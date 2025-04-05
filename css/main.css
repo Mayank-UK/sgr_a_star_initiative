@@ -1,0 +1,32 @@
+/* body {
+    background-color: black;
+    color: white;
+} */
+
+table {
+    min-width: 90%;
+    margin: 20px auto;
+    margin-left: 64px;
+    margin-top: 0px;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 12px;
+    text-align: left;
+}
+
+th {
+    background-color: grey;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
