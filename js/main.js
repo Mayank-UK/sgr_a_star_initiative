@@ -1,6 +1,3 @@
-// The critical CSS should be in your HTML <head> section, not here
-// This JavaScript will only handle the loading overlay creation
-
 // Create loading overlay immediately
 const loading = document.createElement("div");
 loading.className = "loading-overlay";
@@ -11,159 +8,148 @@ loading.innerHTML = `
 document.body.appendChild(loading);
 
 document.addEventListener("DOMContentLoaded", () => {
-  const generateParentLines = (level, color = "#f4f6f8") => {
-    if (level <= 1) return "none";
-    const shadows = [];
-    for (let i = 1; i < level; i++) {
-      shadows.push(`${-1.5 * i}rem 0 0 ${color}`);
-    }
-    return shadows.join(", ");
-  };
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const generateParentLines = (level, color = "#f4f6f8") => {
+        if (level <= 1) return "none";
+        const shadows = [];
+        for (let i = 1; i < level; i++) {
+          shadows.push(`${-1.5 * i}rem 0 0 ${color}`);
+        }
+        return shadows.join(", ");
+      };
 
-  // Process each section
-  const sections = document.querySelectorAll('div[id^="section-"]');
-  
-  if (sections.length === 0) {
-    console.warn("No sections found with id starting with 'section-'");
-    loading.remove();
-    return;
-  }
-
-  sections.forEach((section) => {
-    const raw = section.innerHTML.trim();
-    const lines = raw.split("\n");
-
-    const transformed = lines.map((line, index) => {
-      const normalized = line.replace(/\t/g, "    ");
-      const leadingSpaces = normalized.match(/^ */)?.[0].length || 0;
-      const indentLevel = Math.floor(leadingSpaces / 2);
-      const cleanText = normalized.trim();
-
-      // Skip empty lines
-      if (!cleanText) return '';
-
-      const paddingLeft = indentLevel * 1.5;
-      const linePosition = `${paddingLeft - 0.75}rem`;
-      const parentLines = generateParentLines(indentLevel);
-      const parentLinesHeading = generateParentLines(indentLevel, "#e8ebef");
-      const customStyle =
-        indentLevel > 0
-          ? `padding-left: ${paddingLeft}rem; --line-position: ${linePosition}; --parent-lines: ${parentLines}; --parent-lines-heading: ${parentLinesHeading};`
-          : `padding-left: ${paddingLeft}rem;`;
-
-      if (/<(table|img|div|thead|tbody|tr|td|th)[\s>]/i.test(cleanText)) {
-        return `<div class="line paragraph no-marker" data-level="${indentLevel}" style="${customStyle}">${cleanText}</div>`;
+      const sections = document.querySelectorAll('div[id^="section-"]');
+      if (sections.length === 0) {
+        console.warn("No sections found with id starting with 'section-'");
+        loading.remove();
+        return;
       }
 
-      let cssClass = `line`;
-      if (indentLevel <= 5) {
-        cssClass += ` level-${indentLevel}`;
-      } else {
-        cssClass += ` level-deep`;
-      }
+      sections.forEach((section) => {
+        const raw = section.innerHTML.trim();
+        const lines = raw.split("\n");
 
-      const nextLine = lines[index + 1] || "";
-      const nextIndent = Math.floor((nextLine.replace(/\t/g, "    ").match(/^ */)?.[0].length || 0) / 2);
-      const endsWithPunct = /[.:?]$/.test(cleanText);
-      const wordCount = cleanText.split(/\s+/).length;
-      const charLength = cleanText.length;
+        const transformed = lines.map((line, index) => {
+          const normalized = line.replace(/\t/g, "    ");
+          const leadingSpaces = normalized.match(/^ */)?.[0].length || 0;
+          const indentLevel = Math.floor(leadingSpaces / 2);
+          const cleanText = normalized.trim();
 
-      const isLikelyHeading =
-        wordCount <= 8 && charLength <= 80 && !endsWithPunct && nextIndent > indentLevel;
+          if (!cleanText) return '';
 
-      const markerMatch = cleanText.match(/^([-•\d+*]+\.?\s*)(.*)/);
-      const hasMarker = markerMatch && markerMatch[1].trim().length > 0;
+          const paddingLeft = indentLevel * 1.5;
+          const linePosition = `${paddingLeft - 0.75}rem`;
+          const parentLines = generateParentLines(indentLevel);
+          const parentLinesHeading = generateParentLines(indentLevel, "#e8ebef");
+          const customStyle = `padding-left: ${paddingLeft}rem; --line-position: ${linePosition}; --parent-lines: ${parentLines}; --parent-lines-heading: ${parentLinesHeading};`;
 
-      if (hasMarker) cssClass += " bullet";
-      if (isLikelyHeading) cssClass += " heading";
-      else cssClass += " paragraph";
+          if (/<(table|img|div|thead|tbody|tr|td|th)[\s>]/i.test(cleanText)) {
+            return `<div class="line paragraph no-marker" data-level="${indentLevel}" style="${customStyle}">${cleanText}</div>`;
+          }
 
-      if (hasMarker) {
-        const marker = markerMatch[1];
-        const content = markerMatch[2];
-        return `
-          <div class="${cssClass}" data-level="${indentLevel}" style="${customStyle}">
-            <span class="line-marker">${marker}</span>
-            <span class="line-content">${content}</span>
-          </div>
-        `;
-      } else {
-        cssClass += " no-marker";
-        return `
-          <div class="${cssClass}" data-level="${indentLevel}" style="${customStyle}">
-            <span class="line-content">${cleanText}</span>
-          </div>
-        `;
-      }
-    }).filter(line => line.trim() !== ''); // Remove empty lines
+          let cssClass = `line`;
+          cssClass += indentLevel <= 5 ? ` level-${indentLevel}` : ` level-deep`;
 
-    section.innerHTML = transformed.join("\n");
-  });
+          const nextLine = lines[index + 1] || "";
+          const nextIndent = Math.floor((nextLine.replace(/\t/g, "    ").match(/^ */)?.[0].length || 0) / 2);
+          const endsWithPunct = /[.:?]$/.test(cleanText);
+          const wordCount = cleanText.split(/\s+/).length;
+          const charLength = cleanText.length;
 
-  // Build the control panel
-  const controls = document.getElementById("controls");
-  if (controls) {
-    const sectionDivs = document.querySelectorAll('div[id^="section-"]');
+          const markerMatch = cleanText.match(/^([-•\d+a-zA-Z]+[).\-:]?\s+)(.*)/);
+          const hasMarker = markerMatch && markerMatch[1].trim().length > 0;
 
-    sectionDivs.forEach((section) => {
-      const sectionId = section.id;
-      const labelText = sectionId.replace("section-", "");
+          // Improved heading detection logic
+          const hasChildren = nextIndent > indentLevel;
+          const shortEnough = charLength <= 100 && wordCount <= 12;
+          const endsWithColon = cleanText.endsWith(":");
+          const isLikelyHeading = shortEnough && hasChildren && (!endsWithPunct || endsWithColon);
 
-      const label = document.createElement("label");
-      label.classList.add("switch-label");
+          if (hasMarker) cssClass += " bullet";
+          if (isLikelyHeading) cssClass += " heading";
+          else cssClass += " paragraph";
 
-      const checkbox = document.createElement("input");
-      checkbox.type = "checkbox";
-      checkbox.checked = true;
+          if (hasMarker) {
+            const marker = markerMatch[1];
+            const content = markerMatch[2];
+            return `
+              <div class="${cssClass}" data-level="${indentLevel}" style="${customStyle}">
+                <span class="line-marker">${marker}</span>
+                <span class="line-content">${content}</span>
+              </div>
+            `;
+          } else {
+            cssClass += " no-marker";
+            return `
+              <div class="${cssClass}" data-level="${indentLevel}" style="${customStyle}">
+                <span class="line-content">${cleanText}</span>
+              </div>
+            `;
+          }
+        }).filter(line => line.trim() !== '');
 
-      checkbox.addEventListener("change", () => {
-        section.style.display = checkbox.checked ? "block" : "none";
+        section.innerHTML = transformed.join("\n");
       });
 
-      const slider = document.createElement("span");
-      slider.classList.add("slider");
+      const controls = document.getElementById("controls");
+      if (controls) {
+        const sectionDivs = document.querySelectorAll('div[id^="section-"]');
 
-      label.appendChild(checkbox);
-      label.appendChild(slider);
+        sectionDivs.forEach((section) => {
+          const sectionId = section.id;
+          const labelText = sectionId.replace("section-", "");
 
-      const text = document.createElement("span");
-      text.textContent = ` ${labelText}`;
+          const label = document.createElement("label");
+          label.classList.add("switch-label");
 
-      const wrapper = document.createElement("div");
-      wrapper.classList.add("switch-wrapper");
-      wrapper.appendChild(label);
-      wrapper.appendChild(text);
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.checked = true;
 
-      controls.appendChild(wrapper);
+          checkbox.addEventListener("change", () => {
+            section.style.display = checkbox.checked ? "block" : "none";
+          });
+
+          const slider = document.createElement("span");
+          slider.classList.add("slider");
+
+          label.appendChild(checkbox);
+          label.appendChild(slider);
+
+          const text = document.createElement("span");
+          text.textContent = ` ${labelText}`;
+
+          const wrapper = document.createElement("div");
+          wrapper.classList.add("switch-wrapper");
+          wrapper.appendChild(label);
+          wrapper.appendChild(text);
+
+          controls.appendChild(wrapper);
+        });
+      }
+
+      const sectionsToShow = document.querySelectorAll('div[id^="section-"]');
+      sectionsToShow.forEach((section, index) => {
+        setTimeout(() => {
+          section.style.setProperty('display', 'block', 'important');
+          section.style.opacity = "0";
+          section.style.transition = "opacity 0.3s ease-in-out";
+
+          requestAnimationFrame(() => {
+            section.style.opacity = "1";
+          });
+        }, index * 50);
+      });
+
+      setTimeout(() => {
+        loading.style.opacity = "0";
+        loading.style.transition = "opacity 0.3s ease-out";
+
+        setTimeout(() => {
+          loading.remove();
+        }, 300);
+      }, sectionsToShow.length * 50 + 100);
     });
-  }
-
-  // Show sections after processing with a smooth transition
-  const sectionsToShow = document.querySelectorAll('div[id^="section-"]');
-  
-  // Override the CSS hiding rule by setting inline styles with !important
-  sectionsToShow.forEach((section, index) => {
-    // Add a slight delay for each section to create a staggered effect
-    setTimeout(() => {
-      // Force display block with !important to override CSS
-      section.style.setProperty('display', 'block', 'important');
-      section.style.opacity = "0";
-      section.style.transition = "opacity 0.3s ease-in-out";
-      
-      // Trigger opacity change after display is set
-      requestAnimationFrame(() => {
-        section.style.opacity = "1";
-      });
-    }, index * 50); // 50ms delay between each section
   });
-
-  // Remove loading screen after all sections are processed
-  setTimeout(() => {
-    loading.style.opacity = "0";
-    loading.style.transition = "opacity 0.3s ease-out";
-    
-    setTimeout(() => {
-      loading.remove();
-    }, 300);
-  }, sectionsToShow.length * 50 + 100);
 });

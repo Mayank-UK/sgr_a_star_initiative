@@ -291,12 +291,20 @@ tr:hover {
   margin-top: 0.4rem;
 }
 
-.heading.level-deep .line-content {
+/* .heading.level-deep .line-content {
   font-size: 0.95rem;
   font-weight: 600;
   color: #2d3436;
   font-style: italic;
+} */
+
+.heading.level-deep .line-content {
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-style: italic;
+  color: #2d3436;
 }
+
 
 /* Special styling for level 0 and 1 */
 .level-0 .line-content {
