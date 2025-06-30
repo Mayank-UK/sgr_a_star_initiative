@@ -12,6 +12,15 @@
     <body>
         <div id="controls"><div class="control-heading">📂 Sections</div></div>
 
+        <div id="scroll-controls">
+            <label>Auto scroll:
+                <input type="range" id="speedRange" min="1" max="100" value="10">
+            </label>
+            <button id="toggleScroll">
+                <i class="play-icon"></i>
+            </button>
+        </div>
+
         <h1 style="text-align: center">Polity</h1>
 
 
@@ -35,7 +44,7 @@
 
 
 <!-- Using sections to prevent overload on void reader -->
-<div id="section-base-content-1">
+<div id="section-base-content">
 - Chapter 1: Historical Background
     - Introduction
         - The British arrived in India in 1608 as traders under the East India Company, which was granted an exclusive trading charter by Queen Elizabeth I in 1600.
@@ -3550,12 +3559,8 @@
     - <img align="center" width="750" src="./../images/polity/polity/table_16_2.png" />
     
     - <img align="center" width="750" src="./../images/polity/polity/table_16_3.png" />
-</div>
 
 
-
-
-<div id="section-base-content-2">
 - Chapter 17: Emergency Provisions
     - Introduction
         - The Emergency provisions, contained in Part XVIII of the Constitution (Articles 352 to 360), enable the Central government to address abnormal situations effectively. Their inclusion aims to safeguard India’s sovereignty, unity, integrity, security, democratic political system, and Constitution.
@@ -4847,14 +4852,14 @@
             - Adjournment Motion: 
                 - It is introduced in the Parliament to draw attention of the House to a definite matter of urgent public importance, and needs the support of 50 members to be admitted. As it interrupts the normal business of the House, it is regarded as an extraordinary device. 
                 - It involves an element of censure against the government and hence Rajya Sabha is not permitted to make use of this device. The discussion on an adjournment motion should last for not less than two hours and thirty minutes.
-            - The right to move a motion for an adjournment of the business of the House is subject to the following restrictions:
-                - 1. It should raise a matter which is definite, factual, urgent and of public importance;
-                - 2. It should not cover more than one matter;
-                - 3. It should be restricted to a specific matter of recent occurrence and should not be framed in general terms;
-                - 4. It should not raise a question of privilege;
-                - 5. It should not revive discussion on a matter that has been discussed in the same session;
-                - 6. It should not deal with any matter that is under adjudication by court; and
-                - 7. It should not raise any question that can be raised on a distinct motion.
+                - The right to move a motion for an adjournment of the business of the House is subject to the following restrictions:
+                    - 1. It should raise a matter which is definite, factual, urgent and of public importance;
+                    - 2. It should not cover more than one matter;
+                    - 3. It should be restricted to a specific matter of recent occurrence and should not be framed in general terms;
+                    - 4. It should not raise a question of privilege;
+                    - 5. It should not revive discussion on a matter that has been discussed in the same session;
+                    - 6. It should not deal with any matter that is under adjudication by court; and
+                    - 7. It should not raise any question that can be raised on a distinct motion.
             - No-Confidence Motion: 
                 - Article 75 of the Constitution says that the council of ministers shall be collectively responsible to the Lok Sabha. It means that the ministry stays in office so long as it enjoys confidence of the majority of the members of the Lok Sabha. 
                 - In other words, the Lok Sabha can remove the ministry from office by passing a no-confidence motion. The motion needs the support of 50 members to be admitted.
@@ -4896,12 +4901,15 @@
                 - (iii) Convey a message or commend, urge or request an action.
                 - (iv) Call attention to a matter or situation for consideration by the government.
             - Resolutions are classified into three categories (*Dictionary of Constitutional and Parliamentary Terms*, Lok Sabha Secretariat, Second Edition, 2005, pp. 396–97):
-                - 1. Private Member’s Resolution: It is one that is moved by a private member (other than a minister). It is discussed only on alternate Fridays and in the afternoon sitting.
-                - 2. Government Resolution: It is one that is moved by a minister. It is of the following three kinds:
-                    - (a) Resolutions approving international treaties, conventions or agreements of which the government is a party.
-                    - (b) Resolutions declaring or approving certain policies of the government.
-                    - (c) Resolutions approving recommendations of certain committees.
-                - 3. Statutory Resolution: It can be moved either by a private member or a minister. It is so called because it is in pursuance of a provision in the Constitution or an Act of Parliament.
+                - 1. Private Member’s Resolution: 
+                    - It is one that is moved by a private member (other than a minister). It is discussed only on alternate Fridays and in the afternoon sitting.
+                - 2. Government Resolution: 
+                    - It is one that is moved by a minister. It is of the following three kinds:
+                        - (a) Resolutions approving international treaties, conventions or agreements of which the government is a party.
+                        - (b) Resolutions declaring or approving certain policies of the government.
+                        - (c) Resolutions approving recommendations of certain committees.
+                - 3. Statutory Resolution: 
+                    - It can be moved either by a private member or a minister. It is so called because it is in pursuance of a provision in the Constitution or an Act of Parliament.
             - Resolutions are different from motions in the following respects:
                 - “All resolutions come in the category of substantive motions, that is to say, every resolution is a particular type of motion. All motions need not necessarily be substantive. Further, all motions are not necessarily put to vote of the House, whereas all the resolutions are required to be voted upon.”
                     - Subhash C. Kashyap: *Our Parliament*, National Book Trust, 1999 Edition, p. 139.
@@ -4914,8 +4922,11 @@
 
     - Legislative Procedure in Parliament
         - The legislative procedure is identical in both the Houses of Parliament. Every bill has to pass through the same stages in each House. A bill is a proposal for legislation and it becomes an act or law when duly enacted.
-        - The bills introduced in the Parliament are of two kinds: public bills and private bills (also known as government bills and private members’ bills respectively). Though both are governed by the same general procedure and pass through the same stages in the House, they differ in various respects as shown in:
-            - <img align="center" width="750" src="./../images/polity/polity/table_23_3.png" />
+        - The bills introduced in the Parliament are of two kinds: 
+            - (a) Public bills (also known as government bills)
+            - (b) Private bills (also known as private members’ bills). 
+            - Though both are governed by the same general procedure and pass through the same stages in the House, they differ in various respects as shown in:
+                - <img align="center" width="750" src="./../images/polity/polity/table_23_3.png" />
         - Depending on their content, the bills may further be classified into:
             - (a) Original bills (bills embodying new proposals, ideas or policies);
             - (b) Amending bills (bills which seek to modify, amend or revise the existing Acts);
@@ -4934,41 +4945,49 @@
         - The Constitution has laid down separate procedures for the enactment of all the four types of bills. The procedures with regard to ordinary bills, money bills and financial bills are explained here. The procedure with regard to Constitution amendment bills is already explained in detail.
         - Ordinary Bills
             - Every ordinary bill has to pass through the following five stages in the Parliament before it finds a place on the Statute Book:
-                - 1. First Reading: An ordinary bill can be introduced in either House of Parliament. Such a bill can be introduced either by a minister or by any other member. The member who wants to introduce the bill has to ask for the leave of the House. 
+                - 1. First Reading: 
+                    - An ordinary bill can be introduced in either House of Parliament. Such a bill can be introduced either by a minister or by any other member. The member who wants to introduce the bill has to ask for the leave of the House. 
                     - When the House grants leave to introduce the bill, the mover of the bill introduces it by reading its title and objectives. 
                     - No discussion on the bill takes place at this stage. Later, the bill is published in the Gazette of India. If a bill is published in the Gazette before its introduction, leave of the House to introduce the bill is not necessary. 
                         - The introduction of the bill and its publication in the Gazette constitute the first reading of the bill.
                     - Under Rule 64 of Lok Sabha, the Speaker may, on request being made to him, order the publication of any bill in the Gazette, although no motion has been made for leave to introduce the bill. 
                         - In that case, it shall not be necessary to move for leave to introduce the bill and if the bill is afterwards introduced, it shall not be necessary to publish it again.
-                - 2. Second Reading: During this stage, the bill receives not only the general but also the detailed scrutiny and assumes its final shape. Hence, it forms the most important stage in the enactment of a bill. 
+                - 2. Second Reading: 
+                    - During this stage, the bill receives not only the general but also the detailed scrutiny and assumes its final shape. Hence, it forms the most important stage in the enactment of a bill. 
                     - In fact, this stage involves three more sub-stages, namely, stage of general discussion, committee stage and consideration stage.
-                    - (a) Stage of General Discussion: The printed copies of the bill are distributed to all the members. The principles of the bill and its provisions are discussed generally, but the details of the bill are not discussed. At this stage, the House can take any one of the following four actions:
-                        - (i) It may take the bill into consideration immediately or on some other fixed date;
-                        - (ii) It may refer the bill to a select committee of the House;
-                        - (iii) It may refer the bill to a joint committee of the two Houses; and
-                        - (iv) It may circulate the bill to elicit public opinion.
-                        - A Select Committee consists of members of the House where the bill has originated and a joint committee consists of members of both the Houses of Parliament.
-                    - (b) Committee Stage: The usual practice is to refer the bill to a select committee of the House. This committee examines the bill thoroughly and in detail, clause by clause. It can also amend its provisions, but without altering the principles underlying it. 
-                        - After completing the scrutiny and discussion, the committee reports the bill back to the House.
-                    - (c) Consideration Stage: The House, after receiving the bill from the select committee, considers the provisions of the bill clause by clause. Each clause is discussed and voted upon separately. 
-                        - The members can also move amendments and if accepted, they become part of the bill.
-                - 3. Third Reading: At this stage, the debate is confined to the acceptance or rejection of the bill as a whole and no amendments are allowed, as the general principles underlying the bill have already been scrutinised during the stage of second reading. 
+                        - (a) Stage of General Discussion: 
+                            - The printed copies of the bill are distributed to all the members. The principles of the bill and its provisions are discussed generally, but the details of the bill are not discussed. At this stage, the House can take any one of the following four actions:
+                                - (i) It may take the bill into consideration immediately or on some other fixed date;
+                                - (ii) It may refer the bill to a select committee of the House;
+                                - (iii) It may refer the bill to a joint committee of the two Houses; and
+                                - (iv) It may circulate the bill to elicit public opinion.
+                            - A Select Committee consists of members of the House where the bill has originated and a joint committee consists of members of both the Houses of Parliament.
+                        - (b) Committee Stage: 
+                            - The usual practice is to refer the bill to a select committee of the House. This committee examines the bill thoroughly and in detail, clause by clause. It can also amend its provisions, but without altering the principles underlying it. 
+                            - After completing the scrutiny and discussion, the committee reports the bill back to the House.
+                        - (c) Consideration Stage: 
+                            - The House, after receiving the bill from the select committee, considers the provisions of the bill clause by clause. Each clause is discussed and voted upon separately. 
+                            - The members can also move amendments and if accepted, they become part of the bill.
+                - 3. Third Reading: 
+                    - At this stage, the debate is confined to the acceptance or rejection of the bill as a whole and no amendments are allowed, as the general principles underlying the bill have already been scrutinised during the stage of second reading. 
                     - If the majority of members present and voting accept the bill, the bill is regarded as passed by the House. Thereafter, the bill is authenticated by the presiding officer of the House and transmitted to the second House for consideration and approval. 
                     - A bill is deemed to have been passed by the Parliament only when both the Houses have agreed to it, either with or without amendments.
-                - 4. Bill in the Second House: In the second House also, the bill passes through all the three stages, that is, first reading, second reading and third reading. There are four alternatives before this House:
-                    - (a) It may pass the bill as sent by the first House (i.e., without amendments);
-                    - (b) It may pass the bill with amendments and return it to the first House for reconsideration;
-                    - (c) It may reject the bill altogether; and
-                    - (d) It may not take any action and thus keep the bill pending.
+                - 4. Bill in the Second House: 
+                    - In the second House also, the bill passes through all the three stages, that is, first reading, second reading and third reading. There are four alternatives before this House:
+                        - (a) It may pass the bill as sent by the first House (i.e., without amendments);
+                        - (b) It may pass the bill with amendments and return it to the first House for reconsideration;
+                        - (c) It may reject the bill altogether; and
+                        - (d) It may not take any action and thus keep the bill pending.
                     - If the second House passes the bill without any amendments or the first House accepts the amendments suggested by the second House, the bill is deemed to have been passed by both the Houses and the same is sent to the President for his/her assent. 
                         - On the other hand, if the first House rejects the amendments suggested by the second House or the second House rejects the bill altogether or the second House does not take any action for six months, a deadlock is deemed to have taken place. To resolve such a deadlock, the President can summon a joint sitting of the two Houses. 
                         - If the majority of members present and voting in the joint sitting approves the bill, the bill is deemed to have been passed by both the Houses.
-                - 5. Assent of the President: Every bill after being passed by both Houses of Parliament either singly or at a joint sitting, is presented to the President for his/her assent. There are three alternatives before the President:
-                    - (a) He/she may give his/her assent to the bill; or
-                    - (b) He/she may withhold his/her assent to the bill; or
-                    - (c) He/she may return the bill for reconsideration of the Houses.
-                    - If the President gives his/her assent to the bill, the bill becomes an act and is placed on the Statute Book. If the President withholds his/her assent to the bill, it ends and does not become an act. 
-                        - If the President returns the bill for reconsideration and if it is passed by both the Houses again with or without amendments and presented to the President for his/her assent, the President must give his/her assent to the bill. Thus, the President enjoys only a “suspensive veto.”
+                - 5. Assent of the President: 
+                    - Every bill after being passed by both Houses of Parliament either singly or at a joint sitting, is presented to the President for his/her assent. There are three alternatives before the President:
+                        - (a) He/she may give his/her assent to the bill; or
+                        - (b) He/she may withhold his/her assent to the bill; or
+                        - (c) He/she may return the bill for reconsideration of the Houses.
+                        - If the President gives his/her assent to the bill, the bill becomes an act and is placed on the Statute Book. If the President withholds his/her assent to the bill, it ends and does not become an act. 
+                            - If the President returns the bill for reconsideration and if it is passed by both the Houses again with or without amendments and presented to the President for his/her assent, the President must give his/her assent to the bill. Thus, the President enjoys only a “suspensive veto.”
         - Money Bill
             - Article 110 of the Constitution deals with the definition of money bills. It states that a bill is deemed to be a money bill if it contains ‘only’ provisions dealing with all or any of the following matters:
                 - 1. The imposition, abolition, remission, alteration or regulation of any tax;
@@ -4991,6 +5010,10 @@
             - Finally, when a money bill is presented to the President, he/she may either give his/her assent to the bill or withhold his/her assent to the bill but cannot return the bill for reconsideration of the Houses. Normally, the President gives his/her assent to a money bill as it is introduced in the Parliament with his/her prior permission.
             - Table 23.4 shows the differences between the procedures for the enactment of ordinary bills and money bills:
                 - <img align="center" width="750" src="./../images/polity/polity/table_23_4.png" />
+                    - Why defeat of money bill leads to resignation of the goverment?
+                        - A defeat of a Money Bill in the Lok Sabha is considered tantamount to a vote of no confidence.
+                        - That's because Money Bills deal with core government functioning — taxation, expenditure, borrowing — and losing such a vote means the government has lost its majority support on a critical issue.
+                        - Defeat implies the House is not willing to fund the government — a clear no-confidence signal in a parliamentary democracy.
         - Financial Bills
             - Financial bills are those bills that deal with fiscal matters, that is, revenue or expenditure. However, the Constitution uses the term ‘financial bill’ in a technical sense. Financial bills are of three kinds:
                 - 1. Money bills—Article 110
@@ -5001,7 +5024,9 @@
                 - The financial bills (I) and (II), on the other hand, have been dealt with in Article 117 of the Constitution.
             - Financial Bills (I): 
                 - A financial bill (I) is a bill that contains not only any or all the matters mentioned in Article 110, but also other matters of general legislation. For instance, a bill that contains a borrowing clause, but does not exclusively deal with borrowing. 
-                - In two respects, a financial bill (I) is similar to a money bill—(a) both of them can be introduced only in the Lok Sabha and not in the Rajya Sabha, and (b) both of them can be introduced only on the recommendation of the President. 
+                - In two respects, a financial bill (I) is similar to a money bill:
+                    - (a) both of them can be introduced only in the Lok Sabha and not in the Rajya Sabha, and 
+                    - (b) both of them can be introduced only on the recommendation of the President. 
                 - In all other respects, a financial bill (I) is governed by the same legislative procedure applicable to an ordinary bill. Hence, it can be either rejected or amended by the Rajya Sabha (except that an amendment other than for reduction or abolition of a tax cannot be moved in the Rajya Sabha or in the Lok Sabha without the recommendation of the President i.e., 
                     - The recommendation of President is not required for moving an amendment making provision for the reduction or abolition of a tax). In case of a disagreement between the two Houses over such a bill, the President can summon a joint sitting of the two Houses to resolve the deadlock. 
                     - When the bill is presented to the President, he/she can either give his/her assent to the bill or withhold his/her assent to the bill or return the bill for reconsideration of the Houses.
@@ -5058,6 +5083,11 @@
                 - 4. No money bill imposing tax shall be introduced in the Parliament except on the recommendation of the President, and such a bill shall not be introduced in the Rajya Sabha (Article 117).
                 - 5. No tax shall be levied or collected except by authority of law (Article 265).
                 - 6. Parliament can reduce or abolish a tax but cannot increase it (Article 117).
+                    - When a Money Bill is introduced (usually the Annual Finance Bill or Union Budget):
+                        - The Lok Sabha can reduce or abolish a tax proposed in the Bill.
+                        - But it cannot increase a tax or impose a new tax beyond what is proposed in the Bill.
+                        - This is rooted in the principle that:
+                            - Only the Executive (i.e., the government) can propose new taxation, not the Legislature.
                 - 7. The Constitution has also defined the relative roles or position of both the Houses of Parliament with regard to the enactment of the budget in the following way:
                     - (a) A money bill or finance bill dealing with taxation cannot be introduced in the Rajya Sabha—it must be introduced only in the Lok Sabha (Article 109).
                     - (b) The Rajya Sabha has no power to vote on the demand for grants; it is the exclusive privilege of the Lok Sabha (Article 113).
@@ -5069,7 +5099,11 @@
                 - 12. No such amendment can be proposed to the appropriation bill in either House of the Parliament that will have the effect of varying the amount or altering the destination of any grant voted, or of varying the amount of any expenditure charged on the Consolidated Fund of India (Article 114).
                 - 13. The Lok Sabha can make any grant in advance (Vote on Account) in respect to the estimated expenditure for a part of the financial year, pending the completion of the voting of the demands for grants and the enactment of the appropriation bill (Article 116).
         - Charged Expenditure
-            - The budget consists of two types of expenditure—the expenditure ‘charged’ upon the Consolidated Fund of India and the expenditure ‘made’ from the Consolidated Fund of India. The charged expenditure is non-votable by the Parliament, that is, it can only be discussed by the Parliament, while the other type has to be voted by the Parliament. 
+            - The budget consists of two types of expenditure:
+                - The expenditure ‘charged’ upon the Consolidated Fund of India.
+                    - The charged expenditure is non-votable by the Parliament, that is, it can only be discussed by the Parliament 
+                - The expenditure ‘made’ from the Consolidated Fund of India.
+                    - It has to be voted by the Parliament. 
             - The list of the charged expenditure is as follows:
                 - 1. Emoluments and allowances of the President and other expenditure relating to his/her office.
                 - 2. Salaries and allowances of the Chairman and the Deputy Chairman of the Rajya Sabha and the Speaker and the Deputy Speaker of the Lok Sabha.
@@ -5089,7 +5123,8 @@
                 - 4. Voting on demands for grants.
                 - 5. Passing of appropriation bill.
                 - 6. Passing of finance bill.
-            - 1. Presentation of Budget: Conventionally, the budget is presented to the Lok Sabha by the finance minister on the last working day of February. Since 2017, the presentation of the budget has been advanced to 1st of February.
+            - 1. Presentation of Budget: 
+                - Conventionally, the budget is presented to the Lok Sabha by the finance minister on the last working day of February. Since 2017, the presentation of the budget has been advanced to 1st of February.
                 - The Budget can also be presented to the House in two or more parts and when such presentation takes place, each part shall be dealt with as if it were the budget. Further, there shall be no discussion of the budget on the day on which it is presented to the House.
                 - The finance minister presents the budget with a speech known as the ‘budget speech’. At the end of the speech in the Lok Sabha, the budget is laid before the Rajya Sabha, which can only discuss it and has no power to vote on the demands for grants.
                 - The budget documents presented to the Parliament comprise of the following (*Budget Manual*, Ministry of Finance, Government of India, November 2022, pp. 2–3):
@@ -5111,12 +5146,15 @@
                     - (xiii) Implementation of Previous Budget Announcements
                     - (xiv) Key to Budget Documents
                 - Earlier, the Economic Survey also used to be presented to the Parliament along with the budget. Now, it is presented one day or a few days before the presentation of the budget. This report is prepared by the finance ministry and indicates the status of the national economy.
-            - 2. General Discussion: The general discussion on budget begins a few days after its presentation. It takes place in both the Houses of Parliament and lasts usually for three to four days.
+            - 2. General Discussion: 
+                - The general discussion on budget begins a few days after its presentation. It takes place in both the Houses of Parliament and lasts usually for three to four days.
                 - During this stage, the Lok Sabha can discuss the budget as a whole or on any question of principle involved therein but no cut motion can be moved nor can the budget be submitted to the vote of the House. The finance minister has a general right of reply at the end of the discussion.
-            - 3. Scrutiny by Departmental Committees: After the general discussion on the budget is over, the Houses are adjourned for about three to four weeks. 
+            - 3. Scrutiny by Departmental Committees: 
+                - After the general discussion on the budget is over, the Houses are adjourned for about three to four weeks. 
                 - During this gap period, the 24 departmental standing committees of Parliament examine and discuss in detail the demands for grants of the concerned ministries and prepare reports on them. These reports are submitted to both the Houses of Parliament for consideration.
                 - The standing committee system established in 1993 (and expanded in 2004) makes parliamentary financial control over ministries much more detailed, close, in-depth and comprehensive.
-            - 4. Voting on Demands for Grants: In the light of the reports of the departmental standing committees, the Lok Sabha takes up voting of demands for grants. The demands are presented ministry-wise. A demand becomes a grant after it has been duly voted.
+            - 4. Voting on Demands for Grants: 
+                - In the light of the reports of the departmental standing committees, the Lok Sabha takes up voting of demands for grants. The demands are presented ministry-wise. A demand becomes a grant after it has been duly voted.
                 - Two points should be noted in this context. 
                     - One, the voting of demands for grants is the exclusive privilege of the Lok Sabha, that is, the Rajya Sabha has no power of voting the demands. 
                     - Second, the voting is confined to the votable part of the budget—the expenditure charged on the Consolidated Fund of India is not submitted to the vote (it can only be discussed).
@@ -5136,12 +5174,15 @@
                     - (vi) It should not relate to the expenditure charged on the Consolidated Fund of India.
                     - (vii) It should not relate to a matter that is under adjudication by a court.
                     - (viii) It should not raise a question of privilege.
-                - The significance of a cut motion lies in: (a) facilitating the initiation of concentrated discussion on a specific demand for grant; and (b) upholding the principle of responsible government by probing the activities of the government. However, the cut motions do not have much utility in practice. 
-                    - They are only moved and discussed in the House but not passed as the government enjoys majority support. Their passage by the Lok Sabha amounts to the expression of want of parliamentary confidence in the government and may lead to its resignation.
+                - The significance of a cut motion lies in: 
+                    - (a) facilitating the initiation of concentrated discussion on a specific demand for grant; and 
+                    - (b) upholding the principle of responsible government by probing the activities of the government. 
+                - However, the cut motions do not have much utility in practice. They are only moved and discussed in the House but not passed as the government enjoys majority support. Their passage by the Lok Sabha amounts to the expression of want of parliamentary confidence in the government and may lead to its resignation.
                 - On the last day of the days allotted for discussion and voting on the demands for grants, the Speaker puts all the remaining demands to vote and disposes them whether they have been discussed by the members or not. This is known as ‘guillotine’.
-            - 5. Passing of Appropriation Bill: The Constitution states that ‘no money shall be withdrawn from the Consolidated Fund of India except under appropriation made by law’. Accordingly, after the demands for grants are voted on and passed by the Lok Sabha, an appropriation bill is introduced to provide for the appropriation, out of the Consolidated Fund of India, of all money required to meet:
-                    - (a) The grants voted by the Lok Sabha.
-                    - (b) The expenditure charged on the Consolidated Fund of India.
+            - 5. Passing of Appropriation Bill: 
+                    - The Constitution states that ‘no money shall be withdrawn from the Consolidated Fund of India except under appropriation made by law’. Accordingly, after the demands for grants are voted on and passed by the Lok Sabha, an appropriation bill is introduced to provide for the appropriation, out of the Consolidated Fund of India, of all money required to meet:
+                        - (a) The grants voted by the Lok Sabha.
+                        - (b) The expenditure charged on the Consolidated Fund of India.
                 - No such amendment can be proposed to the appropriation bill in either House of the Parliament that will have the effect of varying the amount or altering the destination of any grant voted, or of varying the amount of any expenditure charged on the Consolidated Fund of India.
                 - The Appropriation Bill becomes the Appropriation Act after it is assented to by the President. This act authorises (or legalises) the payments from the Consolidated Fund of India. This means that the government cannot withdraw money from the Consolidated Fund of India till the enactment of the appropriation bill. 
                     - This takes time and usually goes on till the end of April. But the government needs money to carry on its normal activities after 31 March (the end of the financial year). 
@@ -5151,7 +5192,8 @@
                     - This change is intended to enable the Parliament to avoid a Vote on Account and pass a single Appropriation Bill for the year, before the close of the financial year.
                 - After the advancement of budget cycle from the last day of February to the first day of February, the Vote on Account is presented in the election year when Interim Budget is presented.
                 - In the year in which General Elections to the Lok Sabha are held, the Interim Budget is presented to the Parliament. After the General Elections are over and assumption of office by the new government, the Regular Budget is presented to the Parliament on a date as decided by the new government.
-            - 6. Passing of Finance Bill: The ‘Finance Bill’ means the bill ordinarily introduced in each year to give effect to the financial proposals of the Government of India for the next financial year, and includes a bill to give effect to supplementary financial proposals for any period. 
+            - 6. Passing of Finance Bill: 
+                - The ‘Finance Bill’ means the bill ordinarily introduced in each year to give effect to the financial proposals of the Government of India for the next financial year, and includes a bill to give effect to supplementary financial proposals for any period. 
                 - It is subjected to all the conditions applicable to a Money Bill. Unlike the Appropriation Bill, the amendments (seeking to reject or reduce a tax) can be moved in the case of finance bill.
                 - During this stage, a member can discuss matters relating to general administration, local grievances within the sphere of the responsibility of the Government of India or monetary or financial policy of the government.
                 - According to the Provisional Collection of Taxes Act of 1931, the Finance Bill must be enacted (i.e., passed by the Parliament and assented to by the President) within 75 days.
@@ -5178,14 +5220,17 @@
                 - 1. Consolidated Fund of India (Article 266)
                 - 2. Public Account of India (Article 266)
                 - 3. Contingency Fund of India (Article 267)
-            - Consolidated Fund of India: It is a fund to which all receipts are credited and all payments are debited. In other words, 
-                - (a) all revenues received by the Government of India; 
-                - (b) all loans raised by the Government by the issue of treasury bills, loans or ways and means of advances; and 
-                - (c) all money received by the government in repayment of loans form the Consolidated Fund of India. All the legally authorised payments on behalf of the Government of India are made out of this fund. No money out of this fund can be appropriated (issued or drawn) except in accordance with a parliamentary law.
-            - Public Account of India: All other public money (other than those which are credited to the Consolidated Fund of India) received by or on behalf of the Government of India shall be credited to the Public Account of India. 
+            - Consolidated Fund of India: 
+                - It is a fund to which all receipts are credited and all payments are debited. In other words, 
+                    - (a) all revenues received by the Government of India; 
+                    - (b) all loans raised by the Government by the issue of treasury bills, loans or ways and means of advances; and 
+                    - (c) all money received by the government in repayment of loans form the Consolidated Fund of India. All the legally authorised payments on behalf of the Government of India are made out of this fund. No money out of this fund can be appropriated (issued or drawn) except in accordance with a parliamentary law.
+            - Public Account of India: 
+                - All other public money (other than those which are credited to the Consolidated Fund of India) received by or on behalf of the Government of India shall be credited to the Public Account of India. 
                 - This includes provident fund deposits, judicial deposits, savings bank deposits, departmental deposits, remittances and so on. 
                 - This account is operated by executive action, that is, the payments from this account can be made without parliamentary appropriation. Such payments are mostly in the nature of banking transactions.
-            - Contingency Fund of India: The Constitution authorised the Parliament to establish a ‘Contingency Fund of India’, into which amounts determined by law are paid from time to time. Accordingly, the Parliament enacted the Contingency Fund of India Act in 1950. 
+            - Contingency Fund of India: 
+                - The Constitution authorised the Parliament to establish a ‘Contingency Fund of India’, into which amounts determined by law are paid from time to time. Accordingly, the Parliament enacted the Contingency Fund of India Act in 1950. 
                 - This fund is placed at the disposal of the President, and he/she can make advances out of it to meet unforeseen expenditure pending its authorisation by the Parliament. The fund is held by the finance secretary on behalf of the President. Like the Public Account of India, it is also operated by executive action.
 
     - MULTIFUNCTIONAL ROLE OF PARLIAMENT
@@ -6799,12 +6844,8 @@
     - <img align="center" width="750" src="./../images/polity/polity/table_33_3.png" />
 
     - <img align="center" width="750" src="./../images/polity/polity/table_33_4.png" />
-</div>
 
 
-
-
-<div id="section-base-content-3">
 - Chapter 34: High Court
     - Introduction and overview
         - In the Indian single-integrated judicial system, the high court operates below the Supreme Court but above the subordinate courts. The judiciary in a state consists of a high court and a hierarchy of subordinate courts. The high court occupies the top position in the judicial administration of a state.
@@ -10980,12 +11021,8 @@
                 4. A member of either House of a state legislature disqualified on the ground of defection is also disqualified from being appointed as a minister.
                 5. A member of either House of Parliament or a state legislature disqualified on the ground of defection is also disqualified from holding any remunerative political post, defined as any office under the Central or state government, or a body wholly or partially owned by such government, where the salary or remuneration is paid from public revenue, except where compensatory in nature.
                 6. The provision in the Tenth Schedule exempting disqualification in case of a split by one-third of the members of a legislature party was deleted, removing protection for defectors on grounds of splits.
-</div>
 
 
-
-
-<div id="section-base-content-4">
 - Chapter 86: Pressure Groups
     - Meaning and Techniques
         - Introduction and Overview

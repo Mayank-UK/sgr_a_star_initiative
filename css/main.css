@@ -324,3 +324,37 @@ tr:hover {
 .no-marker .line-content {
   white-space: pre-wrap;
 }
+
+
+
+#scroll-controls {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 10px 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.3s ease;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#scroll-controls button {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+.play-icon::before {
+  content: "▶️";
+}
+
+.pause-icon::before {
+  content: "⏸️";
+}
