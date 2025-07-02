@@ -352,9 +352,18 @@ tr:hover {
 }
 
 .play-icon::before {
-  content: "▶️";
+  content: "►"; /* Unicode black right-pointing pointer */
+  font-size: 1.2em;
+  display: inline-block;
+  transform: rotate(0deg); /* ensure no rotation */
+  vertical-align: middle;
 }
 
+
 .pause-icon::before {
-  content: "⏸️";
+  content: "█"; /* Double vertical line (U+2016) */
+  font-size: 1.2em;
+  display: inline-block;
+  vertical-align: middle;
 }
+
