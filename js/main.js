@@ -7,7 +7,7 @@ loading.innerHTML = `
 document.body.appendChild(loading);
 
 // Autoscroll Variables
-let scrollSpeed = 5; // Default speed in pixels per second
+let scrollSpeed = 3; // Default speed in pixels per second
 let isScrolling = false;
 let isScrollingAllowedByUser = false;
 let lastScrollY = window.scrollY;
