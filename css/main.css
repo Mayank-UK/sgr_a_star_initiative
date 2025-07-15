@@ -384,3 +384,17 @@ table, pre, code, img, iframe {
 body {
     overflow-x: hidden;
 }
+
+
+.blurred-block {
+  filter: blur(6px);
+  cursor: pointer;
+  transition: filter 0.3s ease;
+  border-radius: 4px;
+  background-color: #fdfdfd;
+  padding: 0.25rem 0;
+  margin-bottom: 1rem;
+}
+.blurred-block.revealed {
+  filter: none;
+}

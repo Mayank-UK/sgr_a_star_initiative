@@ -257,6 +257,53 @@ document.addEventListener("DOMContentLoaded", () => {
         // Restore tables in the transformed content
         const finalContent = restoreTablesInContent(transformed.join("\n"), tables);
         section.innerHTML = finalContent;
+
+        const lineElements = section.querySelectorAll('.line');
+        for (let i = 0; i < lineElements.length; i++) {
+          const line = lineElements[i];
+          const content = line.querySelector('.line-content');
+          if (!content) continue;
+
+          const text = content.textContent.trim();
+          if (text.startsWith('Answer:')) {
+            const baseLevel = parseInt(line.dataset.level || '0', 10);
+            const group = [line];
+
+            for (let j = i + 1; j < lineElements.length; j++) {
+              const next = lineElements[j];
+              const nextLevel = parseInt(next.dataset.level || '0', 10);
+              if (nextLevel <= baseLevel) break;
+              group.push(next);
+            }
+
+            const nextLine = lineElements[i + group.length];
+            const nextContent = nextLine?.querySelector('.line-content')?.textContent?.trim() || '';
+            if (nextContent.startsWith('Analysis:')) {
+              const analysisLevel = parseInt(nextLine.dataset.level || '0', 10);
+              group.push(nextLine);
+
+              for (let j = i + group.length; j < lineElements.length; j++) {
+                const subLine = lineElements[j];
+                const subLevel = parseInt(subLine.dataset.level || '0', 10);
+                if (subLevel <= analysisLevel) break;
+                group.push(subLine);
+              }
+            }
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'blurred-block';
+            const parent = line.parentElement;
+            parent.insertBefore(wrapper, group[0]);
+            group.forEach(el => wrapper.appendChild(el));
+
+            wrapper.addEventListener('click', () => {
+              wrapper.classList.toggle('revealed');
+            });
+
+            i += group.length - 1;
+          }
+        }
+
       });
 
       const controls = document.getElementById("controls");
@@ -382,4 +429,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }, { passive: true });
     });
   });
+
+
 });
