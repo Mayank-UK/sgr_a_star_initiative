@@ -359,7 +359,6 @@ tr:hover {
   vertical-align: middle;
 }
 
-
 .pause-icon::before {
   content: "█"; /* Double vertical line (U+2016) */
   font-size: 1.2em;
