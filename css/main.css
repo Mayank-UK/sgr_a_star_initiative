@@ -366,3 +366,21 @@ tr:hover {
   vertical-align: middle;
 }
 
+/* Apply to all relevant wide elements */
+table, pre, code, img, iframe {
+    max-width: 100%;
+    overflow-x: auto;
+    display: block;
+}
+
+/* Enable horizontal scroll ONLY when content overflows */
+table, pre, code, img, iframe {
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap; /* For <code> and <pre> */
+}
+
+/* Prevent body/page horizontal scroll */
+body {
+    overflow-x: hidden;
+}
