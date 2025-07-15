@@ -113,6 +113,55 @@ function handleUserScroll() {
   }
 }
 
+// Helper function to check if an element is inside a table
+function isInsideTable(element) {
+  let parent = element.parentElement;
+  while (parent) {
+    if (parent.tagName && parent.tagName.toLowerCase() === 'table') {
+      return true;
+    }
+    parent = parent.parentElement;
+  }
+  return false;
+}
+
+function extractTablesAndContent(htmlString) {
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = htmlString;
+
+  const tables = [];
+  let tableIndex = 0;
+
+  tempDiv.querySelectorAll('table').forEach((table) => {
+    const placeholder = `__TABLE_PLACEHOLDER_${tableIndex++}__`;
+    const wrapper = document.createElement('div');
+    wrapper.innerHTML = table.outerHTML;
+
+    tables.push({
+      placeholder,
+      content: wrapper.innerHTML
+    });
+
+    // Replace the entire table in DOM
+    table.replaceWith(placeholder);
+  });
+
+  return {
+    htmlWithPlaceholders: tempDiv.innerHTML,
+    tables
+  };
+}
+
+
+// Helper function to restore table elements
+function restoreTablesInContent(processedContent, tables) {
+  let restored = processedContent;
+  tables.forEach(table => {
+    restored = restored.replace(table.placeholder, table.content);
+  });
+  return restored;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
@@ -134,7 +183,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
       sections.forEach((section) => {
         const raw = section.innerHTML.trim();
-        const lines = raw.split("\n");
+        
+        // Extract tables and replace with placeholders
+        const { htmlWithPlaceholders, tables } = extractTablesAndContent(raw);
+        
+        const lines = htmlWithPlaceholders.split("\n");
 
         const transformed = lines.map((line, index) => {
           const normalized = line.replace(/\t/g, "    ");
@@ -143,13 +196,20 @@ document.addEventListener("DOMContentLoaded", () => {
           const cleanText = normalized.trim();
           if (!cleanText) return '';
 
+          // Check if this line contains a table placeholder
+          if (cleanText.includes('__TABLE_PLACEHOLDER_')) {
+            // Return the line as-is (it will be restored later)
+            return cleanText;
+          }
+
           const paddingLeft = indentLevel * 1.5;
           const linePosition = `${paddingLeft - 0.75}rem`;
           const parentLines = generateParentLines(indentLevel);
           const parentLinesHeading = generateParentLines(indentLevel, "#e8ebef");
           const customStyle = `padding-left: ${paddingLeft}rem; --line-position: ${linePosition}; --parent-lines: ${parentLines}; --parent-lines-heading: ${parentLinesHeading};`;
 
-          if (/<(table|img|div|thead|tbody|tr|td|th)[\s>]/i.test(cleanText)) {
+          // Updated regex to exclude table-related elements
+          if (/<(img|div|thead|tbody|tr|td|th)[\s>]/i.test(cleanText)) {
             return `<div class="line paragraph no-marker" data-level="${indentLevel}" style="${customStyle}">${cleanText}</div>`;
           }
 
@@ -194,7 +254,9 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }).filter(line => line.trim() !== '');
 
-        section.innerHTML = transformed.join("\n");
+        // Restore tables in the transformed content
+        const finalContent = restoreTablesInContent(transformed.join("\n"), tables);
+        section.innerHTML = finalContent;
       });
 
       const controls = document.getElementById("controls");
