@@ -244,10 +244,16 @@ document.addEventListener("DOMContentLoaded", () => {
           const cleanText = normalized.trim();
           if (!cleanText) return '';
 
-          // Check if this line contains a table placeholder
           if (cleanText.includes('__TABLE_PLACEHOLDER_')) {
-            // Return the line as-is (it will be restored later)
-            return cleanText;
+            const paddingLeft = indentLevel * 1.5;
+            const linePosition = `${paddingLeft - 0.75}rem`;
+            const customStyle = `padding-left: ${paddingLeft}rem; --line-position: ${linePosition};`;
+
+            return `
+              <div class="line paragraph no-marker table-wrapper" data-level="${indentLevel}" style="${customStyle}">
+                ${cleanText}
+              </div>
+            `;
           }
 
           const paddingLeft = indentLevel * 1.5;
