@@ -364,6 +364,28 @@ tr:hover {
   vertical-align: middle;
 }
 
+.scroll-up-icon::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url('./../notes/images/system/scroll_up.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+}
+
+.scroll-down-icon::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url('./../notes/images/system/scroll_down.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  vertical-align: middle;
+}
+
 
 /* Constrain wide elements */
 img, table, pre, code, iframe {

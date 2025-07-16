@@ -1,10 +1,15 @@
 (function setTitleFromFilename() {
+  // If a title is already set and not empty, don't override
+  if (document.title && document.title.trim() !== "") return;
+
+  // Else, generate title from filename
   const fileName = window.location.pathname.split("/").pop().split(".")[0];
   const formattedTitle = fileName
     .replace(/_/g, " ")
     .replace(/\b\w/g, c => c.toUpperCase());
   document.title = formattedTitle;
 })();
+
 
 
 const loading = document.createElement("div");
@@ -27,10 +32,10 @@ scrollControlsDiv.innerHTML = `
   </button>
   <input type="range" id="speedRange" min="1" max="100" value="5">
   <button id="scrollUp" title="Scroll Up">
-      <img src="./../images/system/scroll_up.png" alt="Scroll Up" height="20" />
+    <i class="scroll-up-icon"></i>
   </button>
   <button id="scrollDown" title="Scroll Down">
-      <img src="./../images/system/scroll_down.png" alt="Scroll Down" height="20" />
+    <i class="scroll-down-icon"></i>
   </button>
 `;
 
