@@ -1,9 +1,43 @@
+(function setTitleFromFilename() {
+  const fileName = window.location.pathname.split("/").pop().split(".")[0];
+  const formattedTitle = fileName
+    .replace(/_/g, " ")
+    .replace(/\b\w/g, c => c.toUpperCase());
+  document.title = formattedTitle;
+})();
+
+
 const loading = document.createElement("div");
 loading.className = "loading-overlay";
 loading.innerHTML = `
   <div class="loading-spinner"></div>
   <span>Processing content...</span>
 `;
+
+// Inject controls at top of body
+const controlsDiv = document.createElement('div');
+controlsDiv.id = 'controls';
+controlsDiv.innerHTML = `<div class="control-heading">📂 Sections</div>`;
+
+const scrollControlsDiv = document.createElement('div');
+scrollControlsDiv.id = 'scroll-controls';
+scrollControlsDiv.innerHTML = `
+  <button id="toggleScroll">
+      <i class="play-icon"></i>
+  </button>
+  <input type="range" id="speedRange" min="1" max="100" value="5">
+  <button id="scrollUp" title="Scroll Up">
+      <img src="./../images/system/scroll_up.png" alt="Scroll Up" height="20" />
+  </button>
+  <button id="scrollDown" title="Scroll Down">
+      <img src="./../images/system/scroll_down.png" alt="Scroll Down" height="20" />
+  </button>
+`;
+
+document.body.prepend(scrollControlsDiv);
+document.body.prepend(controlsDiv);
+
+
 document.body.appendChild(loading);
 
 // Autoscroll Variables
@@ -112,6 +146,15 @@ function handleUserScroll() {
     lastAutoScrollY = window.scrollY;
   }
 }
+
+document.getElementById("scrollUp").addEventListener("click", () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+document.getElementById("scrollDown").addEventListener("click", () => {
+  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+});
+
 
 // Helper function to check if an element is inside a table
 function isInsideTable(element) {
@@ -296,9 +339,13 @@ document.addEventListener("DOMContentLoaded", () => {
             parent.insertBefore(wrapper, group[0]);
             group.forEach(el => wrapper.appendChild(el));
 
-            wrapper.addEventListener('click', () => {
+            const revealHandler = () => {
               wrapper.classList.toggle('revealed');
-            });
+            };
+
+            wrapper.addEventListener('click', revealHandler);
+            wrapper.addEventListener('touchstart', revealHandler);
+
 
             i += group.length - 1;
           }
@@ -352,12 +399,25 @@ document.addEventListener("DOMContentLoaded", () => {
           });
         }, index * 50);
       });
+      
 
       setTimeout(() => {
         loading.style.opacity = "0";
         loading.style.transition = "opacity 0.3s ease-out";
         setTimeout(() => loading.remove(), 300);
       }, sectionsToShow.length * 50 + 100);
+
+      const pageTitle = document.title;
+const h1 = document.createElement("h1");
+h1.textContent = pageTitle;
+h1.style.textAlign = "center";
+h1.style.margin = "2rem 0";
+
+const firstSection = document.querySelector('div[id^="section-"]');
+if (firstSection) {
+  firstSection.parentNode.insertBefore(h1, firstSection);
+}
+
 
       // Scroll controls
       scrollControls = document.getElementById("scroll-controls");

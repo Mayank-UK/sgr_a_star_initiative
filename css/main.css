@@ -291,13 +291,6 @@ tr:hover {
   margin-top: 0.4rem;
 }
 
-/* .heading.level-deep .line-content {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #2d3436;
-  font-style: italic;
-} */
-
 .heading.level-deep .line-content {
   font-size: 0.9rem;
   font-weight: 600;
@@ -325,8 +318,6 @@ tr:hover {
   white-space: pre-wrap;
 }
 
-
-
 #scroll-controls {
   position: fixed;
   top: 10px;
@@ -352,49 +343,78 @@ tr:hover {
 }
 
 .play-icon::before {
-  content: "►"; /* Unicode black right-pointing pointer */
-  font-size: 1.2em;
+  content: "";
   display: inline-block;
-  transform: rotate(0deg); /* ensure no rotation */
+  width: 20px;
+  height: 20px;
+  background-image: url('./../notes/images/system/play.png');
+  background-size: contain;
+  background-repeat: no-repeat;
   vertical-align: middle;
 }
 
 .pause-icon::before {
-  content: "█"; /* Double vertical line (U+2016) */
-  font-size: 1.2em;
+  content: "";
   display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url('./../notes/images/system/pause.png');
+  background-size: contain;
+  background-repeat: no-repeat;
   vertical-align: middle;
 }
 
-/* Apply to all relevant wide elements */
-table, pre, code, img, iframe {
-    max-width: 100%;
-    overflow-x: auto;
-    display: block;
+
+/* Constrain wide elements */
+img, table, pre, code, iframe {
+  max-width: 100%;
+  display: block;
+  overflow-x: auto;
 }
 
-/* Enable horizontal scroll ONLY when content overflows */
-table, pre, code, img, iframe {
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap; /* For <code> and <pre> */
+/* Only scroll if needed */
+table, pre, code {
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
 }
 
-/* Prevent body/page horizontal scroll */
-body {
-    overflow-x: hidden;
+/* This makes sure long tables/images don’t break layout */
+.line-content > * {
+  max-width: 100%;
+  overflow-x: auto;
 }
 
+/* Force container (and body) to not scroll sideways */
+body, html {
+  overflow-x: hidden !important;
+  max-width: 100vw;
+}
 
 .blurred-block {
   filter: blur(6px);
   cursor: pointer;
   transition: filter 0.3s ease;
-  border-radius: 4px;
-  background-color: #fdfdfd;
-  padding: 0.25rem 0;
-  margin-bottom: 1rem;
+  will-change: filter;
+  -webkit-backface-visibility: hidden;
+  -webkit-transform: translateZ(0);
 }
+
 .blurred-block.revealed {
   filter: none;
+}
+
+.blurred-block::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.15);
+  z-index: 10;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+}
+
+.blurred-block.revealed::before {
+  opacity: 0;
 }
