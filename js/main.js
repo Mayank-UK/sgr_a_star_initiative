@@ -413,16 +413,15 @@ document.addEventListener("DOMContentLoaded", () => {
       }, sectionsToShow.length * 50 + 100);
 
       const pageTitle = document.title;
-const h1 = document.createElement("h1");
-h1.textContent = pageTitle;
-h1.style.textAlign = "center";
-h1.style.margin = "2rem 0";
+      const h1 = document.createElement("h1");
+      h1.textContent = pageTitle;
+      h1.style.textAlign = "center";
+      h1.style.margin = "2rem 0";
 
-const firstSection = document.querySelector('div[id^="section-"]');
-if (firstSection) {
-  firstSection.parentNode.insertBefore(h1, firstSection);
-}
-
+      const firstSection = document.querySelector('div[id^="section-"]');
+      if (firstSection) {
+        firstSection.parentNode.insertBefore(h1, firstSection);
+      }
 
       // Scroll controls
       scrollControls = document.getElementById("scroll-controls");
@@ -492,6 +491,152 @@ if (firstSection) {
           }, 500);
         }
       }, { passive: true });
+
+      // Outline button
+      const outlineButton = document.createElement("button");
+      outlineButton.textContent = "View Outline";
+      outlineButton.id = "generate-outline-button";
+      outlineButton.className = "outline-toggle-button";
+      document.getElementById("controls").appendChild(outlineButton);
+
+      document.getElementById("controls").style.position = "relative";
+      document.getElementById("controls").appendChild(outlineButton);
+
+      // Outline sidebar
+      const outlineSidebar = document.createElement("div");
+      outlineSidebar.id = "outline-sidebar";
+      outlineSidebar.style.cssText = `
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 36%;
+        height: 100%;
+        background: #ffffff;
+        box-shadow: -4px 0 10px rgba(0,0,0,0.1);
+        padding: 1rem;
+        overflow-y: auto;
+        z-index: 9999;
+        display: none;
+        font-family: sans-serif;
+        scroll-behavior: smooth;
+      `;
+
+      // Close button
+      const closeBtn = document.createElement("button");
+      closeBtn.textContent = "❌";
+      closeBtn.style.cssText = `
+        background: transparent;
+        border: none;
+        font-size: 1rem;
+        cursor: pointer;
+        margin-bottom: 1rem;
+        float: right;
+        color: #666;
+      `;
+      closeBtn.addEventListener("click", () => {
+        outlineSidebar.style.display = "none";
+      });
+
+      outlineSidebar.appendChild(closeBtn);
+      document.body.appendChild(outlineSidebar);
+
+      // Outline styles
+      const outlineStyles = document.createElement("style");
+      outlineStyles.textContent = `
+        html {
+          scroll-behavior: smooth;
+        }
+
+        #outline-sidebar ul {
+          list-style: none;
+          padding-left: 1rem;
+          margin: 0;
+          border-left: 2px solid #f8f9fa;
+        }
+
+        #outline-sidebar li {
+          padding: 4px 0;
+          margin-left: 0.5rem;
+          font-size: 14px;
+          color: #333;
+        }
+
+        #outline-sidebar a {
+          text-decoration: none;
+          color: inherit;
+          display: inline-block;
+          padding: 2px 6px;
+          border-radius: 4px;
+          transition: background-color 0.2s ease;
+        }
+
+        #outline-sidebar a:hover {
+          background-color: #f3f4f6;
+        }
+      `;
+      document.head.appendChild(outlineStyles);
+
+      // Generate outline structure
+      outlineButton.addEventListener("click", () => {
+        outlineSidebar.style.display = "block";
+        const sidebar = outlineSidebar;
+
+        // Remove all children except close button
+        while (sidebar.children.length > 1) sidebar.removeChild(sidebar.lastChild);
+
+        const baseSections = Array.from(document.querySelectorAll('div[id^="section-"]'))
+          .filter(sec => !/consolidated|pyq/i.test(sec.id));
+
+        const allHeadings = [];
+        baseSections.forEach((section, sIndex) => {
+          const headings = section.querySelectorAll(".line.heading, .line.paragraph.heading");
+          headings.forEach((heading, hIndex) => {
+            const level = parseInt(heading.dataset.level || "0", 10);
+            const text = heading.textContent.trim();
+            const id = `heading-${sIndex}-${hIndex}`;
+            heading.id = id;
+            allHeadings.push({ level, text, id });
+          });
+        });
+
+        if (allHeadings.length === 0) {
+          const p = document.createElement("p");
+          p.textContent = "No headings found in base content.";
+          sidebar.appendChild(p);
+          return;
+        }
+
+        const root = document.createElement("ul");
+        const stack = [{ level: 0, element: root }];
+
+        allHeadings.forEach(({ level, text, id }) => {
+          const li = document.createElement("li");
+          const a = document.createElement("a");
+          a.href = `#${id}`;
+          a.textContent = text;
+          li.appendChild(a);
+
+          while (stack.length > 1 && level <= stack[stack.length - 1].level) {
+            stack.pop();
+          }
+
+          let parentUl = stack[stack.length - 1].element;
+          if (!parentUl.querySelector("ul")) {
+            const newUl = document.createElement("ul");
+            parentUl.appendChild(newUl);
+            parentUl = newUl;
+          } else {
+            parentUl = parentUl.querySelector("ul");
+          }
+
+          parentUl.appendChild(li);
+          stack.push({ level, element: li });
+        });
+
+        sidebar.appendChild(root);
+      });
+
+
     });
   });
 
