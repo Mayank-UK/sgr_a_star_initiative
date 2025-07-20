@@ -620,4 +620,4 @@ Tranchec
 
 - 7. Let me know you understood my requirement, then provide me very small sample of how you will ouput, and then i will proceed further
 
-please provide the output in markdown format so i can copy with single click in this conversation flow only, don't put in any file or open in an artifact very very strictly
+provide me in this conversatin only like you provide code, so i can copy in a single click, don't provide in a file
