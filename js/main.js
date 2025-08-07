@@ -19,6 +19,16 @@ loading.innerHTML = `
   <span>Processing content...</span>
 `;
 
+// Add styles for switch loading states
+const switchStyles = document.createElement('style');
+switchStyles.textContent = `
+  input[type="checkbox"]:disabled + .slider {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+document.head.appendChild(switchStyles);
+
 // Inject controls at top of body
 const controlsDiv = document.createElement('div');
 controlsDiv.id = 'controls';
@@ -120,13 +130,53 @@ function pauseAutoScrollTemporarily(ms = 2000) {
   }, ms);
 }
 
+let scrollTimeout;
+let isScrollingNow = false;
+
 function handleScrollDirection() {
   const currentY = window.scrollY;
   const goingUp = currentY < lastScrollY;
+  
   if (scrollControls) {
-    scrollControls.style.opacity = goingUp ? "1" : "0";
-    scrollControls.style.pointerEvents = goingUp ? "auto" : "none";
+    // Always show controls when scrolling up
+    if (goingUp) {
+      scrollControls.style.opacity = "1";
+      scrollControls.style.pointerEvents = "auto";
+      
+      // Clear any existing timeout
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+    } else {
+      // For iPad/touch devices, add delay before hiding
+      if ('ontouchstart' in window) {
+        isScrollingNow = true;
+        
+        // Clear previous timeout
+        if (scrollTimeout) {
+          clearTimeout(scrollTimeout);
+        }
+        
+        // Show controls immediately while scrolling
+        scrollControls.style.opacity = "1";
+        scrollControls.style.pointerEvents = "auto";
+        
+        // Hide after 3 seconds of no scrolling
+        scrollTimeout = setTimeout(() => {
+          if (!goingUp) {
+            scrollControls.style.opacity = "0";
+            scrollControls.style.pointerEvents = "none";
+          }
+          isScrollingNow = false;
+        }, 3000);
+      } else {
+        // Desktop behavior - hide immediately
+        scrollControls.style.opacity = "0";
+        scrollControls.style.pointerEvents = "none";
+      }
+    }
   }
+  
   lastScrollY = currentY;
 }
 
@@ -350,13 +400,51 @@ document.addEventListener("DOMContentLoaded", () => {
             parent.insertBefore(wrapper, group[0]);
             group.forEach(el => wrapper.appendChild(el));
 
-            const revealHandler = () => {
+            let touchStartY = 0;
+            let touchStartTime = 0;
+            let hasScrolled = false;
+
+            const revealHandler = (e) => {
+              e.preventDefault();
+              e.stopPropagation();
               wrapper.classList.toggle('revealed');
             };
 
-            wrapper.addEventListener('click', revealHandler);
-            wrapper.addEventListener('touchstart', revealHandler);
+            const touchStartHandler = (e) => {
+              touchStartY = e.touches[0].clientY;
+              touchStartTime = Date.now();
+              hasScrolled = false;
+            };
 
+            const touchMoveHandler = (e) => {
+              const currentY = e.touches[0].clientY;
+              const deltaY = Math.abs(currentY - touchStartY);
+              
+              // If moved more than 10px, consider it a scroll
+              if (deltaY > 10) {
+                hasScrolled = true;
+              }
+            };
+
+            const touchEndHandler = (e) => {
+              const touchDuration = Date.now() - touchStartTime;
+              
+              // Only toggle if it was a quick tap (< 300ms) and no scrolling
+              if (!hasScrolled && touchDuration < 300) {
+                e.preventDefault();
+                e.stopPropagation();
+                wrapper.classList.toggle('revealed');
+              }
+            };
+
+            // Use touch events for mobile, click for desktop
+            if ('ontouchstart' in window) {
+              wrapper.addEventListener('touchstart', touchStartHandler, { passive: false });
+              wrapper.addEventListener('touchmove', touchMoveHandler, { passive: true });
+              wrapper.addEventListener('touchend', touchEndHandler, { passive: false });
+            } else {
+              wrapper.addEventListener('click', revealHandler);
+            }
 
             i += group.length - 1;
           }
@@ -378,7 +466,44 @@ document.addEventListener("DOMContentLoaded", () => {
           checkbox.type = "checkbox";
           checkbox.checked = true;
           checkbox.addEventListener("change", () => {
-            section.style.display = checkbox.checked ? "block" : "none";
+            // Create fresh loading overlay for switch operation
+            const switchLoading = document.createElement("div");
+            switchLoading.className = "loading-overlay";
+            switchLoading.innerHTML = `
+              <div class="loading-spinner"></div>
+              <span>Processing section...</span>
+            `;
+            
+            // Show loading and disable checkbox
+            document.body.appendChild(switchLoading);
+            checkbox.disabled = true;
+            
+            // Use requestAnimationFrame for smooth operation
+            requestAnimationFrame(() => {
+              if (checkbox.checked) {
+                section.style.display = "block";
+                section.style.opacity = "0";
+                section.style.transition = "opacity 0.3s ease-in-out";
+                
+                requestAnimationFrame(() => {
+                  section.style.opacity = "1";
+                  
+                  setTimeout(() => {
+                    switchLoading.remove();
+                    checkbox.disabled = false;
+                  }, 300);
+                });
+              } else {
+                section.style.transition = "opacity 0.2s ease-out";
+                section.style.opacity = "0";
+                
+                setTimeout(() => {
+                  section.style.display = "none";
+                  switchLoading.remove();
+                  checkbox.disabled = false;
+                }, 200);
+              }
+            });
           });
 
           const slider = document.createElement("span");
@@ -531,14 +656,34 @@ document.addEventListener("DOMContentLoaded", () => {
       const closeBtn = document.createElement("button");
       closeBtn.textContent = "❌";
       closeBtn.style.cssText = `
-        background: transparent;
-        border: none;
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid #ddd;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
         font-size: 1rem;
         cursor: pointer;
-        margin-bottom: 1rem;
-        float: right;
         color: #666;
+        z-index: 10000;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background-color 0.2s ease;
       `;
+
+      // Add hover effect
+      closeBtn.addEventListener('mouseenter', () => {
+        closeBtn.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+      });
+
+      closeBtn.addEventListener('mouseleave', () => {
+        closeBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+      });
+
       closeBtn.addEventListener("click", () => {
         outlineSidebar.style.display = "none";
       });
