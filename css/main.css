@@ -482,3 +482,93 @@ body, html {
     background-color: #d9dde2;
     transform: scale(0.98);
 }
+
+
+input[type="checkbox"]:disabled + .slider {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.table-expand-icon {
+    background-image: url('./../notes/images/system/expand.webp');
+    background-size: contain;
+    background-repeat: no-repeat;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    position: absolute;
+    top: -20px;
+    left: 40px;
+    z-index: 10;
+    transition: background-color 0.2s ease; 
+}
+
+.table-expand-icon:hover {
+    background-color: rgba(0, 0, 0, 0.1); /* Optional hover effect */
+}
+
+.table-expand-icon:hover {
+    color: #007bff;
+}
+
+.fullscreen-table-wrapper {
+    position: fixed;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 99vw;
+    height: 99vh;
+    background: rgba(255, 255, 255, 0.95);
+    z-index: 10000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.fullscreen-table-wrapper.show {
+    opacity: 1;
+}
+
+.fullscreen-table {
+    width: 100%;
+    max-width: 98vw; /* ensure no overflow */
+    max-height: 95%;
+    overflow: auto;
+    border: 1px solid #ddd;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    box-sizing: border-box; /* important to include padding in width */
+}
+
+.fullscreen-table table {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+    table-layout: fixed;        /* Helps prevent overflow */
+}
+
+.fullscreen-table-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #666;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+}
+
+.fullscreen-table-close:hover {
+    background-color: rgba(255, 255, 255, 1);
+}
