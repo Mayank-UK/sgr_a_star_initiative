@@ -484,30 +484,43 @@ document.addEventListener("DOMContentLoaded", () => {
           const checkbox = document.createElement("input");
           checkbox.type = "checkbox";
           checkbox.checked = true;
-          checkbox.addEventListener("change", () => {
+
+          checkbox.addEventListener("change", (e) => {
+            // Prevent any default behavior that might cause delay
+            e.preventDefault();
+            
+            // Create loading screen in synchronous execution
             const switchLoading = document.createElement("div");
             switchLoading.className = "loading-overlay";
             switchLoading.innerHTML = `
               <div class="loading-spinner"></div>
               <span>Processing section...</span>
             `;
+            
+            // Force immediate DOM update
             document.body.appendChild(switchLoading);
+            switchLoading.offsetHeight; // Force reflow for immediate display
+            
             checkbox.disabled = true;
-
-            requestAnimationFrame(() => {
+            
+            // Minimal delay for smooth UX
+            setTimeout(() => {
+              const section = document.getElementById(sectionId);
+              
               if (checkbox.checked) {
                 section.style.display = "block";
                 section.style.opacity = "0";
                 section.style.transition = "opacity 0.3s ease-in-out";
                 requestAnimationFrame(() => {
                   section.style.opacity = "1";
-                  setTimeout(() => {
-                    switchLoading.remove();
-                    checkbox.disabled = false;
-                  }, 300);
                 });
+                
+                setTimeout(() => {
+                  switchLoading.remove();
+                  checkbox.disabled = false;
+                }, 300);
               } else {
-                section.style.transition = "opacity 0.2s ease-out";
+                section.style.transition = "opacity 0.2s ease-out";  
                 section.style.opacity = "0";
                 setTimeout(() => {
                   section.style.display = "none";
@@ -515,7 +528,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   checkbox.disabled = false;
                 }, 200);
               }
-            });
+            }, 10); // Tiny delay just for smooth transition
           });
 
           const slider = document.createElement("span");
@@ -790,9 +803,7 @@ document.addEventListener("DOMContentLoaded", () => {
         cacheBusterButton.textContent = "Bust cache";
         cacheBusterButton.id = "bust-cache-button";
         cacheBusterButton.className = "bust-cache-button";
-        cacheBusterButton.style.cssText = `
-            
-        `;
+        cacheBusterButton.style.cssText = ``;
         
         cacheBusterButton.addEventListener('click', function() {
             // Generate new cache buster and reload
@@ -800,16 +811,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const url = new URL(window.location);
             url.searchParams.set('bust', newCacheBuster);
             window.location.href = url.toString();
-        });
-        
-        cacheBusterButton.addEventListener('mouseenter', function() {
-            this.style.background = '#ff3838';
-            this.style.transform = 'scale(1.1)';
-        });
-        
-        cacheBusterButton.addEventListener('mouseleave', function() {
-            this.style.background = '#ff4757';
-            this.style.transform = 'scale(1)';
         });
 
         document.getElementById("controls").appendChild(cacheBusterButton);
