@@ -628,158 +628,192 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }, { passive: true });
 
-      const outlineButton = document.createElement("button");
-      outlineButton.textContent = "View Outline";
-      outlineButton.id = "generate-outline-button";
-      outlineButton.className = "outline-toggle-button";
-      document.getElementById("controls").appendChild(outlineButton);
+      // outline functionality
+      (function () {
+        const outlineButton = document.createElement("button");
+        outlineButton.textContent = "View Outline";
+        outlineButton.id = "generate-outline-button";
+        outlineButton.className = "outline-toggle-button";
+        document.getElementById("controls").appendChild(outlineButton);
 
-      document.getElementById("controls").style.position = "relative";
-      document.getElementById("controls").appendChild(outlineButton);
+        document.getElementById("controls").style.position = "relative";
+        document.getElementById("controls").appendChild(outlineButton);
 
-      const outlineSidebar = document.createElement("div");
-      outlineSidebar.id = "outline-sidebar";
-      outlineSidebar.style.cssText = `
-        position: fixed;
-        top: 0;
-        right: 0;
-        width: 36%;
-        height: 100%;
-        background: #ffffff;
-        box-shadow: -4px 0 10px rgba(0,0,0,0.1);
-        padding: 1rem;
-        overflow-y: auto;
-        z-index: 9999;
-        display: none;
-        font-family: sans-serif;
-        scroll-behavior: smooth;
-      `;
-
-      const closeBtn = document.createElement("button");
-      closeBtn.textContent = "❌";
-      closeBtn.style.cssText = `
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        background: rgba(255, 255, 255, 0.9);
-        border: 1px solid #ddd;
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
-        font-size: 1rem;
-        cursor: pointer;
-        color: #666;
-        z-index: 10000;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: background-color 0.2s ease;
-      `;
-
-      closeBtn.addEventListener('mouseenter', () => {
-        closeBtn.style.backgroundColor = 'rgba(255, 255, 255, 1)';
-      });
-
-      closeBtn.addEventListener('mouseleave', () => {
-        closeBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-      });
-
-      closeBtn.addEventListener("click", () => {
-        outlineSidebar.style.display = "none";
-      });
-
-      outlineSidebar.appendChild(closeBtn);
-      document.body.appendChild(outlineSidebar);
-
-      const outlineStyles = document.createElement("style");
-      outlineStyles.textContent = `
-        html {
+        const outlineSidebar = document.createElement("div");
+        outlineSidebar.id = "outline-sidebar";
+        outlineSidebar.style.cssText = `
+          position: fixed;
+          top: 0;
+          right: 0;
+          width: 36%;
+          height: 100%;
+          background: #ffffff;
+          box-shadow: -4px 0 10px rgba(0,0,0,0.1);
+          padding: 1rem;
+          overflow-y: auto;
+          z-index: 9999;
+          display: none;
+          font-family: sans-serif;
           scroll-behavior: smooth;
-        }
-        #outline-sidebar ul {
-          list-style: none;
-          padding-left: 1rem;
-          margin: 0;
-          border-left: 2px solid #f8f9fa;
-        }
-        #outline-sidebar li {
-          padding: 4px 0;
-          margin-left: 0.5rem;
-          font-size: 14px;
-          color: #333;
-        }
-        #outline-sidebar a {
-          text-decoration: none;
-          color: inherit;
-          display: inline-block;
-          padding: 2px 6px;
-          border-radius: 4px;
+        `;
+
+        const closeBtn = document.createElement("button");
+        closeBtn.textContent = "❌";
+        closeBtn.style.cssText = `
+          position: fixed;
+          top: 10px;
+          right: 10px;
+          background: rgba(255, 255, 255, 0.9);
+          border: 1px solid #ddd;
+          border-radius: 50%;
+          width: 32px;
+          height: 32px;
+          font-size: 1rem;
+          cursor: pointer;
+          color: #666;
+          z-index: 10000;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          display: flex;
+          align-items: center;
+          justify-content: center;
           transition: background-color 0.2s ease;
-        }
-        #outline-sidebar a:hover {
-          background-color: #f3f4f6;
-        }
-      `;
-      document.head.appendChild(outlineStyles);
+        `;
 
-      outlineButton.addEventListener("click", () => {
-        outlineSidebar.style.display = "block";
-        const sidebar = outlineSidebar;
+        closeBtn.addEventListener('mouseenter', () => {
+          closeBtn.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+        });
 
-        while (sidebar.children.length > 1) sidebar.removeChild(sidebar.lastChild);
+        closeBtn.addEventListener('mouseleave', () => {
+          closeBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+        });
 
-        const baseSections = Array.from(document.querySelectorAll('div[id^="section-"]'))
-          .filter(sec => !/consolidated|pyq/i.test(sec.id));
+        closeBtn.addEventListener("click", () => {
+          outlineSidebar.style.display = "none";
+        });
 
-        const allHeadings = [];
-        baseSections.forEach((section, sIndex) => {
-          const headings = section.querySelectorAll(".line.heading, .line.paragraph.heading");
-          headings.forEach((heading, hIndex) => {
-            const level = parseInt(heading.dataset.level || "0", 10);
-            const text = heading.textContent.trim();
-            const id = `heading-${sIndex}-${hIndex}`;
-            heading.id = id;
-            allHeadings.push({ level, text, id });
+        outlineSidebar.appendChild(closeBtn);
+        document.body.appendChild(outlineSidebar);
+
+        const outlineStyles = document.createElement("style");
+        outlineStyles.textContent = `
+          html {
+            scroll-behavior: smooth;
+          }
+          #outline-sidebar ul {
+            list-style: none;
+            padding-left: 1rem;
+            margin: 0;
+            border-left: 2px solid #f8f9fa;
+          }
+          #outline-sidebar li {
+            padding: 4px 0;
+            margin-left: 0.5rem;
+            font-size: 14px;
+            color: #333;
+          }
+          #outline-sidebar a {
+            text-decoration: none;
+            color: inherit;
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+          }
+          #outline-sidebar a:hover {
+            background-color: #f3f4f6;
+          }
+        `;
+        document.head.appendChild(outlineStyles);
+
+        outlineButton.addEventListener("click", () => {
+          outlineSidebar.style.display = "block";
+          const sidebar = outlineSidebar;
+
+          while (sidebar.children.length > 1) sidebar.removeChild(sidebar.lastChild);
+
+          const baseSections = Array.from(document.querySelectorAll('div[id^="section-"]'))
+            .filter(sec => !/consolidated|pyq/i.test(sec.id));
+
+          const allHeadings = [];
+          baseSections.forEach((section, sIndex) => {
+            const headings = section.querySelectorAll(".line.heading, .line.paragraph.heading");
+            headings.forEach((heading, hIndex) => {
+              const level = parseInt(heading.dataset.level || "0", 10);
+              const text = heading.textContent.trim();
+              const id = `heading-${sIndex}-${hIndex}`;
+              heading.id = id;
+              allHeadings.push({ level, text, id });
+            });
           });
-        });
 
-        if (allHeadings.length === 0) {
-          const p = document.createElement("p");
-          p.textContent = "No headings found in base content.";
-          sidebar.appendChild(p);
-          return;
-        }
-
-        const root = document.createElement("ul");
-        const stack = [{ level: 0, element: root }];
-
-        allHeadings.forEach(({ level, text, id }) => {
-          const li = document.createElement("li");
-          const a = document.createElement("a");
-          a.href = `#${id}`;
-          a.textContent = text;
-          li.appendChild(a);
-
-          while (stack.length > 1 && level <= stack[stack.length - 1].level) {
-            stack.pop();
+          if (allHeadings.length === 0) {
+            const p = document.createElement("p");
+            p.textContent = "No headings found in base content.";
+            sidebar.appendChild(p);
+            return;
           }
 
-          let parentUl = stack[stack.length - 1].element;
-          if (!parentUl.querySelector("ul")) {
-            const newUl = document.createElement("ul");
-            parentUl.appendChild(newUl);
-            parentUl = newUl;
-          } else {
-            parentUl = parentUl.querySelector("ul");
-          }
+          const root = document.createElement("ul");
+          const stack = [{ level: 0, element: root }];
 
-          parentUl.appendChild(li);
-          stack.push({ level, element: li });
+          allHeadings.forEach(({ level, text, id }) => {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.href = `#${id}`;
+            a.textContent = text;
+            li.appendChild(a);
+
+            while (stack.length > 1 && level <= stack[stack.length - 1].level) {
+              stack.pop();
+            }
+
+            let parentUl = stack[stack.length - 1].element;
+            if (!parentUl.querySelector("ul")) {
+              const newUl = document.createElement("ul");
+              parentUl.appendChild(newUl);
+              parentUl = newUl;
+            } else {
+              parentUl = parentUl.querySelector("ul");
+            }
+
+            parentUl.appendChild(li);
+            stack.push({ level, element: li });
+          });
+
+          sidebar.appendChild(root);
+        });
+      })();
+
+      // cache bust functionality
+      (function () {
+        const cacheBusterButton = document.createElement('button');
+        cacheBusterButton.textContent = "Bust cache";
+        cacheBusterButton.id = "bust-cache-button";
+        cacheBusterButton.className = "bust-cache-button";
+        cacheBusterButton.style.cssText = `
+            
+        `;
+        
+        cacheBusterButton.addEventListener('click', function() {
+            // Generate new cache buster and reload
+            const newCacheBuster = Date.now();
+            const url = new URL(window.location);
+            url.searchParams.set('bust', newCacheBuster);
+            window.location.href = url.toString();
+        });
+        
+        cacheBusterButton.addEventListener('mouseenter', function() {
+            this.style.background = '#ff3838';
+            this.style.transform = 'scale(1.1)';
+        });
+        
+        cacheBusterButton.addEventListener('mouseleave', function() {
+            this.style.background = '#ff4757';
+            this.style.transform = 'scale(1)';
         });
 
-        sidebar.appendChild(root);
-      });
+        document.getElementById("controls").appendChild(cacheBusterButton);
+      })();
     });
   });
 });
