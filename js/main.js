@@ -633,7 +633,7 @@ document.addEventListener("DOMContentLoaded", () => {
       window.addEventListener("touchstart", (e) => {
         if (isScrollingAllowedByUser && !isUserInteracting) {
           isUserInteracting = true;
-          pauseAutoScrollTemporarily(2000);
+          pauseAutoScrollTemporarily(500);
           if (userScrollTimeout) clearTimeout(userScrollTimeout);
           userScrollTimeout = setTimeout(() => {
             isUserInteracting = false;
