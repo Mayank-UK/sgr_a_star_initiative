@@ -1,3 +1,81 @@
+Take the raw data, process it and structure in a format like this:
+
+- The Importance of Ancient Indian History  
+    - Understanding the Foundations of Civilization  
+        - Early humans in India transitioned from hunting-gathering to agriculture (Mehrgarh, 7000 BCE), leading to settled life.  
+        - The Indus Valley Civilization (Harappa, Mohenjo-Daro) displayed advanced urban planning, drainage, and trade systems.  
+        - Agriculture, metalworking, and textile industries formed the economic base of early societies.  
+
+    - Political Unification and State Formation  
+        - Ancient rulers sought to unify India under one rule, reinforcing political and cultural integration.  
+        - Notable examples:  
+            - 3rd Century BCE - Ashoka ruled almost the entire subcontinent, spreading Buddhism and administrative uniformity.  
+            - 4th Century CE - Samudragupta expanded rule from North to South India, linking diverse regions.  
+            - 7th Century CE - Harshavardhana controlled North India before being challenged by Pulakesin II.  
+        - Despite political fragmentation, administrative systems like tax collection and local governance remained similar.  
+
+    - Cultural and Linguistic Integration  
+        - Sanskrit and Prakrit shaped early Indian literature, while Tamil flourished in South India.  
+        - Brahmi script, first used in Ashoka's inscriptions, evolved into modern Indian scripts.  
+        - The Ramayana and Mahabharata created a shared cultural identity across the subcontinent.  
+        - Pilgrimage sites (Varanasi, Rameshwaram, Puri) reinforced religious and cultural unity.  
+
+You can see, every line begins with "-". Use <table> to represent data where you think required. Also, since this contains science data, you have to use math and polyfill to represent the formulas like below sample:
+
+Sample:
+    - Useful Properties of Numbers:
+        - Property 1:
+            - The difference of the squares of any two odd numbers is always divisible by 8.
+            - Example:
+                - \(5^2 - 3^2 = 25 - 9 = 16 = 8 \times 2\)
+                - \(11^2 - 3^2 = 121 - 9 = 112 = 8 \times 14\)
+        - Property 2:
+            - The sum of any two consecutive numbers is equal to the difference of their squares.
+            - Example:
+                - \(3 + 4 = 7 = 4^2 - 3^2\)
+                - \(6 + 7 = 13 = 7^2 - 6^2\)
+
+Provide in a format so that I can copy with a single click, avoid opening in an artifact window, embed it the code window in the same conversation only.
+Let me know when you are ready and we will begin.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 uses grok 4 expert
 
 Suppose you are the best essay writer in india, and you are given this topic to write on, give me your thought process like how will you proceed, step by step of your planning, then provide the final essay, your target is to score the highest possible marks in upsc mains exam
