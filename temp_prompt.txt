@@ -1,24 +1,31 @@
-Take the raw data, process it and structure in a format like this:
+Take the raw data, process it and structure in a format like this, try not to condense so much, so that meaning don't get lost:
 
-- The Importance of Ancient Indian History  
-    - Understanding the Foundations of Civilization  
-        - Early humans in India transitioned from hunting-gathering to agriculture (Mehrgarh, 7000 BCE), leading to settled life.  
-        - The Indus Valley Civilization (Harappa, Mohenjo-Daro) displayed advanced urban planning, drainage, and trade systems.  
-        - Agriculture, metalworking, and textile industries formed the economic base of early societies.  
-
-    - Political Unification and State Formation  
-        - Ancient rulers sought to unify India under one rule, reinforcing political and cultural integration.  
-        - Notable examples:  
-            - 3rd Century BCE - Ashoka ruled almost the entire subcontinent, spreading Buddhism and administrative uniformity.  
-            - 4th Century CE - Samudragupta expanded rule from North to South India, linking diverse regions.  
-            - 7th Century CE - Harshavardhana controlled North India before being challenged by Pulakesin II.  
-        - Despite political fragmentation, administrative systems like tax collection and local governance remained similar.  
-
-    - Cultural and Linguistic Integration  
-        - Sanskrit and Prakrit shaped early Indian literature, while Tamil flourished in South India.  
-        - Brahmi script, first used in Ashoka's inscriptions, evolved into modern Indian scripts.  
-        - The Ramayana and Mahabharata created a shared cultural identity across the subcontinent.  
-        - Pilgrimage sites (Varanasi, Rameshwaram, Puri) reinforced religious and cultural unity.  
+- Units, Measurements, and Errors
+    - Physical Quantities
+        - Definition:
+            - Quantities expressible in numbers, representing measurable attributes of natural phenomena governed by fundamental laws.
+            - Examples: 
+                - Length, mass, time, force, speed, acceleration, velocity, momentum, electric current, temperature.
+        - Types Based on Units and Measurement:
+            - Fundamental Quantities:
+                - Independent of other quantities; include length, mass, time, electric current, temperature, luminous intensity, amount of substance.
+                - Seven base quantities in SI system:   
+                    - metre (length), kilogram (mass), second (time), ampere (electric current), kelvin (temperature), candela (luminous intensity), mole (amount of substance).
+            - Derived Quantities:
+                - Obtained from fundamental quantities; include work, force, pressure, area, volume, energy.
+                - Example:  
+                    - Force derived as mass × acceleration, with unit newton (kg m s⁻²).
+            - Supplementary Quantities:
+                - Neither fundamental nor derived; include plane angle (radian) and solid angle (steradian).
+        - Types Based on Magnitude and Direction:
+            - Scalar Quantities:
+                - Possess only magnitude; no direction.
+                - Examples:   
+                    - Distance, speed, energy, power, time, volume, density, pressure, work, charge, temperature, mass.
+            - Vector Quantities:
+                - Possess both magnitude and direction.
+                - Examples:   
+                    - Displacement, velocity, acceleration, force, weight, momentum, impulse, torque, electric field, magnetic field, angular velocity.
 
 You can see, every line begins with "-". Use <table> to represent data where you think required. Also, since this contains science data, you have to use math and polyfill to represent the formulas like below sample:
 
