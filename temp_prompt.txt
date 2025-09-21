@@ -400,3 +400,197 @@ let's shift our focus to analysis, let me provide you some sample of what kind o
 let me know when you are ready, i will provide pyqs
 
 i have few points to make, first of all the sample i showed you was of history, that's why it head information under historical context, but you are adding it here also with asme name, but i think information under this heading is fine, but few parametrs like broader connection is totally irrelevant, and heading like additional evidence was very particualr to a topic in history and you added to all the qustions, i already told you that i showed you sample, and parameters vary from question to question based on requirement
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+I have some raw data of pyqs, I want you to structure and format the raw data like the sample below
+Provide in a way so that I can copy with a single click, I would prefer not using artifact, and just continue in this conversation window only
+
+- [1995]
+    - Q1: The word ‘Hindu' as reference to the people of Hind (India) was first used by:
+        - Options:
+            (a) the Greeks
+            (b) the Romans
+            (c) the Chinese
+            (d) the Arabs
+    - Q2: Who among the following was a Brahmavadini who composed some hymns of the Vedas?
+        - Options:
+            (a) Lopamudra
+            (b) Gargi
+            (c) Leelavati
+            (d) Savitri
+    - Q3: Match List-I with List-II and select the correct answer using the codes given below the lists:
+        - List-I (Eras):
+            A. Vikrama era
+            B. Saka era
+            C. Gupta era
+            D. Kali era
+        - List-II (Reckoned from):
+            1. 3102 B.C.
+            2. 320 A.D.
+            3. 78 A.D.
+            4. 58 B.C.
+            5. 248 A.D.
+        - Options:
+            (a) A-2, B-4, C-5, D-1
+            (b) A-1, B-3, C-2, D-4
+            (c) A-4, B-5, C-2, D-3
+            (d) A-4, B-3, C-2, D-1
+    - Q4: In Sanskrit plays written during the Gupta period women and Sudras speak:
+        - Options:
+            (a) Sanskrit
+            (b) Prakrit
+            (c) Pali
+            (d) Sauraseni
+    - Q5: The name by which Ashoka is generally referred to in his inscriptions is:
+        - Options:
+            (a) Chakravarti
+            (b) Dharmadeva
+            (c) Dharmakirti
+            (d) Priyadarsi
+    - Q6: The term 'Yavanapriya' mentioned in ancient Sanskrit texts denoted:
+        - Options:
+            (a) a fine variety of Indian muslin
+            (b) ivory
+            (c) damsels sent to the Greek court for dance performance
+            (d) pepper
+    - Q7: The concept of Anuvrata was advocated by:
+        - Options:
+            (a) Mahayana Buddhism
+            (b) Hinayana Buddhism
+            (c) Jainism
+            (d) The Lokayata school
+    - Q8: According to Mimamsa system of philosophy, liberation is possible by means of:
+        - Options:
+            (a) jnana
+            (b) bhakti
+            (c) yoga
+            (d) karma
+    - Q9: Bronze icons of Nataraja cast during the Chola period invariably show the deity with:
+        - Options:
+            (a) eight hands
+            (b) six hands
+            (c) four hands
+            (d) two hands
+
+- [1996]
+    - Q10: According to ancient Indian cosmogonic ideas, the sequential order of the cycle of four aeons (yugas) is:
+        - Options:
+            (a) Dvapara, Krita, Treta and Kali
+            (b) Krita, Dvapara, Treta and Kali
+            (c) Krita, Treta, Dvapara and Kali
+            (d) Treta, Dvapara, Kali and Krita
+    - Q11: Which one of the following temples figured in the news regarding the institution of the Devadasi?
+        - Options:
+            (a) Jagannath temple, Puri
+            (b) Pashupatinath temple, Kathmandu
+            (c) Kandariya Mahadev temple, Khajuraho
+            (d) Chausath Yogini temple, Bhedaghat
+    - Q12: The river most mentioned in early Vedic literature is:
+        - Options:
+            (a) Sindhu
+            (b) Sutudri
+            (c) Sarasvati
+            (d) Ganga
+    - Q13: Which one of the following is not a part of early Jain literature?
+        - Options:
+            (a) Therigatha
+            (b) Acarangasutra
+            (c) Sutrakritanga
+            (d) Brihatkalpasutra
+    - Q14: Which of the following were common to both Buddhism and Jainism?
+        - Statements:
+            1. Avoidance of extremities of penance and enjoyment
+            2. Indifference to the authority of the Vedas
+            3. Denial of efficacy of rituals
+            4. Non-injury to animal life
+        - Options:
+            (a) 1, 2, 3 and 4
+            (b) 2, 3 and 4
+            (c) 1, 3, and 4
+            (d) 1 and 2
+    - Q15: In the context of ancient Indian society, which one of the following terms does not belong to the category of the other three?
+        - Options:
+            (a) Kula
+            (b) Vamsa
+            (c) Kosa
+            (d) Gotra
+    - Q16: Who among the following is known for his work on medicine during the Gupta period?
+        - Options:
+            (a) Saumilla
+            (b) Sudraka
+            (c) Shaunaka
+            (d) Susrutha
+    - Q17: Which one of the following sculptures invariably used green schist as the medium?
+        - Options:
+            - (a) Maurya sculptures
+            - (b) Mathura sculptures
+            - (c) Bharhut sculptures
+            - (d) Gandhara sculptures
+    - Q18: Match List-I with List-II and select the correct answer:
+        - List-I:
+            A. Vishakhadatta
+            B. Varahamihira
+            C. Charaka
+            D. Brahmagupta
+        - List-II:
+            1. Medicine
+            2. Drama
+            3. Astronomy
+            4. Mathematics
+        - Options:
+            (a) A-1, B-3, C-4, D-2
+            (b) A-2, B-1, C-3, D-4
+            (c) A-2, B-3, C-1, D-4
+            (d) A-3, B-4, C-1, D-2
+    - Q19: Which one of the following texts of ancient India allows divorce to a wife deserted by her husband?
+        - Options:
+            (a) Kamasutra
+            (b) Manava Dharma Shastra
+            (c) Sukra Nitisara
+            (d) Arthashastra
