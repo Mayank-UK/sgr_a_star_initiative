@@ -177,181 +177,13 @@ You can see, everyline begine with "-", and breaks on ":", also it's pasted in a
 
 
 
-let's shift our focus to analysis, let me provide you some sample of what kind of analysis i want, the information like historical context, epigraphic evidence, etc all this information is specific to a partidular question, another question will have information relevant to it,  this information is dynamic and should be highly credible as can't risk this, below is the sample, let me know if you have any confusion
+Let's shift our focus to analysis, let me provide you some sample of what kind of analysis i want, the information like historical context, epigraphic evidence, etc all this information is specific to a partidular question, another question will have information relevant to it,  this information is dynamic and should be highly credible as can't risk this, below is the sample, let me know if you have any confusion
+Provide me the response in format so I can copy with single click, code like window, you can see how I have structured the information using indentation and using "-" before every line, avoid using artifact window, try to put here in this conversation
+Provide the questions with images as it is, I will handle them myself, just maintain them in flow
+Avoid using ** around words
 
 - Ancient History PYQs
     - [1995]
-        - Q1: The word ‘Hindu' as reference to the people of Hind (India) was first used by:
-            - Options:
-                (a) the Greeks
-                (b) the Romans
-                (c) the Chinese
-                (d) the Arabs
-            - Answer: 
-                (d) the Arabs
-            - Analysis:
-                - Historical Context: 
-                    - The term "Hindu" derives from the Old Persian word "Hindush," used in the Achaemenid Empire (6th century BCE) to refer to the region around the Indus River (Sindhu in Sanskrit). 
-                    - The Arabs, who came into contact with India during the early Islamic expansions (7th-8th centuries CE), adopted and popularized this term. 
-                        - They used "Al-Hind" in Arabic texts to denote the land and people east of the Indus, as seen in works like those of Al-Biruni (11th century CE), who documented Indian culture extensively.
-                - Why Not Others?:
-                    - Greeks: 
-                        - The Greeks, under Alexander (326 BCE) and later the Indo-Greeks, referred to the region as "India" (from "Indos," their term for the Indus River), not "Hindu." Megasthenes' Indica uses "Indoi" for the people.
-                    - Romans: 
-                        - The Romans followed the Greek nomenclature, calling it "India" in texts like Pliny's Natural History (1st century CE), without using "Hindu."
-                    - Chinese: 
-                        - Chinese pilgrims like Fa-Hien (5th century CE) and Hiuen Tsang (7th century CE) used terms like "Yin-du" (a transliteration of "India"), focusing on Buddhist connections rather than a native ethnonym like "Hindu."
-                - Linguistic Evolution: 
-                    - The Sanskrit "Sindhu" (river) became "Hindu" in Persian due to the phonetic shift (S to H), a common feature in Indo-Iranian languages. This term later entered Arabic usage and eventually referred to the people and their religious practices, distinct from "Muslim."
-                - Broader Connection: 
-                    - The Arab usage reflects their role as intermediaries in India's medieval trade networks (e.g., via the Persian Gulf), contrasting with earlier Greek/Roman direct contact or Chinese pilgrimage-based accounts. This ties into questions on maritime trade or cultural diffusion.
-                - Key Takeaway: 
-                    - "Hindu" as an ethnonym emerged from Persian-Arabic usage, not indigenous self-identification, which initially lacked a unified term for the subcontinent's diverse peoples until later periods.
-        - Q2: Who among the following was a Brahmavadini who composed some hymns of the Vedas?
-            - Options:
-                (a) Lopamudra
-                (b) Gargi
-                (c) Leelavati
-                (d) Savitri
-            - Answer:
-                (a) Lopamudra
-            - Analysis:
-                - Historical Context:
-                    - A Brahmavadini in Vedic tradition refers to a woman who was a seer or composer of Vedic hymns, indicating her deep spiritual and intellectual engagement with the Rigveda. 
-                    - Lopamudra, the wife of the sage Agastya, is credited with composing hymns, notably Rigveda 1.179, which reflects a dialogue between her and Agastya on themes of duty, desire, and asceticism. 
-                    - This showcases the active participation of women in Vedic intellectual life during the early Vedic period (c. 1500-1200 BCE).
-                - Why Not Others?:
-                    - Gargi: 
-                        - Known as a philosopher and debater, Gargi Vachaknavi appears in the Brihadaranyaka Upanishad (3.6, 3.8), where she challenges Yajnavalkya on metaphysical questions. While a prominent Brahmavadini in philosophical discourse, she is not explicitly credited with composing Vedic hymns.
-                    - Leelavati: 
-                        - A later figure associated with mathematics (from Bhaskara II's 12th-century text Lilavati), not a Vedic seer or hymn composer, making her irrelevant here.
-                    - Savitri: 
-                        - A legendary figure from the Mahabharata (wife of Satyavan), symbolizing devotion, but not linked to Vedic hymn composition.
-                - Related Figures:
-                    - Vishwavar Atreyi: 
-                        - Another Rigvedic rishika, credited with hymns like Rigveda 5.28, associated with the Atri family, reflecting women's roles as seers.
-                    - Ghosha Kakshivati: 
-                        - A Vedic seer credited with Rigveda 10.39-40, known for hymns praising the Ashvins, notable for her personal appeal as a woman seeking divine aid.
-                    - Apala: 
-                        - Attributed with Rigveda 8.91, a hymn to Indra, showcasing a female voice in Vedic ritual poetry.
-                    - Maitreyi: 
-                        - A philosopher from the Brihadaranyaka Upanishad (2.4, 4.5), wife of Yajnavalkya, known for metaphysical discussions rather than hymn composition, often paired with Gargi in UPSC contexts.
-                - Vedic Women's Role:
-                    - The Rigveda names several female seers (rishikas), but Lopamudra stands out for her documented contribution. This reflects a period when women had access to Vedic learning, though such roles diminished in later Vedic and post-Vedic society.
-                - Broader Connection:
-                    - Lopamudra's inclusion in the Rigveda highlights the oral tradition's diversity and the cultural significance of rishis/rishikas. It ties into questions on Vedic literature (e.g., Q70 [2004] on Atharvaveda) or philosophical developments (e.g., Upanishadic thinkers like Gargi).
-                - Key Takeaway:
-                    - Lopamudra's authorship underscores the intellectual agency of women in early Vedic India, a contrast to their later marginalization in textual traditions.
-        - Q3: Match List-I with List-II and select the correct answer using the codes given below the lists:
-            - List-I (Eras):
-                A. Vikrama era
-                B. Saka era
-                C. Gupta era
-                D. Kali era
-            - List-II (Reckoned from):
-                1. 3102 B.C.
-                2. 320 A.D.
-                3. 78 A.D.
-                4. 58 B.C.
-                5. 248 A.D.
-            - Options:
-                (a) A-2, B-4, C-5, D-1
-                (b) A-1, B-3, C-2, D-4
-                (c) A-4, B-5, C-2, D-3
-                (d) A-4, B-3, C-2, D-1
-            - Answer:
-                (d) A-4, B-3, C-2, D-1
-            - Analysis:
-                - Historical Context:
-                    - Ancient India used various eras to reckon time, often tied to significant historical or mythological events. The correct matches are: Vikrama era (58 B.C.), Saka era (78 A.D.), Gupta era (320 A.D.), and Kali era (3102 B.C.), reflecting their origins in royal commemorations or cosmological beliefs.
-                    - These eras are critical for dating inscriptions, texts, and events in Indian history, making them a frequent UPSC focus.
-                - Correct Matches Explained:
-                    - Vikrama Era (58 B.C.):
-                        - Initiated by King Vikramaditya (possibly a legendary figure or the Malwa king who defeated the Sakas), starting in 58 B.C. It's widely used in North Indian inscriptions and calendars.
-                    - Saka Era (78 A.D.):
-                        - Began with the Kushana king Kanishka (though traditionally linked to Shalivahana), marking 78 A.D. as year zero. It's the basis for India's national calendar today.
-                    - Gupta Era (320 A.D.):
-                        - Started by the Gupta dynasty, likely with Chandragupta I's ascension in 319-320 A.D., used in Gupta inscriptions to signify their golden age.
-                    - Kali Era (3102 B.C.):
-                        - A mythological era from Puranic tradition, believed to mark the start of Kali Yuga after Krishna's death, calculated as 3102 B.C. by astronomers like Aryabhata.
-                - Why Not Others?:
-                    - (a) A-2, B-4, C-5, D-1:
-                        - Incorrect—Vikrama as 320 A.D. (Gupta era), Saka as 58 B.C. (Vikrama), Gupta as 248 A.D. (no historical basis), Kali as 3102 B.C. (correct but others mismatch).
-                    - (b) A-1, B-3, C-2, D-4:
-                        - Incorrect—Vikrama as 3102 B.C. (Kali), Kali as 58 B.C. (Vikrama), others partially correct but misaligned.
-                    - (c) A-4, B-5, C-2, D-3:
-                        - Incorrect—Saka as 248 A.D. (no basis), Kali as 78 A.D. (wrong), others partially correct but inconsistent.
-                - Sequence of Ancient Indian Eras:
-                    - Kali Era:
-                        - 3102 B.C. (earliest, mythological, tied to Puranic cosmology).
-                    - Vikrama Era:
-                        - 58 B.C. (post-Vedic, linked to a victorious king).
-                    - Saka Era:
-                        - 78 A.D. (classical period, Kushana influence).
-                    - Gupta Era:
-                        - 320 A.D. (golden age, Gupta dynasty's rise).
-                - Other Relevant Eras:
-                    - Harsha Era:
-                        - 606 A.D., started by Harshavardhana, used in some North Indian records (e.g., Q63 [2002] on Harsha).
-                    - Kollam Era:
-                        - 824 A.D., South Indian era from Kerala, linked to regional history, less common in UPSC but worth noting.
-                    - Buddhist Era:
-                        - 544 B.C., based on Buddha's Parinirvana, used in Buddhist contexts (e.g., Q152 [2024-I] on Buddha's epithets).
-                - Related Figures:
-                    - Vikramaditya:
-                        - Legendary king (possibly Chandragupta II or a Malwa ruler), linked to the Vikrama era's origin after defeating the Sakas, often in UPSC for cultural patronage.
-                    - Kanishka:
-                        - Kushana ruler (1st-2nd century A.D.), associated with the Saka era's start in 78 A.D., known for Buddhist councils (e.g., Q57 [2001]).
-                    - Chandragupta I:
-                        - Gupta founder (r. 319-335 A.D.), initiated the Gupta era in 320 A.D., marking the dynasty's rise (e.g., Q76 [2006] on Allahabad Pillar).
-                    - Aryabhata:
-                        - Astronomer (5th century A.D.), calculated Kali Yuga's start as 3102 B.C., influencing Puranic chronology and scientific traditions (e.g., Q84 [2012-I]).
-                - Broader Connection:
-                    - Ties into questions on ancient Indian astronomy (e.g., Aryabhata's Kali Yuga calculations), dynastic timelines (e.g., Q76 [2006] on Gupta inscriptions), or cultural continuity (e.g., modern use of Saka era).
-                - Key Takeaway:
-                    - Mastery of these eras provides a framework for sequencing India's ancient history, from Vedic myths (Kali) to classical empires (Gupta).
-        - Q4: In Sanskrit plays written during the Gupta period women and Sudras speak:
-            - Options:
-                (a) Sanskrit
-                (b) Prakrit
-                (c) Pali
-                (d) Sauraseni
-            - Answer:
-                (b) Prakrit
-            - Analysis:
-                - Historical Context:
-                    - During the Gupta period (4th-6th centuries A.D.), considered a golden age of Indian literature, Sanskrit drama flourished with playwrights like Kalidasa and Sudraka. 
-                        - In these plays, a linguistic hierarchy was observed: Sanskrit was reserved for high-status characters (kings, Brahmins), while Prakrit, a group of vernacular languages derived from Sanskrit, was used for women, Sudras, and other lower-status characters.
-                    - This reflects the social stratification of the time and the Gupta era's emphasis on Sanskrit as a refined, elite language.
-                - Why Not Others?:
-                    - (a) Sanskrit:
-                        - Incorrect—Sanskrit was the language of the educated elite (e.g., Brahmins, kings) in Gupta plays, not typically used by women or Sudras, who were depicted as less learned.
-                    - (c) Pali:
-                        - Incorrect—Pali was the liturgical language of Theravada Buddhism, used in Buddhist texts (e.g., Tripitaka), not in Gupta-era Sanskrit dramas, which were rooted in Brahmanical traditions.
-                    - (d) Sauraseni:
-                        - Incorrect—Sauraseni is a specific dialect of Prakrit, used in some dramas (e.g., by Bhasa), but the question asks for the broader category, Prakrit, which encompasses Sauraseni and other dialects like Magadhi.
-                - Linguistic Role in Drama:
-                    - Prakrit's use in plays like Kalidasa's Abhijnanashakuntalam or Sudraka's Mrichchhakatika highlights its accessibility and its role as a dramatic device to differentiate characters by social class, enhancing realism and audience relatability.
-                - Evolution of Languages:
-                    - Sanskrit:
-                        - Sacred language of Vedic texts, refined during Gupta period as a literary standard.
-                    - Prakrit:
-                        - Evolved from Sanskrit, used in Jain and Buddhist texts, and vernacular drama; includes dialects like Sauraseni, Magadhi, and Maharashtri.
-                    - Pali:
-                        - A Prakrit variant, standardized for Buddhist canon, distinct from dramatic usage.
-                - Related Figures:
-                    - Kalidasa:
-                        - Gupta-era playwright (e.g., Abhijnanashakuntalam), used Prakrit for lower characters, Sanskrit for upper ones, exemplifying this convention (e.g., Q105 [2015-I]).
-                    - Sudraka:
-                        - Author of Mrichchhakatika, a Gupta-era play where Prakrit is prominent for commoners, reflecting social realism (e.g., Q34 [1998]).
-                    - Bhasa:
-                        - Earlier playwright (pre-Gupta, but influential), used specific Prakrit dialects like Sauraseni, setting the stage for Gupta conventions (e.g., Q150 [2024-I]).
-                    - Bharata Muni:
-                        - Author of Natyashastra (c. 200 BCE-200 CE), codified drama rules, including language use, influencing Gupta playwrights.
-                - Broader Connection:
-                    - Links to questions on Gupta literary figures (e.g., Q18 [1996] on Vishakhadatta), language evolution (e.g., Q22 [1997] on scripts), or social structure, showing how language mirrored status in classical India.
-                - Key Takeaway:
-                    - The use of Prakrit for women and Sudras in Gupta plays underscores the period's linguistic and social distinctions, with Sanskrit as the preserve of the elite.
         - Q5: The name by which Ashoka is generally referred to in his inscriptions is:
             - Options:
                 (a) Chakravarti
@@ -361,9 +193,11 @@ let's shift our focus to analysis, let me provide you some sample of what kind o
             - Answer:
                 (d) Priyadarsi
             - Analysis:
-                - Historical Context:
+                - Context and significance:
                     - Ashoka, the Mauryan emperor (r. 268-232 BCE), is primarily known through his inscriptions, such as the Rock Edicts and Pillar Edicts, which are key sources for understanding his reign and policies.
                     - In these inscriptions, Ashoka frequently refers to himself as "Devanampiya Piyadasi" (Beloved of the Gods, Priyadarsi), emphasizing his benevolence and dharmic governance.
+                    - The title "Priyadarsi" underscores Ashoka's self-image as a compassionate ruler, aligning with his promotion of Dharma (moral law) after his conversion to Buddhism post-Kalinga War (261 BCE).
+                    - It contrasts with his earlier, more militaristic persona, reflecting his transformation into a pacifist ruler advocating non-violence, welfare, and religious tolerance.
                 - Why Not Others?:
                     - (a) Chakravarti:
                         - Incorrect—Chakravarti refers to a universal ruler, a title not explicitly used in Ashoka's inscriptions, though implied in his imperial ambitions.
@@ -371,17 +205,7 @@ let's shift our focus to analysis, let me provide you some sample of what kind o
                         - Incorrect—Dharmadeva (God of Dharma) is not used in Ashoka's inscriptions; it is more associated with later rulers or deities.
                     - (c) Dharmakirti:
                         - Incorrect—Dharmakirti was a 7th-century Buddhist philosopher, unrelated to Ashoka's titles.
-                - Significance of Priyadarsi:
-                    - The title "Priyadarsi" underscores Ashoka's self-image as a compassionate ruler, aligning with his promotion of Dharma (moral law) after his conversion to Buddhism post-Kalinga War (261 BCE).
-                    - It contrasts with his earlier, more militaristic persona, reflecting his transformation into a pacifist ruler advocating non-violence, welfare, and religious tolerance.
-                - Epigraphic Evidence:
-                    - Major Rock Edict 1:
-                        - Uses "Devanampiya Piyadasi" to announce policies like banning animal sacrifices.
-                    - Maski Edict:
-                        - Explicitly identifies "Devanampiya Piyadasi" as Ashoka, confirming his identity.
-                    - Pillar Edict 7:
-                        - Emphasizes his dharmic achievements under this title.
-                - Names Used by Other Ancient Indian Rulers:
+                - Relevant information:
                     - Chandragupta Maurya:
                         - Used the title "Samrat" (Universal Monarch) in Greek and Jain sources.
                     - Samudragupta:
@@ -392,14 +216,25 @@ let's shift our focus to analysis, let me provide you some sample of what kind o
                         - Used the title "Devaputra" (Son of God) in his inscriptions, reflecting Kushana influence.
                     - Rudradaman I:
                         - Referred to as "Mahakshatrapa" (Great Satrap) in Junagadh inscription.
-                - Broader Connection:
-                    - Ties into questions on Mauryan administration (e.g., Q45 [2003] on Ashokan edicts), Buddhist influence (e.g., Q152 [2024-I] on Buddha's epithets), or ancient Indian governance (e.g., Q76 [2006] on Allahabad Pillar).
-                - Key Takeaway:
-                    - Ashoka's use of "Priyadarsi" in inscriptions reflects his dharmic identity, central to understanding his reign and legacy.
 
 let me know when you are ready, i will provide pyqs
 
 i have few points to make, first of all the sample i showed you was of history, that's why it head information under historical context, but you are adding it here also with asme name, but i think information under this heading is fine, but few parametrs like broader connection is totally irrelevant, and heading like additional evidence was very particualr to a topic in history and you added to all the qustions, i already told you that i showed you sample, and parameters vary from question to question based on requirement
+
+Also, since this contains science data, you have to use math and polyfill to represent the formulas like below sample:
+
+Sample:
+    - Useful Properties of Numbers:
+        - Property 1:
+            - The difference of the squares of any two odd numbers is always divisible by 8.
+            - Example:
+                - \(5^2 - 3^2 = 25 - 9 = 16 = 8 \times 2\)
+                - \(11^2 - 3^2 = 121 - 9 = 112 = 8 \times 14\)
+        - Property 2:
+            - The sum of any two consecutive numbers is equal to the difference of their squares.
+            - Example:
+                - \(3 + 4 = 7 = 4^2 - 3^2\)
+                - \(6 + 7 = 13 = 7^2 - 6^2\)
 
 
 
