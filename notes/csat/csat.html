@@ -171,36 +171,36 @@
                 - \(17 \div 5 = 3\) remainder 2, so \(17 \mod 5 = 2\).
         - Properties:
             - Addition:
-                \[
+                - \(
                 (a + b) \mod n = [(a \mod n) + (b \mod n)] \mod n
-                \]
+                \)
                 - Example: 
                     - \((17 + 13) \mod 5 = (17 \mod 5 + 13 \mod 5) \mod 5 = (2 + 3) \mod 5 = 0\).
             - Multiplication:
-                \[
+                - \(
                 (a \cdot b) \mod n = [(a \mod n) \cdot (b \mod n)] \mod n
-                \]
+                \)
                 - Example: 
                     - \((17 \times 13) \mod 5 = (2 \times 3) \mod 5 = 6 \mod 5 = 1\).
         - Fermat’s Little Theorem:
             - If \(p\) is prime and \(a\) is not divisible by \(p\), then:
-                \[
+                - \(
                 a^{p-1} \equiv 1 \mod p
-                \]
+                \)
             - Example: 
                 - For \(p = 5\), \(a = 2\), \(2^4 = 16 \equiv 1 \mod 5\).
         - Wilson’s Theorem:
             - For a prime \(p\):
-                \[
+                - \(
                 (p-1)! \equiv -1 \mod p
-                \]
+                \)
             - Example: 
                 - For \(p = 5\), \(4! = 24 \equiv -1 \mod 5\) (since \(24 \mod 5 = 4 = -1 \mod 5\)).
         - Division:
             - Dividend Formula:
-                \[
+                - \(
                 \text{Dividend} = (\text{Divisor} \times \text{Quotient}) + \text{Remainder}
-                \]
+                \)
             - Example: 
                 - For 17 divided by 5, \(17 = 5 \times 3 + 2\) (quotient = 3, remainder = 2).
 
@@ -335,9 +335,9 @@
 
     - Number of Digits and Unit Digits:
         - Number of Digits in \(N = b^k\):
-            \[
+            - \(
             \text{Number of digits} = \lfloor k \cdot \log_{10} b \rfloor + 1
-            \]
+            \)
             - Example: 
                 - For \(2^{10}\), \(\log_{10} 2 \approx 0.3010\), so \(\lfloor 10 \times 0.3010 \rfloor + 1 = \lfloor 3.01 \rfloor + 1 = 4\) digits.
         - Unit Digit of Large Powers:
@@ -393,13 +393,13 @@
                 - \(\frac{1}{7} = 0.\overline{142857}\), period = 6 (since \(10^6 \equiv 1 \mod 7\)).
         - Surds:
             - Simplification rules:
-                \[
+                - \(
                 \sqrt{a} \cdot \sqrt{b} = \sqrt{ab}, \quad \frac{\sqrt{a}}{\sqrt{b}} = \sqrt{\frac{a}{b}}
-                \]
+                \)
             - Rationalizing the denominator:
-                \[
+                - \(
                 \frac{1}{\sqrt{a}} = \frac{\sqrt{a}}{a}
-                \]
+                \)
             - Example: 
                 - \(\frac{1}{\sqrt{2}} = \frac{\sqrt{2}}{2}\).
         - Highest Common Factor (HCF) and Least Common Multiple (LCM):
@@ -408,32 +408,32 @@
                 - Example: 
                     - HCF(48, 18): \(48 = 18 \times 2 + 12\), \(\text{HCF}(18, 12) = 6\), so HCF = 6.
             - LCM:
-                \[
+                - \(
                 \text{LCM}(a, b) = \frac{a \cdot b}{\text{HCF}(a, b)}
-                \]
+                \)
                 - Example: 
                     - LCM(48, 18) = \(\frac{48 \times 18}{6} = 144\).
             - For multiple numbers:
                 - Compute pairwise: \(\text{HCF}(a, b, c) = \text{HCF}(\text{HCF}(a, b), c)\).
         - Number of Divisors:
             - For a number \(N = p_1^{a} \cdot p_2^{b} \cdot \ldots \cdot p_k^{m}\), the number of divisors is:
-                \[
+                - \(
                 (a+1)(b+1)\ldots(m+1)
-                \]
+                \)
             - Example: 
                 - For 12 = \(2^2 \cdot 3^1\), number of divisors = \((2+1)(1+1) = 3 \times 2 = 6\) (divisors: 1, 2, 3, 4, 6, 12).
         - Sum of Divisors:
             - For \(N = p_1^{a} \cdot p_2^{b} \cdot \ldots \cdot p_k^{m}\):
-                \[
+                - \(
                 \sigma(N) = \frac{p_1^{a+1}-1}{p_1-1} \cdot \frac{p_2^{b+1}-1}{p_2-1} \cdot \ldots \cdot \frac{p_k^{m+1}-1}{p_k-1}
-                \]
+                \)
             - Example: 
                 - For 12 = \(2^2 \cdot 3^1\), sum = \(\frac{2^3-1}{2-1} \cdot \frac{3^2-1}{3-1} = \frac{7}{1} \cdot \frac{8}{2} = 7 \times 4 = 28\).
         - Euler’s Totient Function (\(\phi(n)\)):
             - Counts numbers up to \(n\) that are co-prime to \(n\):
-                \[
+                - \(
                 \phi(n) = n \prod_{p|n} \left(1 - \frac{1}{p}\right)
-                \]
+                \)
             - Example: 
                 - For \(n = 6 = 2^1 \cdot 3^1\), \(\phi(6) = 6 \left(1 - \frac{1}{2}\right) \left(1 - \frac{1}{3}\right) = 6 \times \frac{1}{2} \times \frac{2}{3} = 2\). (Co-prime numbers: 1, 5).
 
@@ -1015,12 +1015,12 @@
             - It includes all factors from each polynomial, but without repetition of common factors.
         - Special Formula for Rational Expressions:
             - For two algebraic fractions \( \frac{a(x)}{b(x)} \) and \( \frac{c(x)}{d(x)} \), the rule is:
-                \[
+                - \(
                 \text{HCF} \left( \frac{a(x)}{b(x)}, \frac{c(x)}{d(x)} \right) = \frac{\text{HCF}(a(x), c(x))}{\text{LCM}(b(x), d(x))}
-                \]
-                \[
+                \)
+                - \(
                 \text{LCM} \left( \frac{a(x)}{b(x)}, \frac{c(x)}{d(x)} \right) = \frac{\text{LCM}(a(x), c(x))}{\text{HCF}(b(x), d(x))}
-                \]
+                \)
 
     - Relationship Between LCM and HCF:
         - For two numbers \( a, b \):
@@ -2683,9 +2683,9 @@
         - Faulty Clocks:
             - A clock is considered “too fast” if it shows a time ahead of the correct time (e.g., showing 6:15 when it’s actually 6:00) and “too slow” if it shows a time behind (e.g., showing 6:45 when it’s actually 7:00).
             - If the minute hand overtakes the hour hand every \( M \) minutes, the clock’s gain or loss per day is calculated as:
-                \[
+                - \(
                 \left( \frac{720}{M} - \frac{60 \times 24}{11} \right) \text{ minutes}
-                \]
+                \)
                 - A positive result indicates the clock gains time, while a negative result indicates it loses time.
             - Example:
                 - Question: 
@@ -3214,9 +3214,9 @@
     - Some Rules Related to Solid Figures:
         - Volume Change:
             - If dimensions (\( l, b, h \) for cuboid; \( x \) for cube; \( r, h \) for cylinder/cone; \( r \) for sphere) change by \( x\%, y\%, z\% \), volume changes by:
-                \[
+                - \(
                 \left( x + y + z + \frac{xy + yz + zx}{100} + \frac{xyz}{10000} \right)\%
-                \]
+                \)
             - Example:
                 - Question: 
                     - A cuboid’s length, breadth, and height increase by 10%, 15%, and 20%, respectively. Find the percentage increase in volume.
@@ -3229,9 +3229,9 @@
                         - The volume increases by \( 51.8\% \).
         - Surface Area Change:
             - If two dimensions in the surface area formula change by \( x\%, y\% \), surface area changes by:
-                \[
+                - \(
                 \left( x + y + \frac{xy}{100} \right)\%
-                \]
+                \)
             - Example:
                 - Question: 
                     - A cylinder’s radius and height increase by 5% and 10%, respectively. Find the percentage increase in curved surface area.
