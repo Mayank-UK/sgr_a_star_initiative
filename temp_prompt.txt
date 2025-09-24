@@ -1,4 +1,4 @@
-Take the raw data, process it and structure in a format like this, try not to condense so much, so that meaning don't get lost:
+Take the raw data, process it and structure in a format like this, try to keep close to the original text as much as possible, don't strictly summarize or condense text so much that it becomes difficult to understand.
 
 - Units, Measurements, and Errors
     - Physical Quantities
