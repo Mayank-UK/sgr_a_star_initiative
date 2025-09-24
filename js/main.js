@@ -109,19 +109,22 @@ let isUserInteracting = false;
 let scrollControls = null;
 let lastAutoScrollY = 0;
 let userScrollTimeout = null;
+let accumulatedPixels = 0; // Essential for smooth scrolling
 let isTableFullScreen = false;
 let wasScrollingBeforeFullScreen = false;
 let loadedSections = new Set();
 let isProcessingSection = false;
 let lastFrameTime = 0;
+let scrollTimeout; // Add missing scrollTimeout variable
 
-// Optimized smooth scroll with better timing
+// Optimized smooth scroll with original comfortable timing
 function optimizedSmoothScroll(currentTime) {
   if (!isScrolling) {
     if (animationId) {
       cancelAnimationFrame(animationId);
       animationId = null;
     }
+    accumulatedPixels = 0;
     return;
   }
 
@@ -133,9 +136,19 @@ function optimizedSmoothScroll(currentTime) {
   
   lastFrameTime = currentTime;
   
-  const pixelsToScroll = scrollSpeed * (deltaTime / 1000) * 60; // Normalize to 60fps
-  window.scrollBy({ top: pixelsToScroll, behavior: 'instant' });
-  lastAutoScrollY = window.scrollY;
+  // Use original pixel accumulation method for smooth, readable speed
+  const pixelsPerFrame = scrollSpeed / 60;
+  accumulatedPixels += pixelsPerFrame;
+
+  if (accumulatedPixels >= 1) {
+    const scrollAmount = Math.floor(accumulatedPixels);
+    window.scrollBy({
+      top: scrollAmount,
+      behavior: 'instant'
+    });
+    accumulatedPixels -= scrollAmount;
+    lastAutoScrollY = window.scrollY;
+  }
 
   const atBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 1;
   if (!atBottom) {
@@ -143,12 +156,14 @@ function optimizedSmoothScroll(currentTime) {
   } else {
     isScrolling = false;
     animationId = null;
+    accumulatedPixels = 0;
   }
 }
 
 function startAutoScroll() {
   if (!isScrolling && !isTableFullScreen) {
     isScrolling = true;
+    accumulatedPixels = 0; // Reset accumulated pixels
     lastFrameTime = performance.now();
     animationId = requestAnimationFrame(optimizedSmoothScroll);
   }
@@ -160,6 +175,7 @@ function stopAutoScroll() {
     cancelAnimationFrame(animationId);
     animationId = null;
   }
+  accumulatedPixels = 0; // Reset accumulated pixels
 }
 
 function pauseAutoScrollTemporarily(ms = 2000) {
