@@ -1,8 +1,5 @@
 (function setTitleFromFilename() {
-  // If a title is already set and not empty, don't override
   if (document.title && document.title.trim() !== "") return;
-
-  // Else, generate title from filename
   const fileName = window.location.pathname.split("/").pop().split(".")[0];
   const formattedTitle = fileName
     .replace(/_/g, " ")
@@ -10,6 +7,67 @@
   document.title = formattedTitle;
 })();
 
+// Performance optimizations - Caching and utilities
+const DOM_CACHE = new Map();
+const COMPUTATION_CACHE = new Map();
+const REGEX_PATTERNS = {
+  leadingSpaces: /^ */,
+  marker: /^([-•\d+a-zA-Z]+[).\-:]?\s+)(.*)/,
+  punctuation: /[.:?]$/,
+  htmlTags: /<(img|div|thead|tbody|tr|td|th)[\s>]/i,
+  tabs: /\t/g,
+  question: /\?$/,
+  colon: /:$/,
+  tablePlaceholder: /__TABLE_PLACEHOLDER_\d+__/
+};
+
+function getCachedElement(selector) {
+  if (!DOM_CACHE.has(selector)) {
+    DOM_CACHE.set(selector, document.querySelector(selector));
+  }
+  return DOM_CACHE.get(selector);
+}
+
+function throttle(func, limit) {
+  let inThrottle;
+  return function() {
+    const args = arguments;
+    const context = this;
+    if (!inThrottle) {
+      func.apply(context, args);
+      inThrottle = true;
+      setTimeout(() => inThrottle = false, limit);
+    }
+  }
+}
+
+function debounce(func, wait) {
+  let timeout;
+  return function executedFunction(...args) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+function createSectionChecker() {
+  const consolidatedRegex = /consolidated/i;
+  const baseRegex = /base|content/i;
+  const pyqRegex = /pyq/i;
+  
+  return {
+    isConsolidated: (id) => consolidatedRegex.test(id),
+    isBase: (id) => baseRegex.test(id),
+    isPyq: (id) => pyqRegex.test(id)
+  };
+}
+
+const sectionChecker = createSectionChecker();
+
+// Create DOM elements
 const loading = document.createElement("div");
 loading.className = "loading-overlay";
 loading.innerHTML = `
@@ -17,7 +75,6 @@ loading.innerHTML = `
   <span>Processing content...</span>
 `;
 
-// Inject controls at top of body
 const controlsDiv = document.createElement('div');
 controlsDiv.id = 'controls';
 controlsDiv.innerHTML = `<div class="control-heading">📂 Sections</div>`;
@@ -41,7 +98,7 @@ document.body.prepend(scrollControlsDiv);
 document.body.prepend(controlsDiv);
 document.body.appendChild(loading);
 
-// Autoscroll Variables
+// Optimized variables
 let scrollSpeed = 3;
 let isScrolling = false;
 let isScrollingAllowedByUser = false;
@@ -52,52 +109,48 @@ let isUserInteracting = false;
 let scrollControls = null;
 let lastAutoScrollY = 0;
 let userScrollTimeout = null;
-let accumulatedPixels = 0;
-let isTableFullScreen = false; // Add flag for full screen table state
-let wasScrollingBeforeFullScreen = false; // Track if we were scrolling before full screen
-
-// Track loaded sections for performance
+let isTableFullScreen = false;
+let wasScrollingBeforeFullScreen = false;
 let loadedSections = new Set();
 let isProcessingSection = false;
+let lastFrameTime = 0;
 
-// Smooth scroll logic with pixel accumulation
-function smoothScroll() {
+// Optimized smooth scroll with better timing
+function optimizedSmoothScroll(currentTime) {
   if (!isScrolling) {
     if (animationId) {
       cancelAnimationFrame(animationId);
       animationId = null;
     }
-    accumulatedPixels = 0;
     return;
   }
 
-  const pixelsPerFrame = scrollSpeed / 60;
-  accumulatedPixels += pixelsPerFrame;
-
-  if (accumulatedPixels >= 1) {
-    const scrollAmount = Math.floor(accumulatedPixels);
-    window.scrollBy({
-      top: scrollAmount,
-      behavior: 'instant'
-    });
-    accumulatedPixels -= scrollAmount;
-    lastAutoScrollY = window.scrollY;
+  const deltaTime = currentTime - lastFrameTime;
+  if (deltaTime < 16.67) { // Cap at 60 FPS
+    animationId = requestAnimationFrame(optimizedSmoothScroll);
+    return;
   }
+  
+  lastFrameTime = currentTime;
+  
+  const pixelsToScroll = scrollSpeed * (deltaTime / 1000) * 60; // Normalize to 60fps
+  window.scrollBy({ top: pixelsToScroll, behavior: 'instant' });
+  lastAutoScrollY = window.scrollY;
 
   const atBottom = window.innerHeight + window.scrollY >= document.body.scrollHeight - 1;
   if (!atBottom) {
-    animationId = requestAnimationFrame(smoothScroll);
+    animationId = requestAnimationFrame(optimizedSmoothScroll);
   } else {
     isScrolling = false;
     animationId = null;
-    accumulatedPixels = 0;
   }
 }
 
 function startAutoScroll() {
-  if (!isScrolling && !isTableFullScreen) { // Don't start if table is full screen
+  if (!isScrolling && !isTableFullScreen) {
     isScrolling = true;
-    animationId = requestAnimationFrame(smoothScroll);
+    lastFrameTime = performance.now();
+    animationId = requestAnimationFrame(optimizedSmoothScroll);
   }
 }
 
@@ -107,23 +160,20 @@ function stopAutoScroll() {
     cancelAnimationFrame(animationId);
     animationId = null;
   }
-  accumulatedPixels = 0;
 }
 
 function pauseAutoScrollTemporarily(ms = 2000) {
   stopAutoScroll();
   if (pauseTimeout) clearTimeout(pauseTimeout);
   pauseTimeout = setTimeout(() => {
-    if (isScrollingAllowedByUser && !isTableFullScreen) { // Check table full screen state
+    if (isScrollingAllowedByUser && !isTableFullScreen) {
       startAutoScroll();
     }
   }, ms);
 }
 
-let scrollTimeout;
-let isScrollingNow = false;
-
-function handleScrollDirection() {
+// Optimized scroll handlers with throttling
+const throttledScrollDirection = throttle(() => {
   const currentY = window.scrollY;
   const goingUp = currentY < lastScrollY;
   
@@ -131,19 +181,16 @@ function handleScrollDirection() {
     if (goingUp) {
       scrollControls.style.opacity = "1";
       scrollControls.style.pointerEvents = "auto";
-      if (scrollTimeout) clearTimeout(scrollTimeout);
     } else {
       if ('ontouchstart' in window) {
-        isScrollingNow = true;
-        if (scrollTimeout) clearTimeout(scrollTimeout);
         scrollControls.style.opacity = "1";
         scrollControls.style.pointerEvents = "auto";
+        if (scrollTimeout) clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
           if (!goingUp) {
             scrollControls.style.opacity = "0";
             scrollControls.style.pointerEvents = "none";
           }
-          isScrollingNow = false;
         }, 3000);
       } else {
         scrollControls.style.opacity = "0";
@@ -153,9 +200,9 @@ function handleScrollDirection() {
   }
   
   lastScrollY = currentY;
-}
+}, 16);
 
-function handleUserScroll() {
+const debouncedUserScroll = debounce(() => {
   if (isScrollingAllowedByUser && !isUserInteracting) {
     const currentY = window.scrollY;
     if (Math.abs(currentY - lastAutoScrollY) > 50 || currentY < lastAutoScrollY - 10) {
@@ -171,43 +218,20 @@ function handleUserScroll() {
   if (!isScrolling) {
     lastAutoScrollY = window.scrollY;
   }
-}
+}, 16);
 
-document.getElementById("scrollUp").addEventListener("click", () => {
-  window.scrollTo({ top: 0, behavior: "smooth" });
-});
-
-document.getElementById("scrollDown").addEventListener("click", () => {
-  window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-});
-
-// Helper function to check if an element is inside a table
-function isInsideTable(element) {
-  let parent = element.parentElement;
-  while (parent) {
-    if (parent.tagName && parent.tagName.toLowerCase() === 'table') {
-      return true;
-    }
-    parent = parent.parentElement;
-  }
-  return false;
-}
-
-function extractTablesAndContent(htmlString) {
-  const tempDiv = document.createElement('div');
-  tempDiv.innerHTML = htmlString;
-
+// Optimized table processing
+function extractTablesAndContentOptimized(htmlString) {
   const tables = [];
   let tableIndex = 0;
-
-  tempDiv.querySelectorAll('table').forEach((table) => {
+  
+  const htmlWithPlaceholders = htmlString.replace(/<table[\s\S]*?<\/table>/gi, (match) => {
     const placeholder = `__TABLE_PLACEHOLDER_${tableIndex++}__`;
     const wrapper = document.createElement('div');
     wrapper.className = 'table-container';
     wrapper.style.position = 'relative';
-    wrapper.innerHTML = table.outerHTML;
+    wrapper.innerHTML = match;
 
-    // Add expand icon
     const expandIcon = document.createElement('i');
     expandIcon.className = 'table-expand-icon';
     expandIcon.innerHTML = '';
@@ -218,16 +242,12 @@ function extractTablesAndContent(htmlString) {
       content: wrapper.outerHTML
     });
 
-    table.replaceWith(placeholder);
+    return placeholder;
   });
 
-  return {
-    htmlWithPlaceholders: tempDiv.innerHTML,
-    tables
-  };
+  return { htmlWithPlaceholders, tables };
 }
 
-// Helper function to restore table elements
 function restoreTablesInContent(processedContent, tables) {
   let restored = processedContent;
   tables.forEach(table => {
@@ -236,20 +256,17 @@ function restoreTablesInContent(processedContent, tables) {
   return restored;
 }
 
-// Function to toggle full-screen table
 function toggleFullScreenTable(tableContainer) {
   const table = tableContainer.querySelector('table');
   if (!table) return;
 
   if (tableContainer.classList.contains('fullscreen')) {
-    // Exit full-screen
     const wrapper = document.querySelector('.fullscreen-table-wrapper');
     if (wrapper) {
       wrapper.style.opacity = '0';
       setTimeout(() => {
         wrapper.remove();
         tableContainer.style.display = 'block';
-        // Set full screen flag to false and resume scrolling if it was active before
         isTableFullScreen = false;
         if (wasScrollingBeforeFullScreen && isScrollingAllowedByUser) {
           startAutoScroll();
@@ -257,8 +274,6 @@ function toggleFullScreenTable(tableContainer) {
       }, 300);
     }
   } else {
-    // Enter full-screen
-    // Store current scrolling state and pause scrolling
     wasScrollingBeforeFullScreen = isScrolling;
     isTableFullScreen = true;
     stopAutoScroll();
@@ -278,199 +293,299 @@ function toggleFullScreenTable(tableContainer) {
     wrapper.appendChild(closeBtn);
 
     document.body.appendChild(wrapper);
-    setTimeout(() => {
-      wrapper.classList.add('show');
-    }, 10);
+    setTimeout(() => wrapper.classList.add('show'), 10);
   }
 
   tableContainer.classList.toggle('fullscreen');
 }
 
-// Function to process a single section
-function processSection(section) {
-  if (loadedSections.has(section.id)) {
-    return; // Already processed
+// Optimized line processing
+function optimizedProcessLine(line, index, lines) {
+  const cacheKey = `${line}_${index}`;
+  if (COMPUTATION_CACHE.has(cacheKey)) {
+    return COMPUTATION_CACHE.get(cacheKey);
   }
 
-  const raw = section.innerHTML.trim();
-  const { htmlWithPlaceholders, tables } = extractTablesAndContent(raw);
-  const lines = htmlWithPlaceholders.split("\n");
+  const normalized = line.replace(REGEX_PATTERNS.tabs, "    ");
+  const leadingSpaces = (normalized.match(REGEX_PATTERNS.leadingSpaces)?.[0] || "").length;
+  const indentLevel = Math.floor(leadingSpaces / 2);
+  const cleanText = normalized.trim();
+  
+  if (!cleanText) {
+    COMPUTATION_CACHE.set(cacheKey, { empty: true });
+    return { empty: true };
+  }
 
-  const generateParentLines = (level, color = "#f4f6f8") => {
-    if (level <= 1) return "none";
-    const shadows = [];
-    for (let i = 1; i < level; i++) {
-      shadows.push(`${-1.5 * i}rem 0 0 ${color}`);
-    }
-    return shadows.join(", ");
+  const nextLine = lines[index + 1] || "";
+  const nextIndent = Math.floor(((nextLine.replace(REGEX_PATTERNS.tabs, "    ").match(REGEX_PATTERNS.leadingSpaces)?.[0]) || "").length / 2);
+  
+  const result = {
+    normalized,
+    leadingSpaces,
+    indentLevel,
+    cleanText,
+    nextIndent,
+    isTable: REGEX_PATTERNS.tablePlaceholder.test(cleanText),
+    isHTML: REGEX_PATTERNS.htmlTags.test(cleanText),
+    endsWithPunct: REGEX_PATTERNS.punctuation.test(cleanText),
+    endsWithQuestion: REGEX_PATTERNS.question.test(cleanText),
+    endsWithColon: REGEX_PATTERNS.colon.test(cleanText),
+    wordCount: cleanText.split(/\s+/).length,
+    charLength: cleanText.length,
+    markerMatch: cleanText.match(REGEX_PATTERNS.marker),
+    hasChildren: nextIndent > indentLevel
   };
 
-  const transformed = lines.map((line, index) => {
-    const normalized = line.replace(/\t/g, "    ");
-    const leadingSpaces = normalized.match(/^ */)?.[0].length || 0;
-    const indentLevel = Math.floor(leadingSpaces / 2);
-    const cleanText = normalized.trim();
-    if (!cleanText) return '';
+  // Cache expensive computations
+  result.hasMarker = result.markerMatch && result.markerMatch[1].trim().length > 0;
+  result.shortEnough = result.charLength <= 100 && result.wordCount <= 12;
+  result.isLikelyHeading = result.shortEnough && result.hasChildren && 
+    (!result.endsWithPunct || result.endsWithColon || result.endsWithQuestion);
 
-    if (cleanText.includes('__TABLE_PLACEHOLDER_')) {
-      const paddingLeft = indentLevel * 1.5;
-      const linePosition = `${paddingLeft - 0.75}rem`;
-      const customStyle = `padding-left: ${paddingLeft}rem; --line-position: ${linePosition};`;
+  COMPUTATION_CACHE.set(cacheKey, result);
+  return result;
+}
 
-      return `
-        <div class="line paragraph no-marker table-wrapper" data-level="${indentLevel}" style="${customStyle}">
-          ${cleanText}
-        </div>
-      `;
-    }
+// Optimized parent lines generation with caching
+const parentLinesCache = new Map();
+function generateParentLines(level, color = "#f4f6f8") {
+  const cacheKey = `${level}_${color}`;
+  if (parentLinesCache.has(cacheKey)) {
+    return parentLinesCache.get(cacheKey);
+  }
 
+  if (level <= 1) {
+    parentLinesCache.set(cacheKey, "none");
+    return "none";
+  }
+  
+  const shadows = [];
+  for (let i = 1; i < level; i++) {
+    shadows.push(`${-1.5 * i}rem 0 0 ${color}`);
+  }
+  
+  const result = shadows.join(", ");
+  parentLinesCache.set(cacheKey, result);
+  return result;
+}
+
+// Optimized section processing
+function processSection(section) {
+  if (loadedSections.has(section.id)) return;
+
+  const raw = section.innerHTML.trim();
+  const { htmlWithPlaceholders, tables } = extractTablesAndContentOptimized(raw);
+  const lines = htmlWithPlaceholders.split("\n");
+
+  // Use document fragment for batch DOM operations
+  const fragment = document.createDocumentFragment();
+  
+  const transformedLines = [];
+  
+  for (let index = 0; index < lines.length; index++) {
+    const line = lines[index];
+    const lineData = optimizedProcessLine(line, index, lines);
+    
+    if (lineData.empty) continue;
+
+    const { indentLevel, cleanText } = lineData;
     const paddingLeft = indentLevel * 1.5;
     const linePosition = `${paddingLeft - 0.75}rem`;
     const parentLines = generateParentLines(indentLevel);
     const parentLinesHeading = generateParentLines(indentLevel, "#e8ebef");
     const customStyle = `padding-left: ${paddingLeft}rem; --line-position: ${linePosition}; --parent-lines: ${parentLines}; --parent-lines-heading: ${parentLinesHeading};`;
 
-    if (/<(img|div|thead|tbody|tr|td|th)[\s>]/i.test(cleanText)) {
-      return `<div class="line paragraph no-marker" data-level="${indentLevel}" style="${customStyle}">${cleanText}</div>`;
+    if (lineData.isTable) {
+      transformedLines.push(`
+        <div class="line paragraph no-marker table-wrapper" data-level="${indentLevel}" style="${customStyle}">
+          ${cleanText}
+        </div>
+      `);
+      continue;
+    }
+
+    if (lineData.isHTML) {
+      transformedLines.push(`<div class="line paragraph no-marker" data-level="${indentLevel}" style="${customStyle}">${cleanText}</div>`);
+      continue;
     }
 
     let cssClass = `line`;
     cssClass += indentLevel <= 5 ? ` level-${indentLevel}` : ` level-deep`;
 
-    const nextLine = lines[index + 1] || "";
-    const nextIndent = Math.floor((nextLine.replace(/\t/g, "    ").match(/^ */)?.[0].length || 0) / 2);
-    const endsWithPunct = /[.:?]$/.test(cleanText);
-    const endsWithQuestion = cleanText.endsWith("?");
-    const wordCount = cleanText.split(/\s+/).length;
-    const charLength = cleanText.length;
-
-    const markerMatch = cleanText.match(/^([-•\d+a-zA-Z]+[).\-:]?\s+)(.*)/);
-    const hasMarker = markerMatch && markerMatch[1].trim().length > 0;
-
-    const hasChildren = nextIndent > indentLevel;
-    const shortEnough = charLength <= 100 && wordCount <= 12;
-    const endsWithColon = cleanText.endsWith(":");
-    const isLikelyHeading = shortEnough && hasChildren && (!endsWithPunct || endsWithColon || endsWithQuestion);
-
-    if (hasMarker) cssClass += " bullet";
-    if (isLikelyHeading) cssClass += " heading";
+    if (lineData.hasMarker) cssClass += " bullet";
+    if (lineData.isLikelyHeading) cssClass += " heading";
     else cssClass += " paragraph";
 
-    if (hasMarker) {
-      const marker = markerMatch[1];
-      const content = markerMatch[2];
-      return `
+    if (lineData.hasMarker) {
+      const marker = lineData.markerMatch[1];
+      const content = lineData.markerMatch[2];
+      transformedLines.push(`
         <div class="${cssClass}" data-level="${indentLevel}" style="${customStyle}">
           <span class="line-marker">${marker}</span>
           <span class="line-content">${content}</span>
         </div>
-      `;
+      `);
     } else {
       cssClass += " no-marker";
-      return `
+      transformedLines.push(`
         <div class="${cssClass}" data-level="${indentLevel}" style="${customStyle}">
           <span class="line-content">${cleanText}</span>
         </div>
-      `;
+      `);
     }
-  }).filter(line => line.trim() !== '');
+  }
 
-  const finalContent = restoreTablesInContent(transformed.join("\n"), tables);
+  const finalContent = restoreTablesInContent(transformedLines.join("\n"), tables);
   section.innerHTML = finalContent;
 
-  // Add click event listeners to expand icons
-  section.querySelectorAll('.table-container').forEach(container => {
-    const expandIcon = container.querySelector('.table-expand-icon');
-    if (expandIcon) {
-      expandIcon.addEventListener('click', () => toggleFullScreenTable(container));
-    }
-  });
-
+  // Process answer blocks efficiently
   const lineElements = section.querySelectorAll('.line');
+  processAnswerBlocks(lineElements);
+
+  loadedSections.add(section.id);
+}
+
+// Optimized answer block processing
+function processAnswerBlocks(lineElements) {
   for (let i = 0; i < lineElements.length; i++) {
     const line = lineElements[i];
     const content = line.querySelector('.line-content');
     if (!content) continue;
 
     const text = content.textContent.trim();
-    if (text.startsWith('Answer:')) {
-      const baseLevel = parseInt(line.dataset.level || '0', 10);
-      const group = [line];
+    if (!text.startsWith('Answer:')) continue;
 
-      for (let j = i + 1; j < lineElements.length; j++) {
-        const next = lineElements[j];
-        const nextLevel = parseInt(next.dataset.level || '0', 10);
-        if (nextLevel <= baseLevel) break;
-        group.push(next);
+    const baseLevel = parseInt(line.dataset.level || '0', 10);
+    const group = [line];
+
+    // Collect answer group
+    for (let j = i + 1; j < lineElements.length; j++) {
+      const next = lineElements[j];
+      const nextLevel = parseInt(next.dataset.level || '0', 10);
+      if (nextLevel <= baseLevel) break;
+      group.push(next);
+    }
+
+    // Check for analysis section
+    const nextLine = lineElements[i + group.length];
+    const nextContent = nextLine?.querySelector('.line-content')?.textContent?.trim() || '';
+    if (nextContent.startsWith('Analysis:')) {
+      const analysisLevel = parseInt(nextLine.dataset.level || '0', 10);
+      group.push(nextLine);
+
+      for (let j = i + group.length; j < lineElements.length; j++) {
+        const subLine = lineElements[j];
+        const subLevel = parseInt(subLine.dataset.level || '0', 10);
+        if (subLevel <= analysisLevel) break;
+        group.push(subLine);
       }
+    }
 
-      const nextLine = lineElements[i + group.length];
-      const nextContent = nextLine?.querySelector('.line-content')?.textContent?.trim() || '';
-      if (nextContent.startsWith('Analysis:')) {
-        const analysisLevel = parseInt(nextLine.dataset.level || '0', 10);
-        group.push(nextLine);
+    createBlurredBlock(group);
+    i += group.length - 1;
+  }
+}
 
-        for (let j = i + group.length; j < lineElements.length; j++) {
-          const subLine = lineElements[j];
-          const subLevel = parseInt(subLine.dataset.level || '0', 10);
-          if (subLevel <= analysisLevel) break;
-          group.push(subLine);
-        }
+// Optimized blurred block creation
+function createBlurredBlock(group) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'blurred-block';
+  wrapper.dataset.optimized = 'true'; // Mark for event delegation
+  
+  const parent = group[0].parentElement;
+  parent.insertBefore(wrapper, group[0]);
+  
+  // Use document fragment for batch insertion
+  const fragment = document.createDocumentFragment();
+  group.forEach(el => fragment.appendChild(el));
+  wrapper.appendChild(fragment);
+}
+
+// Event delegation for better performance
+function setupEventDelegation() {
+  // Single click handler for all interactions
+  document.addEventListener('click', (e) => {
+    // Handle blurred blocks
+    if (e.target.closest('.blurred-block[data-optimized]')) {
+      e.preventDefault();
+      e.stopPropagation();
+      const wrapper = e.target.closest('.blurred-block');
+      wrapper.classList.toggle('revealed');
+      return;
+    }
+    
+    // Handle table expansion
+    if (e.target.classList.contains('table-expand-icon')) {
+      const container = e.target.closest('.table-container');
+      if (container) {
+        toggleFullScreenTable(container);
       }
+      return;
+    }
+  });
 
-      const wrapper = document.createElement('div');
-      wrapper.className = 'blurred-block';
-      const parent = line.parentElement;
-      parent.insertBefore(wrapper, group[0]);
-      group.forEach(el => wrapper.appendChild(el));
+  // Single touch handler for mobile
+  let touchStartY = 0;
+  let touchStartTime = 0;
+  let hasScrolled = false;
 
-      let touchStartY = 0;
-      let touchStartTime = 0;
-      let hasScrolled = false;
+  document.addEventListener('touchstart', (e) => {
+    const blurredBlock = e.target.closest('.blurred-block[data-optimized]');
+    if (blurredBlock) {
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+      hasScrolled = false;
+    }
 
-      const revealHandler = (e) => {
+    // Handle user scroll interaction
+    if (isScrollingAllowedByUser && !isUserInteracting) {
+      isUserInteracting = true;
+      pauseAutoScrollTemporarily(500);
+      if (userScrollTimeout) clearTimeout(userScrollTimeout);
+      userScrollTimeout = setTimeout(() => {
+        isUserInteracting = false;
+      }, 500);
+    }
+  }, { passive: false });
+
+  document.addEventListener('touchmove', (e) => {
+    const blurredBlock = e.target.closest('.blurred-block[data-optimized]');
+    if (blurredBlock) {
+      const currentY = e.touches[0].clientY;
+      const deltaY = Math.abs(currentY - touchStartY);
+      if (deltaY > 10) {
+        hasScrolled = true;
+      }
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    const blurredBlock = e.target.closest('.blurred-block[data-optimized]');
+    if (blurredBlock) {
+      const touchDuration = Date.now() - touchStartTime;
+      if (!hasScrolled && touchDuration < 300) {
         e.preventDefault();
         e.stopPropagation();
-        wrapper.classList.toggle('revealed');
-      };
-
-      const touchStartHandler = (e) => {
-        touchStartY = e.touches[0].clientY;
-        touchStartTime = Date.now();
-        hasScrolled = false;
-      };
-
-      const touchMoveHandler = (e) => {
-        const currentY = e.touches[0].clientY;
-        const deltaY = Math.abs(currentY - touchStartY);
-        if (deltaY > 10) {
-          hasScrolled = true;
-        }
-      };
-
-      const touchEndHandler = (e) => {
-        const touchDuration = Date.now() - touchStartTime;
-        if (!hasScrolled && touchDuration < 300) {
-          e.preventDefault();
-          e.stopPropagation();
-          wrapper.classList.toggle('revealed');
-        }
-      };
-
-      if ('ontouchstart' in window) {
-        wrapper.addEventListener('touchstart', touchStartHandler, { passive: false });
-        wrapper.addEventListener('touchmove', touchMoveHandler, { passive: true });
-        wrapper.addEventListener('touchend', touchEndHandler, { passive: false });
-      } else {
-        wrapper.addEventListener('click', revealHandler);
+        blurredBlock.classList.toggle('revealed');
       }
-
-      i += group.length - 1;
     }
-  }
-
-  loadedSections.add(section.id);
+  }, { passive: false });
 }
+
+// Intersection Observer for even more efficient lazy loading
+const intersectionObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const section = entry.target;
+      if (!loadedSections.has(section.id) && section.style.display !== 'none') {
+        processSection(section);
+        intersectionObserver.unobserve(section); // Stop observing once loaded
+      }
+    }
+  });
+}, {
+  rootMargin: '50px' // Load 50px before coming into view
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   requestAnimationFrame(() => {
@@ -482,125 +597,57 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Find consolidated section first, fallback to base content
+      // Setup event delegation early
+      setupEventDelegation();
+
+      // Find priority sections
       const consolidatedSection = Array.from(sections).find(section => 
-        section.id.toLowerCase().includes('consolidated')
+        sectionChecker.isConsolidated(section.id)
       );
       const baseSection = Array.from(sections).find(section => 
-        section.id.toLowerCase().includes('base') || section.id.toLowerCase().includes('content')
+        sectionChecker.isBase(section.id)
       );
 
-      // Process consolidated section first if it exists, otherwise base content
       const prioritySection = consolidatedSection || baseSection;
       if (prioritySection) {
         processSection(prioritySection);
       }
 
-      const controls = document.getElementById("controls");
+      // Setup controls with optimized logic
+      const controls = getCachedElement("#controls") || document.getElementById("controls");
       if (controls) {
         const sectionDivs = document.querySelectorAll('div[id^="section-"]');
-        
-        // Store reference to consolidated section for use in toggle logic
         const hasConsolidatedSection = consolidatedSection !== undefined;
+        
+        // Use document fragment for batch control creation
+        const controlsFragment = document.createDocumentFragment();
         
         sectionDivs.forEach((section) => {
           const sectionId = section.id;
           const labelText = sectionId.replace("section-", "");
-          const isConsolidated = sectionId.toLowerCase().includes('consolidated');
-          const isBase = sectionId.toLowerCase().includes('base') || sectionId.toLowerCase().includes('content');
+          const isConsolidated = sectionChecker.isConsolidated(sectionId);
+          const isBase = sectionChecker.isBase(sectionId);
           const shouldBeChecked = isConsolidated || (!hasConsolidatedSection && isBase);
 
-          const label = document.createElement("label");
-          label.classList.add("switch-label");
+          const wrapper = createSectionToggle(section, sectionId, labelText, shouldBeChecked);
+          controlsFragment.appendChild(wrapper);
 
-          const checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          // Only check consolidated section by default, or base content if no consolidated exists
-          checkbox.checked = shouldBeChecked;
-
-          checkbox.addEventListener("change", (e) => {
-            // Prevent any default behavior that might cause delay
-            e.preventDefault();
-            
-            if (isProcessingSection) {
-              checkbox.checked = !checkbox.checked; // Revert the change
-              return;
-            }
-            
-            isProcessingSection = true;
-            
-            // Create loading screen in synchronous execution
-            const switchLoading = document.createElement("div");
-            switchLoading.className = "loading-overlay";
-            switchLoading.innerHTML = `
-              <div class="loading-spinner"></div>
-              <span>Processing section...</span>
-            `;
-            
-            // Force immediate DOM update
-            document.body.appendChild(switchLoading);
-            switchLoading.offsetHeight; // Force reflow for immediate display
-            
-            checkbox.disabled = true;
-            
-            // Minimal delay for smooth UX
-            setTimeout(() => {
-              const section = document.getElementById(sectionId);
-              
-              if (checkbox.checked) {
-                // Process section if not already loaded
-                if (!loadedSections.has(sectionId)) {
-                  processSection(section);
-                }
-                
-                section.style.display = "block";
-                section.style.opacity = "0";
-                section.style.transition = "opacity 0.3s ease-in-out";
-                requestAnimationFrame(() => {
-                  section.style.opacity = "1";
-                });
-                
-                setTimeout(() => {
-                  switchLoading.remove();
-                  checkbox.disabled = false;
-                  isProcessingSection = false;
-                }, 300);
-              } else {
-                section.style.transition = "opacity 0.2s ease-out";  
-                section.style.opacity = "0";
-                setTimeout(() => {
-                  section.style.display = "none";
-                  switchLoading.remove();
-                  checkbox.disabled = false;
-                  isProcessingSection = false;
-                }, 200);
-              }
-            }, 10); // Tiny delay just for smooth transition
-          });
-
-          const slider = document.createElement("span");
-          slider.classList.add("slider");
-
-          label.appendChild(checkbox);
-          label.appendChild(slider);
-
-          const text = document.createElement("span");
-          text.textContent = `${labelText}`;
-
-          const wrapper = document.createElement("div");
-          wrapper.classList.add("switch-wrapper");
-          wrapper.appendChild(label);
-          wrapper.appendChild(text);
-
-          controls.appendChild(wrapper);
+          // Setup intersection observer for unloaded sections
+          if (!shouldBeChecked) {
+            intersectionObserver.observe(section);
+          }
         });
+        
+        controls.appendChild(controlsFragment);
       }
 
-      // Only show sections that are checked (consolidated by default, or base content if no consolidated)
+      // Optimized section display logic
       const sectionsToShow = document.querySelectorAll('div[id^="section-"]');
+      let visibleSectionCount = 0;
+      
       sectionsToShow.forEach((section, index) => {
-        const isConsolidated = section.id.toLowerCase().includes('consolidated');
-        const isBase = section.id.toLowerCase().includes('base') || section.id.toLowerCase().includes('content');
+        const isConsolidated = sectionChecker.isConsolidated(section.id);
+        const isBase = sectionChecker.isBase(section.id);
         const shouldShow = isConsolidated || (!consolidatedSection && isBase);
         
         if (shouldShow) {
@@ -611,26 +658,21 @@ document.addEventListener("DOMContentLoaded", () => {
             requestAnimationFrame(() => {
               section.style.opacity = "1";
             });
-          }, index * 50);
+          }, visibleSectionCount * 50);
+          visibleSectionCount++;
         } else {
-          // Hide other sections initially
           section.style.display = "none";
         }
       });
 
-      // Faster loading completion since we're only processing priority section
-      const prioritySections = Array.from(sectionsToShow).filter(section => {
-        const isConsolidated = section.id.toLowerCase().includes('consolidated');
-        const isBase = section.id.toLowerCase().includes('base') || section.id.toLowerCase().includes('content');
-        return isConsolidated || (!consolidatedSection && isBase);
-      });
-      
+      // Faster loading completion
       setTimeout(() => {
         loading.style.opacity = "0";
         loading.style.transition = "opacity 0.3s ease-out";
         setTimeout(() => loading.remove(), 300);
-      }, prioritySections.length * 50 + 100);
+      }, visibleSectionCount * 50 + 100);
 
+      // Add title
       const pageTitle = document.title;
       const h1 = document.createElement("h1");
       h1.textContent = pageTitle;
@@ -642,244 +684,356 @@ document.addEventListener("DOMContentLoaded", () => {
         firstSection.parentNode.insertBefore(h1, firstSection);
       }
 
-      scrollControls = document.getElementById("scroll-controls");
-
-      const speedRange = document.getElementById("speedRange");
-      const toggleButton = document.getElementById("toggleScroll");
-      const icon = toggleButton.querySelector("i");
-
-      if (speedRange) {
-        speedRange.min = "1";
-        speedRange.max = "100";
-        speedRange.value = "10";
-        speedRange.addEventListener("input", (e) => {
-          const sliderValue = parseInt(e.target.value);
-          scrollSpeed = 0.5 + (sliderValue / 100) * 49.5;
-        });
-      }
-
-      if (toggleButton) {
-        toggleButton.addEventListener("click", () => {
-          if (isScrolling || isScrollingAllowedByUser) {
-            stopAutoScroll();
-            if (pauseTimeout) {
-              clearTimeout(pauseTimeout);
-              pauseTimeout = null;
-            }
-            icon.className = "play-icon";
-            isScrollingAllowedByUser = false;
-            isUserInteracting = false;
-          } else {
-            // Only start scrolling if table is not in full screen
-            if (!isTableFullScreen) {
-              startAutoScroll();
-            }
-            icon.className = "pause-icon";
-            isScrollingAllowedByUser = true;
-          }
-        });
-      }
-
-      window.addEventListener("scroll", handleScrollDirection, { passive: true });
-      window.addEventListener("scroll", handleUserScroll, { passive: true });
-      
-      window.addEventListener("wheel", (e) => {
-        if (isScrollingAllowedByUser && !isUserInteracting) {
-          isUserInteracting = true;
-          pauseAutoScrollTemporarily(2000);
-          if (userScrollTimeout) clearTimeout(userScrollTimeout);
-          userScrollTimeout = setTimeout(() => {
-            isUserInteracting = false;
-          }, 500);
-        }
-      }, { passive: true });
-      
-      window.addEventListener("touchstart", (e) => {
-        if (isScrollingAllowedByUser && !isUserInteracting) {
-          isUserInteracting = true;
-          pauseAutoScrollTemporarily(500);
-          if (userScrollTimeout) clearTimeout(userScrollTimeout);
-          userScrollTimeout = setTimeout(() => {
-            isUserInteracting = false;
-          }, 500);
-        }
-      }, { passive: true });
-
-      // outline functionality
-      (function () {
-        const outlineButton = document.createElement("button");
-        outlineButton.textContent = "View Outline";
-        outlineButton.id = "generate-outline-button";
-        outlineButton.className = "outline-toggle-button";
-        document.getElementById("controls").appendChild(outlineButton);
-
-        document.getElementById("controls").style.position = "relative";
-        document.getElementById("controls").appendChild(outlineButton);
-
-        const outlineSidebar = document.createElement("div");
-        outlineSidebar.id = "outline-sidebar";
-        outlineSidebar.style.cssText = `
-          position: fixed;
-          top: 0;
-          right: 0;
-          width: 36%;
-          height: 100%;
-          background: #ffffff;
-          box-shadow: -4px 0 10px rgba(0,0,0,0.1);
-          padding: 1rem;
-          overflow-y: auto;
-          z-index: 9999;
-          display: none;
-          font-family: sans-serif;
-          scroll-behavior: smooth;
-        `;
-
-        const closeBtn = document.createElement("button");
-        closeBtn.textContent = "❌";
-        closeBtn.style.cssText = `
-          position: fixed;
-          top: 10px;
-          right: 10px;
-          background: rgba(255, 255, 255, 0.9);
-          border: 1px solid #ddd;
-          border-radius: 50%;
-          width: 32px;
-          height: 32px;
-          font-size: 1rem;
-          cursor: pointer;
-          color: #666;
-          z-index: 10000;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: background-color 0.2s ease;
-        `;
-
-        closeBtn.addEventListener('mouseenter', () => {
-          closeBtn.style.backgroundColor = 'rgba(255, 255, 255, 1)';
-        });
-
-        closeBtn.addEventListener('mouseleave', () => {
-          closeBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
-        });
-
-        closeBtn.addEventListener("click", () => {
-          outlineSidebar.style.display = "none";
-        });
-
-        outlineSidebar.appendChild(closeBtn);
-        document.body.appendChild(outlineSidebar);
-
-        const outlineStyles = document.createElement("style");
-        outlineStyles.textContent = `
-          html {
-            scroll-behavior: smooth;
-          }
-          #outline-sidebar ul {
-            list-style: none;
-            padding-left: 1rem;
-            margin: 0;
-            border-left: 2px solid #f8f9fa;
-          }
-          #outline-sidebar li {
-            padding: 4px 0;
-            margin-left: 0.5rem;
-            font-size: 14px;
-            color: #333;
-          }
-          #outline-sidebar a {
-            text-decoration: none;
-            color: inherit;
-            display: inline-block;
-            padding: 2px 6px;
-            border-radius: 4px;
-            transition: background-color 0.2s ease;
-          }
-          #outline-sidebar a:hover {
-            background-color: #f3f4f6;
-          }
-        `;
-        document.head.appendChild(outlineStyles);
-
-        outlineButton.addEventListener("click", () => {
-          outlineSidebar.style.display = "block";
-          const sidebar = outlineSidebar;
-
-          while (sidebar.children.length > 1) sidebar.removeChild(sidebar.lastChild);
-
-          // Only process loaded sections for outline
-          const baseSections = Array.from(document.querySelectorAll('div[id^="section-"]'))
-            .filter(sec => loadedSections.has(sec.id) && !/pyq/i.test(sec.id));
-
-          const allHeadings = [];
-          baseSections.forEach((section, sIndex) => {
-            const headings = section.querySelectorAll(".line.heading, .line.paragraph.heading");
-            headings.forEach((heading, hIndex) => {
-              const level = parseInt(heading.dataset.level || "0", 10);
-              const text = heading.textContent.trim();
-              const id = `heading-${sIndex}-${hIndex}`;
-              heading.id = id;
-              allHeadings.push({ level, text, id });
-            });
-          });
-
-          if (allHeadings.length === 0) {
-            const p = document.createElement("p");
-            p.textContent = "No headings found in loaded content.";
-            sidebar.appendChild(p);
-            return;
-          }
-
-          const root = document.createElement("ul");
-          const stack = [{ level: 0, element: root }];
-
-          allHeadings.forEach(({ level, text, id }) => {
-            const li = document.createElement("li");
-            const a = document.createElement("a");
-            a.href = `#${id}`;
-            a.textContent = text;
-            li.appendChild(a);
-
-            while (stack.length > 1 && level <= stack[stack.length - 1].level) {
-              stack.pop();
-            }
-
-            let parentUl = stack[stack.length - 1].element;
-            if (!parentUl.querySelector("ul")) {
-              const newUl = document.createElement("ul");
-              parentUl.appendChild(newUl);
-              parentUl = newUl;
-            } else {
-              parentUl = parentUl.querySelector("ul");
-            }
-
-            parentUl.appendChild(li);
-            stack.push({ level, element: li });
-          });
-
-          sidebar.appendChild(root);
-        });
-      })();
-
-      // cache bust functionality
-      (function () {
-        const cacheBusterButton = document.createElement('button');
-        cacheBusterButton.textContent = "Bust cache";
-        cacheBusterButton.id = "bust-cache-button";
-        cacheBusterButton.className = "bust-cache-button";
-        cacheBusterButton.style.cssText = ``;
-        
-        cacheBusterButton.addEventListener('click', function() {
-            // Generate new cache buster and reload
-            const newCacheBuster = Date.now();
-            const url = new URL(window.location);
-            url.searchParams.set('bust', newCacheBuster);
-            window.location.href = url.toString();
-        });
-
-        document.getElementById("controls").appendChild(cacheBusterButton);
-      })();
+      setupScrollControls();
+      setupOutlineFeature();
+      setupCacheBuster();
     });
   });
+});
+
+// Optimized section toggle creation
+function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("switch-wrapper");
+
+  const label = document.createElement("label");
+  label.classList.add("switch-label");
+
+  const checkbox = document.createElement("input");
+  checkbox.type = "checkbox";
+  checkbox.checked = shouldBeChecked;
+
+  checkbox.addEventListener("change", (e) => {
+    e.preventDefault();
+    
+    if (isProcessingSection) {
+      checkbox.checked = !checkbox.checked;
+      return;
+    }
+    
+    isProcessingSection = true;
+    
+    const switchLoading = document.createElement("div");
+    switchLoading.className = "loading-overlay";
+    switchLoading.innerHTML = `
+      <div class="loading-spinner"></div>
+      <span>Processing section...</span>
+    `;
+    
+    document.body.appendChild(switchLoading);
+    switchLoading.offsetHeight;
+    
+    checkbox.disabled = true;
+    
+    setTimeout(() => {
+      const targetSection = document.getElementById(sectionId);
+      
+      if (checkbox.checked) {
+        if (!loadedSections.has(sectionId)) {
+          processSection(targetSection);
+        }
+        
+        targetSection.style.display = "block";
+        targetSection.style.opacity = "0";
+        targetSection.style.transition = "opacity 0.3s ease-in-out";
+        requestAnimationFrame(() => {
+          targetSection.style.opacity = "1";
+        });
+        
+        setTimeout(() => {
+          switchLoading.remove();
+          checkbox.disabled = false;
+          isProcessingSection = false;
+        }, 300);
+      } else {
+        targetSection.style.transition = "opacity 0.2s ease-out";  
+        targetSection.style.opacity = "0";
+        setTimeout(() => {
+          targetSection.style.display = "none";
+          switchLoading.remove();
+          checkbox.disabled = false;
+          isProcessingSection = false;
+        }, 200);
+      }
+    }, 10);
+  });
+
+  const slider = document.createElement("span");
+  slider.classList.add("slider");
+
+  const text = document.createElement("span");
+  text.textContent = labelText;
+
+  label.appendChild(checkbox);
+  label.appendChild(slider);
+  wrapper.appendChild(label);
+  wrapper.appendChild(text);
+
+  return wrapper;
+}
+
+function setupScrollControls() {
+  scrollControls = getCachedElement("#scroll-controls") || document.getElementById("scroll-controls");
+
+  const speedRange = getCachedElement("#speedRange") || document.getElementById("speedRange");
+  const toggleButton = getCachedElement("#toggleScroll") || document.getElementById("toggleScroll");
+  const scrollUpBtn = getCachedElement("#scrollUp") || document.getElementById("scrollUp");
+  const scrollDownBtn = getCachedElement("#scrollDown") || document.getElementById("scrollDown");
+
+  if (speedRange) {
+    speedRange.addEventListener("input", (e) => {
+      const sliderValue = parseInt(e.target.value);
+      scrollSpeed = 0.5 + (sliderValue / 100) * 49.5;
+    });
+  }
+
+  if (toggleButton) {
+    const icon = toggleButton.querySelector("i");
+    toggleButton.addEventListener("click", () => {
+      if (isScrolling || isScrollingAllowedByUser) {
+        stopAutoScroll();
+        if (pauseTimeout) {
+          clearTimeout(pauseTimeout);
+          pauseTimeout = null;
+        }
+        icon.className = "play-icon";
+        isScrollingAllowedByUser = false;
+        isUserInteracting = false;
+      } else {
+        if (!isTableFullScreen) {
+          startAutoScroll();
+        }
+        icon.className = "pause-icon";
+        isScrollingAllowedByUser = true;
+      }
+    });
+  }
+
+  if (scrollUpBtn) {
+    scrollUpBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
+
+  if (scrollDownBtn) {
+    scrollDownBtn.addEventListener("click", () => {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+    });
+  }
+
+  // Setup optimized scroll event listeners
+  window.addEventListener("scroll", throttledScrollDirection, { passive: true });
+  window.addEventListener("scroll", debouncedUserScroll, { passive: true });
+  
+  window.addEventListener("wheel", (e) => {
+    if (isScrollingAllowedByUser && !isUserInteracting) {
+      isUserInteracting = true;
+      pauseAutoScrollTemporarily(2000);
+      if (userScrollTimeout) clearTimeout(userScrollTimeout);
+      userScrollTimeout = setTimeout(() => {
+        isUserInteracting = false;
+      }, 500);
+    }
+  }, { passive: true });
+}
+
+function setupOutlineFeature() {
+  const outlineButton = document.createElement("button");
+  outlineButton.textContent = "View Outline";
+  outlineButton.id = "generate-outline-button";
+  outlineButton.className = "outline-toggle-button";
+  
+  const controls = getCachedElement("#controls") || document.getElementById("controls");
+  controls.appendChild(outlineButton);
+
+  const outlineSidebar = document.createElement("div");
+  outlineSidebar.id = "outline-sidebar";
+  outlineSidebar.style.cssText = `
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 36%;
+    height: 100%;
+    background: #ffffff;
+    box-shadow: -4px 0 10px rgba(0,0,0,0.1);
+    padding: 1rem;
+    overflow-y: auto;
+    z-index: 9999;
+    display: none;
+    font-family: sans-serif;
+    scroll-behavior: smooth;
+  `;
+
+  const closeBtn = document.createElement("button");
+  closeBtn.textContent = "❌";
+  closeBtn.style.cssText = `
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #666;
+    z-index: 10000;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+  `;
+
+  closeBtn.addEventListener('mouseenter', () => {
+    closeBtn.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+  });
+
+  closeBtn.addEventListener('mouseleave', () => {
+    closeBtn.style.backgroundColor = 'rgba(255, 255, 255, 0.9)';
+  });
+
+  closeBtn.addEventListener("click", () => {
+    outlineSidebar.style.display = "none";
+  });
+
+  outlineSidebar.appendChild(closeBtn);
+  document.body.appendChild(outlineSidebar);
+
+  const outlineStyles = document.createElement("style");
+  outlineStyles.textContent = `
+    html {
+      scroll-behavior: smooth;
+    }
+    #outline-sidebar ul {
+      list-style: none;
+      padding-left: 1rem;
+      margin: 0;
+      border-left: 2px solid #f8f9fa;
+    }
+    #outline-sidebar li {
+      padding: 4px 0;
+      margin-left: 0.5rem;
+      font-size: 14px;
+      color: #333;
+    }
+    #outline-sidebar a {
+      text-decoration: none;
+      color: inherit;
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background-color 0.2s ease;
+    }
+    #outline-sidebar a:hover {
+      background-color: #f3f4f6;
+    }
+  `;
+  document.head.appendChild(outlineStyles);
+
+  outlineButton.addEventListener("click", () => {
+    outlineSidebar.style.display = "block";
+    
+    // Clear previous outline
+    while (outlineSidebar.children.length > 1) {
+      outlineSidebar.removeChild(outlineSidebar.lastChild);
+    }
+
+    // Only process loaded sections for outline (performance optimization)
+    const baseSections = Array.from(document.querySelectorAll('div[id^="section-"]'))
+      .filter(sec => loadedSections.has(sec.id) && !sectionChecker.isPyq(sec.id));
+
+    const allHeadings = [];
+    baseSections.forEach((section, sIndex) => {
+      const headings = section.querySelectorAll(".line.heading, .line.paragraph.heading");
+      headings.forEach((heading, hIndex) => {
+        const level = parseInt(heading.dataset.level || "0", 10);
+        const text = heading.textContent.trim();
+        const id = `heading-${sIndex}-${hIndex}`;
+        heading.id = id;
+        allHeadings.push({ level, text, id });
+      });
+    });
+
+    if (allHeadings.length === 0) {
+      const p = document.createElement("p");
+      p.textContent = "No headings found in loaded content.";
+      outlineSidebar.appendChild(p);
+      return;
+    }
+
+    const root = document.createElement("ul");
+    const stack = [{ level: 0, element: root }];
+
+    allHeadings.forEach(({ level, text, id }) => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = `#${id}`;
+      a.textContent = text;
+      li.appendChild(a);
+
+      while (stack.length > 1 && level <= stack[stack.length - 1].level) {
+        stack.pop();
+      }
+
+      let parentUl = stack[stack.length - 1].element;
+      if (!parentUl.querySelector("ul")) {
+        const newUl = document.createElement("ul");
+        parentUl.appendChild(newUl);
+        parentUl = newUl;
+      } else {
+        parentUl = parentUl.querySelector("ul");
+      }
+
+      parentUl.appendChild(li);
+      stack.push({ level, element: li });
+    });
+
+    outlineSidebar.appendChild(root);
+  });
+}
+
+function setupCacheBuster() {
+  const cacheBusterButton = document.createElement('button');
+  cacheBusterButton.textContent = "Bust cache";
+  cacheBusterButton.id = "bust-cache-button";
+  cacheBusterButton.className = "bust-cache-button";
+  
+  cacheBusterButton.addEventListener('click', function() {
+    // Clear all caches before reload for fresh start
+    DOM_CACHE.clear();
+    COMPUTATION_CACHE.clear();
+    parentLinesCache.clear();
+    
+    const newCacheBuster = Date.now();
+    const url = new URL(window.location);
+    url.searchParams.set('bust', newCacheBuster);
+    window.location.href = url.toString();
+  });
+
+  const controls = getCachedElement("#controls") || document.getElementById("controls");
+  controls.appendChild(cacheBusterButton);
+}
+
+// Memory cleanup on page unload
+window.addEventListener('beforeunload', () => {
+  // Clear all caches to prevent memory leaks
+  DOM_CACHE.clear();
+  COMPUTATION_CACHE.clear();
+  parentLinesCache.clear();
+  
+  // Cancel any ongoing animations
+  if (animationId) {
+    cancelAnimationFrame(animationId);
+  }
+  
+  // Clear timeouts
+  if (pauseTimeout) clearTimeout(pauseTimeout);
+  if (userScrollTimeout) clearTimeout(userScrollTimeout);
+  
+  // Disconnect observer
+  if (intersectionObserver) {
+    intersectionObserver.disconnect();
+  }
 });
