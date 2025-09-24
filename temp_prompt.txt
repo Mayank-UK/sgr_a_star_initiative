@@ -1,35 +1,103 @@
-Take the raw data, process it and structure in a format like this, try to keep close to the original text as much as possible, don't strictly summarize or condense text so much that it becomes difficult to understand.
+Take the raw data, process it and structure in a format like this, keep the original text, don't strictly summarize or condense text
 
-- Units, Measurements, and Errors
-    - Physical Quantities
-        - Definition:
-            - Quantities expressible in numbers, representing measurable attributes of natural phenomena governed by fundamental laws.
-            - Examples: 
-                - Length, mass, time, force, speed, acceleration, velocity, momentum, electric current, temperature.
-        - Types Based on Units and Measurement:
-            - Fundamental Quantities:
-                - Independent of other quantities; include length, mass, time, electric current, temperature, luminous intensity, amount of substance.
-                - Seven base quantities in SI system:   
-                    - metre (length), kilogram (mass), second (time), ampere (electric current), kelvin (temperature), candela (luminous intensity), mole (amount of substance).
-            - Derived Quantities:
-                - Obtained from fundamental quantities; include work, force, pressure, area, volume, energy.
-                - Example:  
-                    - Force derived as mass × acceleration, with unit newton (kg m s⁻²).
-            - Supplementary Quantities:
-                - Neither fundamental nor derived; include plane angle (radian) and solid angle (steradian).
-        - Types Based on Magnitude and Direction:
-            - Scalar Quantities:
-                - Possess only magnitude; no direction.
-                - Examples:   
-                    - Distance, speed, energy, power, time, volume, density, pressure, work, charge, temperature, mass.
-            - Vector Quantities:
-                - Possess both magnitude and direction.
-                - Examples:   
-                    - Displacement, velocity, acceleration, force, weight, momentum, impulse, torque, electric field, magnetic field, angular velocity.
+Sample data below:
 
-You can see, every line begins with "-". Use <table> to represent data where you think required. Also, since this contains science data, you have to use math and polyfill to represent the formulas like below sample:
+- Chapter 1: Historical Background
+    - Introduction
+        - The British arrived in India in 1608 as traders under the East India Company, which was granted an exclusive trading charter by Queen Elizabeth I in 1600.
+        - In 1765, following its victory in the Battle of Buxar (1764), the Company obtained the ‘diwani’ (rights over revenue and civil justice) of Bengal, Bihar, and Orissa from Mughal Emperor Shah Alam, marking its transition from a trading entity to a territorial power.
+        - In 1858, after the Revolt of 1857, also known as the Sepoy Mutiny or First War of Independence, the British Crown assumed direct responsibility for governing India, a rule that continued until India gained independence on August 15, 1947.
+            - The British Parliament passed the Indian Independence Act on 18 July 1947. It declared that on 15 August 1947, British rule in India would end, so India and Pakistan would be independent, but still Dominion of British Crown.
+        - With independence, the need for a Constitution arose, leading to the formation of a Constituent Assembly in 1946, which drafted the Constitution that came into effect on January 26, 1950.
+            - India abolished the dominion status and became a fully sovereign republic. The President of India replaced the British Monarch as the constitutional head of state.
+        - Several features of the Indian Constitution and polity have their roots in British rule, shaped by significant events that established the legal framework for government and administration in British India.
 
-Sample:
+    - The Company Rule (1773–1858)
+        - Regulating Act of 1773
+            - Significance
+                - This act was a landmark in constitutional history as it represented the first step by the British Government to control and regulate the affairs of the East India Company in India.
+                - It explicitly recognized the Company’s political and administrative functions for the first time.
+                - It laid the foundations for a centralized administration in India.
+            - Features
+                - 1. Designated the Governor of Bengal as the ‘Governor-General of Bengal’ and established an Executive Council of four members to assist him. Lord Warren Hastings was appointed as the first Governor-General.
+                    - Why Bengal and not Madras or Bombay?
+                        - Bengal Was the Richest, most populous, most powerful Province among all British Provinces
+                - 2. Subordinated the Governors of Bombay and Madras presidencies to the Governor-General of Bengal, ending their previous independence.
+                - 3. Established a Supreme Court at Calcutta in 1774, comprising one chief justice and three other judges.
+                - 4. Prohibited Company servants from engaging in private trade or accepting presents or bribes from the ‘natives’ to curb corruption.
+                - 5. Strengthened British Government oversight by requiring the Company’s Court of Directors to report on its revenue, civil, and military affairs in India.
+        - Amending Act of 1781 (Act of Settlement)
+            - Purpose
+                - Enacted to address the shortcomings of the Regulating Act of 1773.
+            - Features
+                - 1. Exempted the Governor-General and his Council from the Supreme Court’s jurisdiction for actions taken in their official capacity, and similarly exempted Company servants for official acts.
+                - 2. Excluded revenue matters and issues arising from revenue collection from the Supreme Court’s jurisdiction.
+                - 3. Granted the Supreme Court jurisdiction over all inhabitants of Calcutta, requiring it to administer personal laws (Hindu law for Hindus, Mohammedan law for Muslims).
+                - 4. Directed appeals from Provincial Courts to the Governor-General-in-Council instead of the Supreme Court.
+                - 5. Empowered the Governor-General-in-Council to frame regulations for the Provincial Courts and Councils.
+        - Pitt’s India Act of 1784
+            - Introduction
+                - Introduced by British Prime Minister William Pitt to further reform Company governance.
+            - Features
+                - 1. Distinguished between the Company’s commercial and political functions.
+                - 2. Allowed the Court of Directors to manage commercial affairs but created a Board of Control to oversee political affairs, establishing a system of double government.
+                - 3. Empowered the Board of Control to supervise and direct all civil, military, and revenue operations of the British possessions in India.
+            - Significance
+                - Marked the first time Company territories were referred to as ‘British possessions in India’.
+                - Granted the British Government supreme control over the Company’s affairs and administration in India.
+        - Act of 1786
+            - Context
+                - Enacted to meet the demands of Lord Cornwallis, appointed Governor-General of Bengal in 1786.
+            - Features
+                - 1. Granted Cornwallis the power to override his Council’s decisions in special cases.
+                - 2. Appointed him as Commander-in-Chief alongside his role as Governor-General.
+        - Charter Act of 1793
+            - Features
+                - 1. Extended the overriding power given to Lord Cornwallis to all future Governor-Generals and Governors of Presidencies.
+                - 2. Enhanced the Governor-General’s control over the governments of Bombay and Madras presidencies.
+                - 3. Extended the Company’s trade monopoly in India for another 20 years.
+                - 4. Stipulated [demanded] that the Commander-in-Chief would not be a member of the Governor-General’s Council unless specifically appointed.
+                - 5. Provided that the Board of Control and its staff be paid from Indian revenues.
+        - Charter Act of 1813
+            - Features
+                - 1. Abolished the Company’s trade monopoly in India, opening trade to all British merchants, except for tea and trade with China, which remained under Company control.
+                - 2. Asserted the sovereignty of the British Crown over the Company’s territories in India.
+                - 3. Permitted Christian missionaries to enter India to promote enlightenment among the population.
+                - 4. Provided for the spread of Western education among inhabitants of British territories in India.
+                - 5. Authorized local governments in India to impose taxes on persons and to punish non-payment.
+        - Charter Act of 1833
+            - Significance
+                - Represented the final step toward centralization of administration in British India.
+            - Features
+                - 1. Redesignated the Governor-General of Bengal as the Governor-General of India, vesting him with all civil and military powers. Lord William Bentinck was the first Governor-General of India.
+                - 2. Stripped the Governors of Bombay and Madras of their legislative powers, granting exclusive legislative authority to the Governor-General for all British India. Laws made under this act were called Acts, unlike earlier Regulations.
+                - 3. Terminated the Company’s commercial activities, transforming it into a purely administrative body holding territories ‘in trust for His Majesty, His heirs and successors’.
+                - 4. Attempted to introduce open competition for civil servant selection, stating that Indians should not be debarred from Company employment, though this provision was negated due to opposition from the Court of Directors.
+        - Charter Act of 1853
+            - Significance
+                - The last Charter Act, marking a significant constitutional milestone.
+            - Features
+                - 1. Separated the legislative and executive functions of the Governor-General’s Council, adding six legislative councillors to form the Indian (Central) Legislative Council, which functioned as a mini-Parliament adopting British parliamentary procedures.
+                - 2. Introduced an open competition system for selecting and recruiting civil servants, opening covenanted [contract] civil services to Indians. The Macaulay Committee on Indian Civil Service was appointed in 1854 to implement this.
+                - 3. Extended the Company’s rule without specifying a duration, signaling that Parliament could terminate it at any time.
+                - 4. Introduced local representation in the Indian (Central) Legislative Council, with four members appointed by the provincial governments of Madras, Bombay, Bengal, and Agra.
+
+
+You can see, every line begins with "-". Use html <table> to represent data where you think required. Also, since this contains science data, you have to use math and polyfill to represent the formulas like below sample:
+
+Sample table:
+    - <table>
+        <tr><th>S.No.</th><th>Type</th><th>Species 1</th><th>Species 2</th></tr>
+        <tr><td>1</td><td>Mutualism</td><td>(+)</td><td>(+)</td></tr>
+        <tr><td>2</td><td>Commensalism</td><td>(+)</td><td>(0)</td></tr>
+        <tr><td>3</td><td>Amensalism</td><td>(–)</td><td>(0)</td></tr>
+        <tr><td>4</td><td>Competition</td><td>(–)</td><td>(–)</td></tr>
+        <tr><td>5</td><td>Predation</td><td>(+)</td><td>(–)</td></tr>
+        <tr><td>6</td><td>Parasitism</td><td>(+)</td><td>(–)</td></tr>
+        <tr><td colspan="4">(+) Benefited, (–) Harmed, (0) Neither benefited nor harmed</td></tr>
+    </table>
+
+Sample complex data:
     - Useful Properties of Numbers:
         - Property 1:
             - The difference of the squares of any two odd numbers is always divisible by 8.
@@ -43,7 +111,39 @@ Sample:
                 - \(6 + 7 = 13 = 7^2 - 6^2\)
 
 Provide in a format so that I can copy with a single click, avoid opening in an artifact window, embed it the code window in the same conversation only. Don't condense the language to a level that text becomes difficult to understand.
-Let me know when you are ready and we will begin.
+Let me know when you are ready and we will begin. Avoid using artifact, provide here in a code like window, so it can be copied with single click and can be directly pasted to code editor
+
+
+There are few issues, firstly you are not indenting properly based on hierarchy, and secondly you have to use html table to represent data and not just visual table here, let me try to guide you using your output
+
+- CHAPTER 1: ECOLOGY
+    - Ecology ‘Oikos’ meaning home or place to live in and ‘logos’ meaning study. Literally it is the study of the home of nature.
+    - Ecology is defined “as a scientific study of the relationship of the living organisms with each other and with their environment.”
+    - It deals with the ways in which organisms are moulded by their environment, how they make use of environmental resources including energy flow and mineral cycling.
+
+    - 1.1. HISTORY OF ECOLOGY
+        - The roots of ecology lie in Natural History, which is as old as human civilization itself. Since early history, man has indulged in ecology in a practical sort of way, knowingly and unknowingly. In primitive societies every individual was required to have an intimate knowledge of his environment for their survival, i.e., about the forces of nature and of plants and animals around him/her.
+        - Our ancient Indian texts have references to ecological principles. The classical texts of the Vedic period such as the Vedas, the Samhitas, the Brahmanas and the Aranyakas-Upanishads contain many references to ecological concepts.
+        - The Indian treatise on medicine, the Charaka-Samhita and the surgical text Sushruta-Samhita, show that people during this period had a good understanding of plant and animal ecology.
+        - These texts contain classification of animals on the basis of habit and habitat, land in terms of nature of soil, climate and vegetation; and description of plants typical to various localities.
+        - Charaka-Samhita contains information that air, land, water and seasons were indispensable for life and that polluted air and water were injurious to health.
+
+    - 1.2. ENVIRONMENT AND ITS COMPONENTS
+    
+        - Components of Environment
+    
+    ...
+
+
+Here is the sample of html table:
+    - <table>
+        <tr><th>Level</th><th>Type</th><th>Description</th></tr>
+        <tr><td>I</td><td>Autotrophs</td><td>Green plants (producers)</td></tr>
+        <tr><td>II</td><td>Heterotrophs</td><td>Herbivore (primary consumers)</td></tr>
+        <tr><td>III</td><td>Heterotrophs</td><td>Carnivores (secondary consumers)</td></tr>
+        <tr><td>IV</td><td>Heterotrophs</td><td>Carnivore (tertiary consumers)</td></tr>
+        <tr><td>V</td><td>Heterotrophs</td><td>Top carnivores (quaternary consumers)</td></tr>
+    </table>
 
 
 
