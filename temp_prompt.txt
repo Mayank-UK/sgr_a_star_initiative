@@ -135,7 +135,7 @@ There are few issues, firstly you are not indenting properly based on hierarchy,
     ...
 
 
-Here is the sample of html table:
+Here is the sample of html table if required to be used to structure some data:
     - <table>
         <tr><th>Level</th><th>Type</th><th>Description</th></tr>
         <tr><td>I</td><td>Autotrophs</td><td>Green plants (producers)</td></tr>
