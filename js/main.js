@@ -405,8 +405,8 @@ function processSection(section) {
     if (lineData.empty) continue;
 
     const { indentLevel, cleanText } = lineData;
-    const paddingLeft = indentLevel * 1.5;
-    const linePosition = `${paddingLeft - 0.75}rem`;
+    const paddingLeft = indentLevel * 1;
+    const linePosition = `${paddingLeft + 0.2}rem`;
     const parentLines = generateParentLines(indentLevel);
     const parentLinesHeading = generateParentLines(indentLevel, "#e8ebef");
     const customStyle = `padding-left: ${paddingLeft}rem; --line-position: ${linePosition}; --parent-lines: ${parentLines}; --parent-lines-heading: ${parentLinesHeading};`;
