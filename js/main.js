@@ -703,6 +703,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setupScrollControls();
       setupOutlineFeature();
       setupCacheBuster();
+      setupNavigationWarning();
     });
   });
 });
@@ -1053,3 +1054,240 @@ window.addEventListener('beforeunload', () => {
     intersectionObserver.disconnect();
   }
 });
+
+
+
+function setupNavigationWarning() {
+  let isLeavingPage = false;
+  let dialogOpen = false;
+
+  // Push multiple states to create a deep history stack
+  // This prevents accidental back navigation when first arriving
+  window.history.pushState({ type: 'blocker1' }, '', window.location.href);
+  window.history.pushState({ type: 'blocker2' }, '', window.location.href);
+  window.history.pushState({ type: 'main' }, '', window.location.href);
+
+  // Only intercept popstate (back button)
+  window.addEventListener('popstate', (e) => {
+    // Don't show dialog if we're already leaving
+    if (isLeavingPage || dialogOpen) {
+      return;
+    }
+
+    // Push state back to prevent actual navigation
+    window.history.pushState({ type: 'blocked' }, '', window.location.href);
+    
+    dialogOpen = true;
+    showNavigationWarningDialog(
+      () => {
+        // User clicked "Leave Page"
+        dialogOpen = false;
+        isLeavingPage = true;
+        window.history.back();
+      },
+      () => {
+        // User clicked "Stay on Page"
+        dialogOpen = false;
+      }
+    );
+  }, false);
+
+
+
+  // Function to create and show the warning dialog
+  function showNavigationWarningDialog(onConfirm, onCancel) {
+    // Remove any existing dialogs
+    const existingDialog = document.getElementById('nav-warning-dialog');
+    const existingOverlay = document.getElementById('nav-warning-overlay');
+    if (existingDialog) existingDialog.remove();
+    if (existingOverlay) existingOverlay.remove();
+
+    // Add animations style if not already added
+    if (!document.getElementById('nav-warning-styles')) {
+      const style = document.createElement('style');
+      style.id = 'nav-warning-styles';
+      style.textContent = `
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        @keyframes slideUp {
+          from {
+            transform: translateY(20px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+        @keyframes fadeOut {
+          from { opacity: 1; }
+          to { opacity: 0; }
+        }
+        @keyframes slideDown {
+          from {
+            transform: translateY(0);
+            opacity: 1;
+          }
+          to {
+            transform: translateY(20px);
+            opacity: 0;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // Save scroll position and disable scrolling
+    const scrollPos = window.scrollY;
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.top = `-${scrollPos}px`;
+
+    // Create overlay
+    const overlay = document.createElement('div');
+    overlay.id = 'nav-warning-overlay';
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10001;
+      animation: fadeIn 0.2s ease-in;
+    `;
+
+    // Create dialog
+    const dialog = document.createElement('div');
+    dialog.id = 'nav-warning-dialog';
+    dialog.style.cssText = `
+      background: white;
+      border-radius: 8px;
+      padding: 2rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      text-align: center;
+      animation: slideUp 0.3s ease-out;
+    `;
+
+    // Add heading
+    const heading = document.createElement('h2');
+    heading.textContent = 'Leave Page?';
+    heading.style.cssText = `
+      margin: 0 0 1rem 0;
+      font-size: 1.5rem;
+      color: #333;
+    `;
+    dialog.appendChild(heading);
+
+    // Add message
+    const message = document.createElement('p');
+    message.textContent = 'Are you sure you want to leave this page? Any unsaved progress may be lost.';
+    message.style.cssText = `
+      margin: 0 0 2rem 0;
+      font-size: 1rem;
+      color: #666;
+      line-height: 1.5;
+    `;
+    dialog.appendChild(message);
+
+    // Create button container
+    const buttonContainer = document.createElement('div');
+    buttonContainer.style.cssText = `
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    `;
+
+    // Cancel button
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Stay on Page';
+    cancelBtn.style.cssText = `
+      padding: 0.75rem 1.5rem;
+      border: 1px solid #ddd;
+      background: #f5f5f5;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    `;
+    cancelBtn.addEventListener('mouseenter', () => {
+      cancelBtn.style.background = '#efefef';
+    });
+    cancelBtn.addEventListener('mouseleave', () => {
+      cancelBtn.style.background = '#f5f5f5';
+    });
+    cancelBtn.addEventListener('click', closeDialog);
+
+    // Confirm button
+    const confirmBtn = document.createElement('button');
+    confirmBtn.textContent = 'Leave Page';
+    confirmBtn.style.cssText = `
+      padding: 0.75rem 1.5rem;
+      border: none;
+      background: #dc2626;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      transition: all 0.2s ease;
+    `;
+    confirmBtn.addEventListener('mouseenter', () => {
+      confirmBtn.style.background = '#b91c1c';
+    });
+    confirmBtn.addEventListener('mouseleave', () => {
+      confirmBtn.style.background = '#dc2626';
+    });
+    confirmBtn.addEventListener('click', () => {
+      closeDialog();
+      onConfirm();
+    });
+
+    buttonContainer.appendChild(cancelBtn);
+    buttonContainer.appendChild(confirmBtn);
+    dialog.appendChild(buttonContainer);
+
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+
+    // Close dialog function
+    function closeDialog() {
+      overlay.style.animation = 'fadeOut 0.2s ease-out';
+      dialog.style.animation = 'slideDown 0.2s ease-out';
+      setTimeout(() => {
+        if (overlay.parentNode) overlay.remove();
+        // Restore scroll position and scrolling
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.top = '';
+        window.scrollTo(0, scrollPos);
+        onCancel();
+      }, 200);
+    }
+
+    // Close on overlay click
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        closeDialog();
+      }
+    });
+
+    // Close on Escape key
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        closeDialog();
+        document.removeEventListener('keydown', handleEscape);
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
+  }
+}
