@@ -82,17 +82,119 @@ controlsDiv.innerHTML = `<div class="control-heading">📂 Sections</div>`;
 const scrollControlsDiv = document.createElement('div');
 scrollControlsDiv.id = 'scroll-controls';
 scrollControlsDiv.innerHTML = `
-  <button id="toggleScroll">
-      <i class="play-icon"></i>
-  </button>
-  <input type="range" id="speedRange" min="1" max="100" value="5">
-  <button id="scrollUp" title="Scroll Up">
-    <i class="scroll-up-icon"></i>
-  </button>
-  <button id="scrollDown" title="Scroll Down">
-    <i class="scroll-down-icon"></i>
-  </button>
+  <div class="scroll-controls-buttons">
+    <button id="toggleScroll">
+        <i class="play-icon"></i>
+    </button>
+    <input type="range" id="speedRange" min="1" max="100" value="5">
+    <button id="scrollUp" title="Scroll Up">
+      <i class="scroll-up-icon"></i>
+    </button>
+    <button id="scrollDown" title="Scroll Down">
+      <i class="scroll-down-icon"></i>
+    </button>
+  </div>
+  <div class="scroll-progress-inline">
+    <div class="progress-bar-inline">
+      <div class="progress-fill-inline"></div>
+    </div>
+    <div class="progress-info">
+      <span class="progress-text-inline">0%</span>
+      <span class="estimated-time">-- ETA</span>
+    </div>
+  </div>
 `;
+
+// Add CSS styles for the inline progress display
+const scrollProgressStyles = document.createElement('style');
+scrollProgressStyles.textContent = `
+  #scroll-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .scroll-controls-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .scroll-progress-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .progress-bar-inline {
+    flex: 1;
+    height: 6px;
+    background: #f0f0f0;
+    border-radius: 3px;
+    overflow: hidden;
+    border: 1px solid #d0d0d0;
+  }
+
+  .progress-fill-inline {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50, #66BB6A);
+    width: 0%;
+    transition: width 0.1s ease-out;
+    border-radius: 3px;
+  }
+
+  .progress-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 150px;
+  }
+
+  .progress-text-inline {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+    min-width: 30px;
+    text-align: right;
+  }
+
+  .estimated-time {
+    font-size: 11px;
+    font-weight: 500;
+    color: #666;
+    padding: 4px 10px;
+    background: #f5f5f5;
+    border-radius: 3px;
+    border: 1px solid #e0e0e0;
+    min-width: 85px;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 768px) {
+    .scroll-progress-inline {
+      gap: 6px;
+    }
+
+    .progress-bar-inline {
+      height: 4px;
+    }
+
+    .progress-text-inline {
+      font-size: 11px;
+      min-width: 30px;
+    }
+
+    .estimated-time {
+      font-size: 10px;
+      min-width: 70px;
+      padding: 2px 6px;
+    }
+  }
+`;
+document.head.appendChild(scrollProgressStyles);
 
 document.body.prepend(scrollControlsDiv);
 document.body.prepend(controlsDiv);
@@ -109,13 +211,13 @@ let isUserInteracting = false;
 let scrollControls = null;
 let lastAutoScrollY = 0;
 let userScrollTimeout = null;
-let accumulatedPixels = 0; // Essential for smooth scrolling
+let accumulatedPixels = 0;
 let isTableFullScreen = false;
 let wasScrollingBeforeFullScreen = false;
 let loadedSections = new Set();
 let isProcessingSection = false;
 let lastFrameTime = 0;
-let scrollTimeout; // Add missing scrollTimeout variable
+let scrollTimeout;
 
 // Optimized smooth scroll with original comfortable timing
 function optimizedSmoothScroll(currentTime) {
@@ -129,14 +231,13 @@ function optimizedSmoothScroll(currentTime) {
   }
 
   const deltaTime = currentTime - lastFrameTime;
-  if (deltaTime < 16.67) { // Cap at 60 FPS
+  if (deltaTime < 16.67) {
     animationId = requestAnimationFrame(optimizedSmoothScroll);
     return;
   }
   
   lastFrameTime = currentTime;
   
-  // Use original pixel accumulation method for smooth, readable speed
   const pixelsPerFrame = scrollSpeed / 60;
   accumulatedPixels += pixelsPerFrame;
 
@@ -163,7 +264,7 @@ function optimizedSmoothScroll(currentTime) {
 function startAutoScroll() {
   if (!isScrolling && !isTableFullScreen) {
     isScrolling = true;
-    accumulatedPixels = 0; // Reset accumulated pixels
+    accumulatedPixels = 0;
     lastFrameTime = performance.now();
     animationId = requestAnimationFrame(optimizedSmoothScroll);
   }
@@ -175,7 +276,7 @@ function stopAutoScroll() {
     cancelAnimationFrame(animationId);
     animationId = null;
   }
-  accumulatedPixels = 0; // Reset accumulated pixels
+  accumulatedPixels = 0;
 }
 
 function pauseAutoScrollTemporarily(ms = 2000) {
@@ -235,6 +336,130 @@ const debouncedUserScroll = debounce(() => {
     lastAutoScrollY = window.scrollY;
   }
 }, 16);
+
+// Variables for tracking scroll speed and time estimate
+let scrollSpeedHistory = [];
+const SCROLL_SPEED_WINDOW = 5 * 60 * 1000; // 5 minutes in milliseconds
+let lastScrollTime = Date.now();
+let lastScrollPosition = 0;
+let firstScrollTime = null; // Track when scrolling actually started
+
+// Function to calculate and update scroll progress with time estimate
+function updateScrollProgress() {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  
+  const scrollPercent = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
+  
+  const progressFill = document.querySelector('.progress-fill-inline');
+  const progressText = document.querySelector('.progress-text-inline');
+  const estimatedTimeEl = document.querySelector('.estimated-time');
+  
+  if (progressFill) {
+    progressFill.style.width = scrollPercent + '%';
+  }
+  
+  if (progressText) {
+    progressText.textContent = scrollPercent + '%';
+  }
+
+  // Track scroll speed
+  const currentTime = Date.now();
+  const timeDelta = currentTime - lastScrollTime;
+  const posDelta = scrollTop - lastScrollPosition;
+  
+  // Initialize first scroll time on first actual movement
+  if (firstScrollTime === null && Math.abs(posDelta) > 0) {
+    firstScrollTime = currentTime;
+  }
+  
+  if (timeDelta > 200 && Math.abs(posDelta) > 5) {
+    // Calculate pixels per second
+    const pixelsPerSecond = (Math.abs(posDelta) / timeDelta) * 1000;
+    
+    scrollSpeedHistory.push({
+      time: currentTime,
+      pixelsPerSecond: pixelsPerSecond
+    });
+    
+    // Clean old history (keep only last 5 minutes)
+    scrollSpeedHistory = scrollSpeedHistory.filter(entry => 
+      currentTime - entry.time < SCROLL_SPEED_WINDOW
+    );
+    
+    lastScrollTime = currentTime;
+    lastScrollPosition = scrollTop;
+  }
+  
+  // Update ETA
+  if (estimatedTimeEl) {
+    if (scrollPercent >= 100) {
+      estimatedTimeEl.textContent = '✓ Done';
+      estimatedTimeEl.style.background = '#e8f5e9';
+      estimatedTimeEl.style.color = '#2e7d32';
+    } else if (firstScrollTime !== null) {
+      // Calculate time elapsed since first scroll
+      const timeElapsedSinceFirstScroll = currentTime - firstScrollTime;
+      const hasFullWindow = timeElapsedSinceFirstScroll >= SCROLL_SPEED_WINDOW;
+      const hasValidData = scrollSpeedHistory.length > 5; // At least some data points
+      
+      if (hasFullWindow && hasValidData) {
+        // Calculate average speed from data collected over 5 minutes
+        const avgSpeed = scrollSpeedHistory.reduce((sum, entry) => sum + entry.pixelsPerSecond, 0) / scrollSpeedHistory.length;
+        
+        if (avgSpeed > 1) {
+          const remainingPixels = docHeight - scrollTop;
+          const estimatedSeconds = Math.round(remainingPixels / avgSpeed);
+          
+          let timeStr = '';
+          if (estimatedSeconds < 60) {
+            timeStr = `${estimatedSeconds}s`;
+          } else if (estimatedSeconds < 3600) {
+            const mins = Math.floor(estimatedSeconds / 60);
+            const secs = estimatedSeconds % 60;
+            timeStr = `${mins}m ${secs}s`;
+          } else {
+            const hours = Math.floor(estimatedSeconds / 3600);
+            const mins = Math.floor((estimatedSeconds % 3600) / 60);
+            timeStr = `${hours}h ${mins}m`;
+          }
+          
+          estimatedTimeEl.textContent = timeStr;
+          estimatedTimeEl.style.background = '#fff3cd';
+          estimatedTimeEl.style.color = '#856404';
+        } else {
+          estimatedTimeEl.textContent = 'N/A';
+          estimatedTimeEl.style.background = '#f5f5f5';
+          estimatedTimeEl.style.color = '#999';
+        }
+      } else {
+        estimatedTimeEl.textContent = 'N/A';
+        estimatedTimeEl.style.background = '#f5f5f5';
+        estimatedTimeEl.style.color = '#999';
+      }
+    } else {
+      estimatedTimeEl.textContent = 'N/A';
+      estimatedTimeEl.style.background = '#f5f5f5';
+      estimatedTimeEl.style.color = '#999';
+    }
+  }
+}
+
+// Add optimized scroll event listener for progress tracking
+const throttledProgressUpdate = throttle(updateScrollProgress, 16);
+window.addEventListener('scroll', throttledProgressUpdate, { passive: true });
+
+// Also call on document ready to ensure elements exist
+document.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    const estimatedTimeEl = document.querySelector('.estimated-time');
+    if (estimatedTimeEl) {
+      console.log('Estimated time element found and initialized');
+    } else {
+      console.warn('Estimated time element not found');
+    }
+  }, 500);
+}, { once: true });
 
 // Optimized table processing
 function extractTablesAndContentOptimized(htmlString) {
@@ -352,7 +577,6 @@ function optimizedProcessLine(line, index, lines) {
     hasChildren: nextIndent > indentLevel
   };
 
-  // Cache expensive computations
   result.hasMarker = result.markerMatch && result.markerMatch[1].trim().length > 0;
   result.shortEnough = result.charLength <= 100 && result.wordCount <= 12;
   result.isLikelyHeading = result.shortEnough && result.hasChildren && 
@@ -393,9 +617,7 @@ function processSection(section) {
   const { htmlWithPlaceholders, tables } = extractTablesAndContentOptimized(raw);
   const lines = htmlWithPlaceholders.split("\n");
 
-  // Use document fragment for batch DOM operations
   const fragment = document.createDocumentFragment();
-  
   const transformedLines = [];
   
   for (let index = 0; index < lines.length; index++) {
@@ -454,7 +676,6 @@ function processSection(section) {
   const finalContent = restoreTablesInContent(transformedLines.join("\n"), tables);
   section.innerHTML = finalContent;
 
-  // Process answer blocks efficiently
   const lineElements = section.querySelectorAll('.line');
   processAnswerBlocks(lineElements);
 
@@ -474,7 +695,6 @@ function processAnswerBlocks(lineElements) {
     const baseLevel = parseInt(line.dataset.level || '0', 10);
     const group = [line];
 
-    // Collect answer group
     for (let j = i + 1; j < lineElements.length; j++) {
       const next = lineElements[j];
       const nextLevel = parseInt(next.dataset.level || '0', 10);
@@ -482,7 +702,6 @@ function processAnswerBlocks(lineElements) {
       group.push(next);
     }
 
-    // Check for analysis section
     const nextLine = lineElements[i + group.length];
     const nextContent = nextLine?.querySelector('.line-content')?.textContent?.trim() || '';
     if (nextContent.startsWith('Analysis:')) {
@@ -506,12 +725,11 @@ function processAnswerBlocks(lineElements) {
 function createBlurredBlock(group) {
   const wrapper = document.createElement('div');
   wrapper.className = 'blurred-block';
-  wrapper.dataset.optimized = 'true'; // Mark for event delegation
+  wrapper.dataset.optimized = 'true';
   
   const parent = group[0].parentElement;
   parent.insertBefore(wrapper, group[0]);
   
-  // Use document fragment for batch insertion
   const fragment = document.createDocumentFragment();
   group.forEach(el => fragment.appendChild(el));
   wrapper.appendChild(fragment);
@@ -519,9 +737,7 @@ function createBlurredBlock(group) {
 
 // Event delegation for better performance
 function setupEventDelegation() {
-  // Single click handler for all interactions
   document.addEventListener('click', (e) => {
-    // Handle blurred blocks
     if (e.target.closest('.blurred-block[data-optimized]')) {
       e.preventDefault();
       e.stopPropagation();
@@ -530,7 +746,6 @@ function setupEventDelegation() {
       return;
     }
     
-    // Handle table expansion
     if (e.target.classList.contains('table-expand-icon')) {
       const container = e.target.closest('.table-container');
       if (container) {
@@ -540,7 +755,6 @@ function setupEventDelegation() {
     }
   });
 
-  // Single touch handler for mobile
   let touchStartY = 0;
   let touchStartTime = 0;
   let hasScrolled = false;
@@ -553,7 +767,6 @@ function setupEventDelegation() {
       hasScrolled = false;
     }
 
-    // Handle user scroll interaction
     if (isScrollingAllowedByUser && !isUserInteracting) {
       isUserInteracting = true;
       pauseAutoScrollTemporarily(500);
@@ -588,19 +801,19 @@ function setupEventDelegation() {
   }, { passive: false });
 }
 
-// Intersection Observer for even more efficient lazy loading
+// Intersection Observer for efficient lazy loading
 const intersectionObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       const section = entry.target;
       if (!loadedSections.has(section.id) && section.style.display !== 'none') {
         processSection(section);
-        intersectionObserver.unobserve(section); // Stop observing once loaded
+        intersectionObserver.unobserve(section);
       }
     }
   });
 }, {
-  rootMargin: '50px' // Load 50px before coming into view
+  rootMargin: '50px'
 });
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -613,10 +826,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // Setup event delegation early
       setupEventDelegation();
 
-      // Find priority sections
       const consolidatedSection = Array.from(sections).find(section => 
         sectionChecker.isConsolidated(section.id)
       );
@@ -629,13 +840,11 @@ document.addEventListener("DOMContentLoaded", () => {
         processSection(prioritySection);
       }
 
-      // Setup controls with optimized logic
       const controls = getCachedElement("#controls") || document.getElementById("controls");
       if (controls) {
         const sectionDivs = document.querySelectorAll('div[id^="section-"]');
         const hasConsolidatedSection = consolidatedSection !== undefined;
         
-        // Use document fragment for batch control creation
         const controlsFragment = document.createDocumentFragment();
         
         sectionDivs.forEach((section) => {
@@ -648,7 +857,6 @@ document.addEventListener("DOMContentLoaded", () => {
           const wrapper = createSectionToggle(section, sectionId, labelText, shouldBeChecked);
           controlsFragment.appendChild(wrapper);
 
-          // Setup intersection observer for unloaded sections
           if (!shouldBeChecked) {
             intersectionObserver.observe(section);
           }
@@ -657,7 +865,6 @@ document.addEventListener("DOMContentLoaded", () => {
         controls.appendChild(controlsFragment);
       }
 
-      // Optimized section display logic
       const sectionsToShow = document.querySelectorAll('div[id^="section-"]');
       let visibleSectionCount = 0;
       
@@ -681,14 +888,12 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
 
-      // Faster loading completion
       setTimeout(() => {
         loading.style.opacity = "0";
         loading.style.transition = "opacity 0.3s ease-out";
         setTimeout(() => loading.remove(), 300);
       }, visibleSectionCount * 50 + 100);
 
-      // Add title
       const pageTitle = document.title;
       const h1 = document.createElement("h1");
       h1.textContent = pageTitle;
@@ -704,6 +909,8 @@ document.addEventListener("DOMContentLoaded", () => {
       setupOutlineFeature();
       setupCacheBuster();
       setupNavigationWarning();
+      
+      updateScrollProgress();
     });
   });
 });
@@ -761,6 +968,7 @@ function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
           switchLoading.remove();
           checkbox.disabled = false;
           isProcessingSection = false;
+          updateScrollProgress();
         }, 300);
       } else {
         targetSection.style.transition = "opacity 0.2s ease-out";  
@@ -770,6 +978,7 @@ function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
           switchLoading.remove();
           checkbox.disabled = false;
           isProcessingSection = false;
+          updateScrollProgress();
         }, 200);
       }
     }, 10);
@@ -838,7 +1047,6 @@ function setupScrollControls() {
     });
   }
 
-  // Setup optimized scroll event listeners
   window.addEventListener("scroll", throttledScrollDirection, { passive: true });
   window.addEventListener("scroll", debouncedUserScroll, { passive: true });
   
@@ -952,12 +1160,10 @@ function setupOutlineFeature() {
   outlineButton.addEventListener("click", () => {
     outlineSidebar.style.display = "block";
     
-    // Clear previous outline
     while (outlineSidebar.children.length > 1) {
       outlineSidebar.removeChild(outlineSidebar.lastChild);
     }
 
-    // Only process loaded sections for outline (performance optimization)
     const baseSections = Array.from(document.querySelectorAll('div[id^="section-"]'))
       .filter(sec => loadedSections.has(sec.id) && !sectionChecker.isPyq(sec.id));
 
@@ -1018,7 +1224,6 @@ function setupCacheBuster() {
   cacheBusterButton.className = "bust-cache-button";
   
   cacheBusterButton.addEventListener('click', function() {
-    // Clear all caches before reload for fresh start
     DOM_CACHE.clear();
     COMPUTATION_CACHE.clear();
     parentLinesCache.clear();
@@ -1033,76 +1238,57 @@ function setupCacheBuster() {
   controls.appendChild(cacheBusterButton);
 }
 
-// Memory cleanup on page unload
 window.addEventListener('beforeunload', () => {
-  // Clear all caches to prevent memory leaks
   DOM_CACHE.clear();
   COMPUTATION_CACHE.clear();
   parentLinesCache.clear();
   
-  // Cancel any ongoing animations
   if (animationId) {
     cancelAnimationFrame(animationId);
   }
   
-  // Clear timeouts
   if (pauseTimeout) clearTimeout(pauseTimeout);
   if (userScrollTimeout) clearTimeout(userScrollTimeout);
   
-  // Disconnect observer
   if (intersectionObserver) {
     intersectionObserver.disconnect();
   }
 });
 
-
-
 function setupNavigationWarning() {
   let isLeavingPage = false;
   let dialogOpen = false;
 
-  // Push multiple states to create a deep history stack
-  // This prevents accidental back navigation when first arriving
   window.history.pushState({ type: 'blocker1' }, '', window.location.href);
   window.history.pushState({ type: 'blocker2' }, '', window.location.href);
   window.history.pushState({ type: 'main' }, '', window.location.href);
 
-  // Only intercept popstate (back button)
   window.addEventListener('popstate', (e) => {
-    // Don't show dialog if we're already leaving
     if (isLeavingPage || dialogOpen) {
       return;
     }
 
-    // Push state back to prevent actual navigation
     window.history.pushState({ type: 'blocked' }, '', window.location.href);
     
     dialogOpen = true;
     showNavigationWarningDialog(
       () => {
-        // User clicked "Leave Page"
         dialogOpen = false;
         isLeavingPage = true;
         window.history.back();
       },
       () => {
-        // User clicked "Stay on Page"
         dialogOpen = false;
       }
     );
   }, false);
 
-
-
-  // Function to create and show the warning dialog
   function showNavigationWarningDialog(onConfirm, onCancel) {
-    // Remove any existing dialogs
     const existingDialog = document.getElementById('nav-warning-dialog');
     const existingOverlay = document.getElementById('nav-warning-overlay');
     if (existingDialog) existingDialog.remove();
     if (existingOverlay) existingOverlay.remove();
 
-    // Add animations style if not already added
     if (!document.getElementById('nav-warning-styles')) {
       const style = document.createElement('style');
       style.id = 'nav-warning-styles';
@@ -1139,14 +1325,12 @@ function setupNavigationWarning() {
       document.head.appendChild(style);
     }
 
-    // Save scroll position and disable scrolling
     const scrollPos = window.scrollY;
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
     document.body.style.width = '100%';
     document.body.style.top = `-${scrollPos}px`;
 
-    // Create overlay
     const overlay = document.createElement('div');
     overlay.id = 'nav-warning-overlay';
     overlay.style.cssText = `
@@ -1163,7 +1347,6 @@ function setupNavigationWarning() {
       animation: fadeIn 0.2s ease-in;
     `;
 
-    // Create dialog
     const dialog = document.createElement('div');
     dialog.id = 'nav-warning-dialog';
     dialog.style.cssText = `
@@ -1176,7 +1359,6 @@ function setupNavigationWarning() {
       animation: slideUp 0.3s ease-out;
     `;
 
-    // Add heading
     const heading = document.createElement('h2');
     heading.textContent = 'Leave Page?';
     heading.style.cssText = `
@@ -1186,7 +1368,6 @@ function setupNavigationWarning() {
     `;
     dialog.appendChild(heading);
 
-    // Add message
     const message = document.createElement('p');
     message.textContent = 'Are you sure you want to leave this page? Any unsaved progress may be lost.';
     message.style.cssText = `
@@ -1197,7 +1378,6 @@ function setupNavigationWarning() {
     `;
     dialog.appendChild(message);
 
-    // Create button container
     const buttonContainer = document.createElement('div');
     buttonContainer.style.cssText = `
       display: flex;
@@ -1205,7 +1385,6 @@ function setupNavigationWarning() {
       justify-content: center;
     `;
 
-    // Cancel button
     const cancelBtn = document.createElement('button');
     cancelBtn.textContent = 'Stay on Page';
     cancelBtn.style.cssText = `
@@ -1226,7 +1405,6 @@ function setupNavigationWarning() {
     });
     cancelBtn.addEventListener('click', closeDialog);
 
-    // Confirm button
     const confirmBtn = document.createElement('button');
     confirmBtn.textContent = 'Leave Page';
     confirmBtn.style.cssText = `
@@ -1258,13 +1436,11 @@ function setupNavigationWarning() {
     overlay.appendChild(dialog);
     document.body.appendChild(overlay);
 
-    // Close dialog function
     function closeDialog() {
       overlay.style.animation = 'fadeOut 0.2s ease-out';
       dialog.style.animation = 'slideDown 0.2s ease-out';
       setTimeout(() => {
         if (overlay.parentNode) overlay.remove();
-        // Restore scroll position and scrolling
         document.body.style.overflow = '';
         document.body.style.position = '';
         document.body.style.width = '';
@@ -1274,14 +1450,12 @@ function setupNavigationWarning() {
       }, 200);
     }
 
-    // Close on overlay click
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) {
         closeDialog();
       }
     });
 
-    // Close on Escape key
     const handleEscape = (e) => {
       if (e.key === 'Escape') {
         closeDialog();
