@@ -711,7 +711,7 @@ function generateParentLines(level, color = "#f4f6f8") {
   return result;
 }
 
-// Optimized section processing
+// Optimized section processing with hierarchical indent containers
 function processSection(section) {
   if (loadedSections.has(section.id)) return;
 
@@ -719,8 +719,8 @@ function processSection(section) {
   const { htmlWithPlaceholders, tables } = extractTablesAndContentOptimized(raw);
   const lines = htmlWithPlaceholders.split("\n");
 
-  const fragment = document.createDocumentFragment();
   const transformedLines = [];
+  const indentStack = []; // Track nested indent levels
   
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index];
@@ -729,11 +729,25 @@ function processSection(section) {
     if (lineData.empty) continue;
 
     const { indentLevel, cleanText } = lineData;
+
+    // Close containers for outdented levels
+    while (indentStack.length > 0 && indentStack[indentStack.length - 1] >= indentLevel) {
+      transformedLines.push('</div>'); // Close indent container
+      indentStack.pop();
+    }
+
+    // Open new container if we're indenting deeper
+    if (indentStack.length === 0 || indentStack[indentStack.length - 1] < indentLevel) {
+      // Only add padding for the relative indent increase, not absolute
+      const currentIndent = indentStack.length > 0 ? indentStack[indentStack.length - 1] : 0;
+      const relativeIndent = (indentLevel - currentIndent) * 1;
+      transformedLines.push(`<div class="indent-level-${indentLevel}" style="padding-left: ${relativeIndent}rem; border-left: 2px solid ${indentLevel % 2 === 0 ? '#f8f8f8ff' : '#f9f9f9ff'}">`);
+      indentStack.push(indentLevel);
+    }
+
     const paddingLeft = indentLevel * 1;
     const linePosition = `${paddingLeft + 0.2}rem`;
-    const parentLines = generateParentLines(indentLevel);
-    const parentLinesHeading = generateParentLines(indentLevel, "#e8ebef");
-    const customStyle = `padding-left: ${paddingLeft}rem; --line-position: ${linePosition}; --parent-lines: ${parentLines}; --parent-lines-heading: ${parentLinesHeading};`;
+    const customStyle = `padding-left: 0rem;`; // No padding needed, container handles it
 
     if (lineData.isTable) {
       transformedLines.push(`
@@ -773,6 +787,12 @@ function processSection(section) {
         </div>
       `);
     }
+  }
+
+  // Close any remaining open containers
+  while (indentStack.length > 0) {
+    transformedLines.push('</div>');
+    indentStack.pop();
   }
 
   const finalContent = restoreTablesInContent(transformedLines.join("\n"), tables);
@@ -869,6 +889,13 @@ function setupEventDelegation() {
       hasScrolled = false;
     }
 
+    // Mark touch interaction for scroll panel
+    isUserTouchScrolling = true;
+    if (scrollTimeout) clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(() => {
+      isUserTouchScrolling = false;
+    }, 1000);
+
     if (isScrollingAllowedByUser && !isUserInteracting) {
       isUserInteracting = true;
       pauseAutoScrollTemporarily(500);
@@ -900,6 +927,9 @@ function setupEventDelegation() {
         blurredBlock.classList.toggle('revealed');
       }
     }
+
+    // Reset touch scrolling flag after touch ends
+    isUserTouchScrolling = false;
   }, { passive: false });
 }
 
@@ -1255,6 +1285,32 @@ function setupOutlineFeature() {
     }
     #outline-sidebar a:hover {
       background-color: #f3f4f6;
+    }
+  `;
+
+  const lineStyles = document.createElement("style");
+  lineStyles.textContent = `
+    .line {
+      background-image: repeating-linear-gradient(
+        90deg,
+        var(--parent-lines-color, #f4f6f8) 0,
+        var(--parent-lines-color, #f4f6f8) 1px,
+        transparent 1px,
+        transparent calc(var(--line-position, 0.2rem) + 1px)
+      );
+      background-position: left top;
+      background-repeat: repeat-y;
+      background-attachment: scroll;
+    }
+
+    .line.heading {
+      background-image: repeating-linear-gradient(
+        90deg,
+        #e8ebef 0,
+        #e8ebef 1px,
+        transparent 1px,
+        transparent calc(var(--line-position, 0.2rem) + 1px)
+      );
     }
   `;
   document.head.appendChild(outlineStyles);
