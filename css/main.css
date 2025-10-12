@@ -1,7 +1,7 @@
-/* body {
-    background-color: black;
-    color: white;
-} */
+body {
+    /* background-color: black;
+    color: white; */
+}
 
 /* Critical CSS - Add this to your HTML <head> section */
 /* This prevents flash of unstyled content by hiding sections immediately */

@@ -67,102 +67,137 @@ function createSectionChecker() {
 
 const sectionChecker = createSectionChecker();
 
-// Smart scroll ETA estimation - measures RECENT progress only
-class SmartScrollEstimator {
+// Improved Scroll Estimator - Optimized for intermittent tracking
+class ImprovedScrollEstimator {
   constructor() {
-    this.recentProgress = []; // Track last N seconds of progress
-    this.startTime = Date.now();
-    this.recentWindow = 30000; // Only look at last 30 seconds of scrolling
-    this.snapshotInterval = 500; // Snapshot every 500ms
-    this.lastSnapshotTime = Date.now();
-    this.lastScrollPercent = 0;
-    this.minDataPoints = 5; // Need at least 5 data points (2.5 seconds of data)
+    this.dataPoints = []; // { time, scrollPos } - raw scroll data
+    this.windowStart = Date.now();
+    this.recordInterval = 500; // Record scroll every 500ms (more frequent for visible moments)
+    this.lastRecordTime = Date.now();
+    this.lastScrollPos = 0;
+    
+    // Adaptive thresholds
+    this.minJitterThreshold = 3; // Only record if changed more than 3px
+    this.dataWindow = 300000; // Keep 5 minutes of data
+    this.minDataPoints = 3; // Only need 3 data points (1.5 seconds of actual scrolling)
+    this.readyTime = 3000; // Ready after just 3 seconds of gathered data
   }
 
-  recordScroll(currentPosition, totalHeight) {
+  recordScroll(currentPos, totalHeight) {
     const now = Date.now();
     
-    // Only snapshot at intervals
-    if (now - this.lastSnapshotTime < this.snapshotInterval) {
+    // Record at intervals
+    if (now - this.lastRecordTime < this.recordInterval) {
       return;
     }
 
-    const scrollPercent = totalHeight > 0 ? (currentPosition / totalHeight) * 100 : 0;
-    
-    // Only record if position actually changed meaningfully
-    if (Math.abs(scrollPercent - this.lastScrollPercent) < 0.1) {
+    // Filter jitter - only record meaningful movement
+    if (Math.abs(currentPos - this.lastScrollPos) < this.minJitterThreshold) {
       return;
     }
 
-    this.recentProgress.push({
+    this.dataPoints.push({
       time: now,
-      percent: scrollPercent
+      pos: currentPos
     });
 
-    // Keep only recent data (last 30 seconds)
-    this.recentProgress = this.recentProgress.filter(
-      entry => now - entry.time < this.recentWindow
-    );
+    // Keep only recent data (last 5 minutes)
+    const cutoffTime = now - this.dataWindow;
+    this.dataPoints = this.dataPoints.filter(dp => dp.time > cutoffTime);
 
-    this.lastSnapshotTime = now;
-    this.lastScrollPercent = scrollPercent;
+    this.lastRecordTime = now;
+    this.lastScrollPos = currentPos;
   }
 
-  getEstimatedTimeToCompletion(currentPosition, totalHeight) {
-    const currentPercent = totalHeight > 0 ? (currentPosition / totalHeight) * 100 : 0;
+  getEstimatedTimeToCompletion(currentPos, totalHeight) {
+    if (totalHeight <= 0) return null;
 
-    if (currentPercent >= 100) {
+    const scrollPercent = (currentPos / totalHeight) * 100;
+    
+    if (scrollPercent >= 99) {
       return 0;
     }
 
-    // Need enough recent data
-    if (this.recentProgress.length < this.minDataPoints) {
-      return null; // Not enough data yet
+    // Need minimum data points to estimate
+    if (this.dataPoints.length < this.minDataPoints) {
+      return null;
     }
 
-    // Calculate rate from ONLY the most recent data
-    // This ensures we measure current speed, not historical speed
-    const oldestEntry = this.recentProgress[0];
-    const newestEntry = this.recentProgress[this.recentProgress.length - 1];
+    // Use recent data points for calculation
+    // Take data from last 30 seconds if available, otherwise use all data
+    const now = Date.now();
+    const recentCutoff = now - 30000;
+    const recentPoints = this.dataPoints.filter(dp => dp.time > recentCutoff);
     
-    const timeElapsed = newestEntry.time - oldestEntry.time;
-    const percentProgressed = newestEntry.percent - oldestEntry.percent;
+    const pointsToUse = recentPoints.length >= this.minDataPoints ? recentPoints : this.dataPoints;
 
-    if (timeElapsed <= 0 || percentProgressed <= 0) {
+    if (pointsToUse.length < this.minDataPoints) {
       return null;
     }
 
-    // Calculate percentage per millisecond from recent behavior ONLY
-    const percentPerMs = percentProgressed / timeElapsed;
+    // Calculate from oldest to newest for most stable estimate
+    const oldestPoint = pointsToUse[0];
+    const newestPoint = pointsToUse[pointsToUse.length - 1];
 
-    if (percentPerMs <= 0) {
+    const timeElapsed = newestPoint.time - oldestPoint.time;
+    const distanceCovered = newestPoint.pos - oldestPoint.pos;
+
+    if (timeElapsed <= 0 || distanceCovered <= 0) {
       return null;
     }
 
-    const remainingPercent = 100 - currentPercent;
-    const estimatedMs = remainingPercent / percentPerMs;
+    // Calculate pixels per millisecond
+    const pixelsPerMs = distanceCovered / timeElapsed;
+
+    if (pixelsPerMs <= 0) {
+      return null;
+    }
+
+    // Calculate remaining distance
+    const remainingDistance = totalHeight - currentPos;
+    
+    if (remainingDistance <= 0) {
+      return 0;
+    }
+
+    // Estimate time to completion
+    const estimatedMs = remainingDistance / pixelsPerMs;
 
     return Math.max(0, Math.round(estimatedMs));
   }
 
   getConfidence() {
-    const dataPoints = this.recentProgress.length;
+    const now = Date.now();
+    const timeSinceStart = now - this.windowStart;
+    const dataPoints = this.dataPoints.length;
     
-    if (dataPoints < 3) return 0;
-    if (dataPoints < this.minDataPoints) return 0.3;
-    if (dataPoints < 15) return 0.6;
-    return 0.85; // High confidence with good recent data
+    // Check if we have enough recent data
+    const recentCutoff = now - 30000;
+    const recentPoints = this.dataPoints.filter(dp => dp.time > recentCutoff);
+
+    // Ready quickly if we have good recent activity
+    if (recentPoints.length >= this.minDataPoints && timeSinceStart > this.readyTime) {
+      if (recentPoints.length < 5) return 0.6;
+      if (recentPoints.length < 15) return 0.75;
+      return 0.9;
+    }
+
+    // Otherwise use historical data
+    if (dataPoints < this.minDataPoints) return 0;
+    if (dataPoints < 10) return 0.4;
+    if (dataPoints < 30) return 0.65;
+    return 0.85;
   }
 
   reset() {
-    this.recentProgress = [];
-    this.startTime = Date.now();
-    this.lastSnapshotTime = Date.now();
-    this.lastScrollPercent = 0;
+    this.dataPoints = [];
+    this.windowStart = Date.now();
+    this.lastRecordTime = Date.now();
+    this.lastScrollPos = 0;
   }
 }
 
-const estimator = new SmartScrollEstimator();
+const estimator = new ImprovedScrollEstimator();
 
 // Create DOM elements
 const loading = document.createElement("div");
@@ -386,27 +421,40 @@ function pauseAutoScrollTemporarily(ms = 2000) {
   }, ms);
 }
 
-// Optimized scroll handlers with throttling
+// Optimized scroll handlers with throttling - fixed for iPad
+let isUserTouchScrolling = false;
+let lastScrollDirection = null;
+
 const throttledScrollDirection = throttle(() => {
   const currentY = window.scrollY;
   const goingUp = currentY < lastScrollY;
   
   if (scrollControls) {
+    // Always show on scroll up
     if (goingUp) {
       scrollControls.style.opacity = "1";
       scrollControls.style.pointerEvents = "auto";
+      isUserTouchScrolling = true;
+      lastScrollDirection = 'up';
+      if (scrollTimeout) clearTimeout(scrollTimeout);
     } else {
+      // On scroll down, handle differently for touch vs non-touch
+      lastScrollDirection = 'down';
       if ('ontouchstart' in window) {
+        // On touch devices, show immediately, then hide after delay
         scrollControls.style.opacity = "1";
         scrollControls.style.pointerEvents = "auto";
+        
         if (scrollTimeout) clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
-          if (!goingUp) {
+          // Only hide if still scrolling down and no touch interaction
+          if (lastScrollDirection === 'down' && !isUserTouchScrolling) {
             scrollControls.style.opacity = "0";
             scrollControls.style.pointerEvents = "none";
           }
         }, 3000);
       } else {
+        // On desktop, hide immediately on scroll down
         scrollControls.style.opacity = "0";
         scrollControls.style.pointerEvents = "none";
       }
@@ -482,17 +530,9 @@ function updateScrollProgress() {
       const confidence = estimator.getConfidence();
 
       if (etaMs === null) {
-        if (confidence >= 0.5) {
-          // Functional mode: show estimate even with limited data
-          const timeStr = formatTime(etaMs || 0);
-          estimatedTimeEl.textContent = timeStr || 'Calculating...';
-          estimatedTimeEl.style.background = '#f0f0f0';
-          estimatedTimeEl.style.color = '#666';
-        } else {
-          estimatedTimeEl.textContent = 'Calculating...';
-          estimatedTimeEl.style.background = '#f5f5f5';
-          estimatedTimeEl.style.color = '#999';
-        }
+        estimatedTimeEl.textContent = 'Calculating...';
+        estimatedTimeEl.style.background = '#f5f5f5';
+        estimatedTimeEl.style.color = '#999';
       } else {
         const timeStr = formatTime(etaMs);
         estimatedTimeEl.textContent = timeStr;
