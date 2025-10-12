@@ -67,6 +67,103 @@ function createSectionChecker() {
 
 const sectionChecker = createSectionChecker();
 
+// Smart scroll ETA estimation - measures RECENT progress only
+class SmartScrollEstimator {
+  constructor() {
+    this.recentProgress = []; // Track last N seconds of progress
+    this.startTime = Date.now();
+    this.recentWindow = 30000; // Only look at last 30 seconds of scrolling
+    this.snapshotInterval = 500; // Snapshot every 500ms
+    this.lastSnapshotTime = Date.now();
+    this.lastScrollPercent = 0;
+    this.minDataPoints = 5; // Need at least 5 data points (2.5 seconds of data)
+  }
+
+  recordScroll(currentPosition, totalHeight) {
+    const now = Date.now();
+    
+    // Only snapshot at intervals
+    if (now - this.lastSnapshotTime < this.snapshotInterval) {
+      return;
+    }
+
+    const scrollPercent = totalHeight > 0 ? (currentPosition / totalHeight) * 100 : 0;
+    
+    // Only record if position actually changed meaningfully
+    if (Math.abs(scrollPercent - this.lastScrollPercent) < 0.1) {
+      return;
+    }
+
+    this.recentProgress.push({
+      time: now,
+      percent: scrollPercent
+    });
+
+    // Keep only recent data (last 30 seconds)
+    this.recentProgress = this.recentProgress.filter(
+      entry => now - entry.time < this.recentWindow
+    );
+
+    this.lastSnapshotTime = now;
+    this.lastScrollPercent = scrollPercent;
+  }
+
+  getEstimatedTimeToCompletion(currentPosition, totalHeight) {
+    const currentPercent = totalHeight > 0 ? (currentPosition / totalHeight) * 100 : 0;
+
+    if (currentPercent >= 100) {
+      return 0;
+    }
+
+    // Need enough recent data
+    if (this.recentProgress.length < this.minDataPoints) {
+      return null; // Not enough data yet
+    }
+
+    // Calculate rate from ONLY the most recent data
+    // This ensures we measure current speed, not historical speed
+    const oldestEntry = this.recentProgress[0];
+    const newestEntry = this.recentProgress[this.recentProgress.length - 1];
+    
+    const timeElapsed = newestEntry.time - oldestEntry.time;
+    const percentProgressed = newestEntry.percent - oldestEntry.percent;
+
+    if (timeElapsed <= 0 || percentProgressed <= 0) {
+      return null;
+    }
+
+    // Calculate percentage per millisecond from recent behavior ONLY
+    const percentPerMs = percentProgressed / timeElapsed;
+
+    if (percentPerMs <= 0) {
+      return null;
+    }
+
+    const remainingPercent = 100 - currentPercent;
+    const estimatedMs = remainingPercent / percentPerMs;
+
+    return Math.max(0, Math.round(estimatedMs));
+  }
+
+  getConfidence() {
+    const dataPoints = this.recentProgress.length;
+    
+    if (dataPoints < 3) return 0;
+    if (dataPoints < this.minDataPoints) return 0.3;
+    if (dataPoints < 15) return 0.6;
+    return 0.85; // High confidence with good recent data
+  }
+
+  reset() {
+    this.recentProgress = [];
+    this.startTime = Date.now();
+    this.lastSnapshotTime = Date.now();
+    this.lastScrollPercent = 0;
+  }
+}
+
+const estimator = new SmartScrollEstimator();
+
 // Create DOM elements
 const loading = document.createElement("div");
 loading.className = "loading-overlay";
@@ -164,11 +261,11 @@ scrollProgressStyles.textContent = `
     font-size: 11px;
     font-weight: 500;
     color: #666;
-    padding: 4px 10px;
+    padding: 4px 6px;
     background: #f5f5f5;
     border-radius: 3px;
     border: 1px solid #e0e0e0;
-    min-width: 85px;
+    min-width: 64px;
     text-align: center;
     white-space: nowrap;
   }
@@ -337,17 +434,29 @@ const debouncedUserScroll = debounce(() => {
   }
 }, 16);
 
-// Variables for tracking scroll speed and time estimate
-let scrollSpeedHistory = [];
-const SCROLL_SPEED_WINDOW = 5 * 60 * 1000; // 5 minutes in milliseconds
-let lastScrollTime = Date.now();
-let lastScrollPosition = 0;
-let firstScrollTime = null; // Track when scrolling actually started
+// Function to format time display
+function formatTime(ms) {
+  const seconds = Math.round(ms / 1000);
+  
+  if (seconds < 60) {
+    return `${seconds}s`;
+  } else if (seconds < 3600) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}m ${secs}s`;
+  } else {
+    const hours = Math.floor(seconds / 3600);
+    const mins = Math.floor((seconds % 3600) / 60);
+    return `${hours}h ${mins}m`;
+  }
+}
 
-// Function to calculate and update scroll progress with time estimate
 function updateScrollProgress() {
   const scrollTop = window.scrollY;
   const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  
+  // Record scroll for estimation
+  estimator.recordScroll(scrollTop, document.documentElement.scrollHeight);
   
   const scrollPercent = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
   
@@ -363,100 +472,53 @@ function updateScrollProgress() {
     progressText.textContent = scrollPercent + '%';
   }
 
-  // Track scroll speed
-  const currentTime = Date.now();
-  const timeDelta = currentTime - lastScrollTime;
-  const posDelta = scrollTop - lastScrollPosition;
-  
-  // Initialize first scroll time on first actual movement
-  if (firstScrollTime === null && Math.abs(posDelta) > 0) {
-    firstScrollTime = currentTime;
-  }
-  
-  if (timeDelta > 200 && Math.abs(posDelta) > 5) {
-    // Calculate pixels per second
-    const pixelsPerSecond = (Math.abs(posDelta) / timeDelta) * 1000;
-    
-    scrollSpeedHistory.push({
-      time: currentTime,
-      pixelsPerSecond: pixelsPerSecond
-    });
-    
-    // Clean old history (keep only last 5 minutes)
-    scrollSpeedHistory = scrollSpeedHistory.filter(entry => 
-      currentTime - entry.time < SCROLL_SPEED_WINDOW
-    );
-    
-    lastScrollTime = currentTime;
-    lastScrollPosition = scrollTop;
-  }
-  
-  // Update ETA
   if (estimatedTimeEl) {
     if (scrollPercent >= 100) {
       estimatedTimeEl.textContent = '✓ Done';
       estimatedTimeEl.style.background = '#e8f5e9';
       estimatedTimeEl.style.color = '#2e7d32';
-    } else if (firstScrollTime !== null) {
-      // Calculate time elapsed since first scroll
-      const timeElapsedSinceFirstScroll = currentTime - firstScrollTime;
-      const hasFullWindow = timeElapsedSinceFirstScroll >= SCROLL_SPEED_WINDOW;
-      const hasValidData = scrollSpeedHistory.length > 5; // At least some data points
-      
-      if (hasFullWindow && hasValidData) {
-        // Calculate average speed from data collected over 5 minutes
-        const avgSpeed = scrollSpeedHistory.reduce((sum, entry) => sum + entry.pixelsPerSecond, 0) / scrollSpeedHistory.length;
-        
-        if (avgSpeed > 1) {
-          const remainingPixels = docHeight - scrollTop;
-          const estimatedSeconds = Math.round(remainingPixels / avgSpeed);
-          
-          let timeStr = '';
-          if (estimatedSeconds < 60) {
-            timeStr = `${estimatedSeconds}s`;
-          } else if (estimatedSeconds < 3600) {
-            const mins = Math.floor(estimatedSeconds / 60);
-            const secs = estimatedSeconds % 60;
-            timeStr = `${mins}m ${secs}s`;
-          } else {
-            const hours = Math.floor(estimatedSeconds / 3600);
-            const mins = Math.floor((estimatedSeconds % 3600) / 60);
-            timeStr = `${hours}h ${mins}m`;
-          }
-          
-          estimatedTimeEl.textContent = timeStr;
-          estimatedTimeEl.style.background = '#fff3cd';
-          estimatedTimeEl.style.color = '#856404';
+    } else {
+      const etaMs = estimator.getEstimatedTimeToCompletion(scrollTop, document.documentElement.scrollHeight);
+      const confidence = estimator.getConfidence();
+
+      if (etaMs === null) {
+        if (confidence >= 0.5) {
+          // Functional mode: show estimate even with limited data
+          const timeStr = formatTime(etaMs || 0);
+          estimatedTimeEl.textContent = timeStr || 'Calculating...';
+          estimatedTimeEl.style.background = '#f0f0f0';
+          estimatedTimeEl.style.color = '#666';
         } else {
-          estimatedTimeEl.textContent = 'N/A';
+          estimatedTimeEl.textContent = 'Calculating...';
           estimatedTimeEl.style.background = '#f5f5f5';
           estimatedTimeEl.style.color = '#999';
         }
       } else {
-        estimatedTimeEl.textContent = 'N/A';
-        estimatedTimeEl.style.background = '#f5f5f5';
-        estimatedTimeEl.style.color = '#999';
+        const timeStr = formatTime(etaMs);
+        estimatedTimeEl.textContent = timeStr;
+        
+        // Color code based on confidence
+        if (confidence > 0.7) {
+          estimatedTimeEl.style.background = '#fff3cd';
+          estimatedTimeEl.style.color = '#856404';
+        } else {
+          estimatedTimeEl.style.background = '#f0f0f0';
+          estimatedTimeEl.style.color = '#666';
+        }
       }
-    } else {
-      estimatedTimeEl.textContent = 'N/A';
-      estimatedTimeEl.style.background = '#f5f5f5';
-      estimatedTimeEl.style.color = '#999';
     }
   }
 }
 
 // Add optimized scroll event listener for progress tracking
-const throttledProgressUpdate = throttle(updateScrollProgress, 16);
+const throttledProgressUpdate = throttle(updateScrollProgress, 100);
 window.addEventListener('scroll', throttledProgressUpdate, { passive: true });
 
-// Also call on document ready to ensure elements exist
 document.addEventListener('DOMContentLoaded', () => {
   setTimeout(() => {
     const estimatedTimeEl = document.querySelector('.estimated-time');
     if (estimatedTimeEl) {
       console.log('Estimated time element found and initialized');
-    } else {
-      console.warn('Estimated time element not found');
     }
   }, 500);
 }, { once: true });
@@ -1227,6 +1289,7 @@ function setupCacheBuster() {
     DOM_CACHE.clear();
     COMPUTATION_CACHE.clear();
     parentLinesCache.clear();
+    estimator.reset();
     
     const newCacheBuster = Date.now();
     const url = new URL(window.location);
