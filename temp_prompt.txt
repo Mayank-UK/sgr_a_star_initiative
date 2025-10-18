@@ -1,3 +1,56 @@
+Give me current affairs for today, first in Hindi, then in English.
+The current affairs should be relevant to UPSC preparation, meaning they must cover themes useful for GS Paper 2 and GS Paper 3 — such as governance, economy, environment, foreign policy, international relations, and science-tech developments.
+
+The content should:
+    Be very current (based on the last 1–2 days)
+
+    Be multidimensional (cover economic, political, strategic, and governance implications)
+
+    Be written in paragraph form (not bullet points)
+
+    Have about 250 words each in Hindi and English separately
+
+    Use advanced vocabulary and analytical phrasing suitable for UPSC Mains answers or editorials
+
+    Avoid sensationalism or newspaper-style tone — instead sound like an intelligent, analytical summary of recent events
+
+    Reflect how the event connects with policy implications, international positioning, or constitutional/governance principles.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Take the raw data, process it and structure in a format like this, keep the original text, don't strictly summarize or condense text
 
 Sample data below:
