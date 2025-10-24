@@ -218,7 +218,7 @@ scrollControlsDiv.innerHTML = `
     <button id="toggleScroll">
         <i class="play-icon"></i>
     </button>
-    <input type="range" id="speedRange" min="1" max="100" value="5">
+    <input type="range" id="speedRange" min="1" max="100" value="8">
     <button id="scrollUp" title="Scroll Up">
       <i class="scroll-up-icon"></i>
     </button>
@@ -333,7 +333,7 @@ document.body.prepend(controlsDiv);
 document.body.appendChild(loading);
 
 // Optimized variables
-let scrollSpeed = 3;
+let scrollSpeed = 8;
 let isScrolling = false;
 let isScrollingAllowedByUser = false;
 let lastScrollY = window.scrollY;
