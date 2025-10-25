@@ -1209,7 +1209,7 @@ function setupOutlineFeature() {
     position: fixed;
     top: 0;
     right: 0;
-    width: 36%;
+    width: 70%;
     height: 100%;
     background: #ffffff;
     box-shadow: -4px 0 10px rgba(0,0,0,0.1);
