@@ -583,17 +583,43 @@
                 - \(\frac{1}{\sqrt{2}} = \frac{\sqrt{2}}{2}\).
         - Highest Common Factor (HCF) and Least Common Multiple (LCM):
             - HCF (Greatest Common Divisor):
-                - Found using the Euclidean algorithm: \(\text{HCF}(a, b) = \text{HCF}(b, a \mod b)\).
-                - Example: 
-                    - HCF(48, 18): \(48 = 18 \times 2 + 12\), \(\text{HCF}(18, 12) = 6\), so HCF = 6.
-            - LCM:
-                - \(
-                \text{LCM}(a, b) = \frac{a \cdot b}{\text{HCF}(a, b)}
-                \)
-                - Example: 
-                    - LCM(48, 18) = \(\frac{48 \times 18}{6} = 144\).
-            - For multiple numbers:
-                - Compute pairwise: \(\text{HCF}(a, b, c) = \text{HCF}(\text{HCF}(a, b), c)\).
+                - The HCF of two or more numbers is the largest number that divides each of them exactly, leaving no remainder.
+                - It represents the highest measure of common divisibility among numbers.
+                - Methods to find HCF:
+                    - Prime Factorization Method:
+                        - Express each number as a product of primes.
+                        - Multiply the common primes raised to their smallest powers.
+                        - Example:
+                            \(36 = 2^2 \times 3^2\), \(60 = 2^2 \times 3 \times 5\)
+                            ⇒ \(\text{HCF} = 2^2 \times 3 = 12\)
+                    - Division (or Euclidean) Method:
+                        - Found using: \(\text{HCF}(a, b) = \text{HCF}(b, a \bmod b)\)
+                        - Continue until the remainder becomes 0.
+                        - Example:
+                            \(48 = 18 \times 2 + 12\)
+                            \(18 = 12 \times 1 + 6\)
+                            \(12 = 6 \times 2 + 0\)
+                            ⇒ \(\text{HCF} = 6\)
+                - For multiple numbers:
+                    - Compute stepwise: \(\text{HCF}(a, b, c) = \text{HCF}(\text{HCF}(a, b), c)\)
+            - LCM (Least Common Multiple):
+                - The LCM of two or more numbers is the smallest number that is exactly divisible by each of them.
+                - It represents the lowest shared multiple among the numbers.
+                - Formula:
+                    \(\text{LCM}(a, b) = \frac{a \times b}{\text{HCF}(a, b)}\)
+                - Example:
+                    \(\text{LCM}(48, 18) = \frac{48 \times 18}{6} = 144\)
+                - Prime Factorization Method:
+                    - Express each number as a product of prime factors.
+                    - Multiply all primes raised to their highest powers.
+                    - Example:
+                        \(12 = 2^2 \times 3\), \(18 = 2 \times 3^2\)
+                        ⇒ \(\text{LCM} = 2^2 \times 3^2 = 36\)
+                - For multiple numbers:
+                    - Compute sequentially: \(\text{LCM}(a, b, c) = \text{LCM}(\text{LCM}(a, b), c)\)
+            - Relationship between HCF and LCM:
+                - \(\text{HCF}(a, b) \times \text{LCM}(a, b) = a \times b\)
+                - This relation helps verify the correctness of computed values.
         - Number of Divisors:
             - For a number \(N = p_1^{a} \cdot p_2^{b} \cdot \ldots \cdot p_k^{m}\), the number of divisors is:
                 - \(
