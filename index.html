@@ -905,6 +905,7 @@
         - How to proceed?
             - i. Prepare digital notes and do all value addition in them
             - ii. Download different toppers' notes for different subjects as a base
+                - Check if some subjects can be ignored like history, polity, etc
             - iii. Develop protocols for consistent and rapid development
                 - Develop protocol like figma design process for each step, how list items will be numbered, how alignment will be done, how diagrams will be used, etc, everything, before beginning writing, this should be upsc oriented from toppers notes and recommendations
                 - Physical paper notes will include a pattern, and for each information that is presented there will be evidence and examples to support it, diagram if possible
@@ -1583,3 +1584,312 @@
 
 </div>    
 
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8ZPn5PiKa2NG1V4fmFHXWD0twv5UfsWbD6q9fPcyhvunj1XDZHB9mfoXwVAMtQzVI/exec";
+const PAGE_ID = window.location.pathname.split('/').filter(Boolean).pop() || document.title.trim();
+
+function escapeRegex(s){ return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); }
+
+function findNodeAtCharIndex(root, globalIndex) {
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+  let node;
+  let count = 0;
+  while (walker.nextNode()) {
+    node = walker.currentNode;
+    const len = node.textContent.length;
+    if (globalIndex <= count + len - 1) {
+      return { node, offset: globalIndex - count };
+    }
+    count += len;
+  }
+  return null;
+}
+
+// ✅ Improved tolerant matching
+function findContextIndex(pre, text, post) {
+  const bodyText = document.body.innerText.replace(/\s+/g, ' ');
+  const preNorm = pre ? pre.replace(/\s+/g, ' ').trim() : '';
+  const postNorm = post ? post.replace(/\s+/g, ' ').trim() : '';
+  const target = text.replace(/\s+/g, ' ').trim();
+
+  // Try with full context
+  let combined = preNorm + target + postNorm;
+  let idx = bodyText.indexOf(combined);
+  if (idx !== -1) return idx + preNorm.length;
+
+  // Try with partial context
+  idx = bodyText.indexOf(target);
+  return idx !== -1 ? idx : -1;
+}
+
+function createRangeForContext(startGlobalIndex, textLength) {
+  const startInfo = findNodeAtCharIndex(document.body, startGlobalIndex);
+  if (!startInfo) return null;
+  const endInfo = findNodeAtCharIndex(document.body, startGlobalIndex + textLength);
+  if (!endInfo) return null;
+
+  const range = document.createRange();
+  range.setStart(startInfo.node, startInfo.offset);
+  range.setEnd(endInfo.node, endInfo.offset);
+  return range;
+}
+
+function applyHighlightRange(range, id, color) {
+  try {
+    const span = document.createElement('span');
+    span.className = 'user-highlight';
+    span.dataset.id = id;
+    span.style.background = color || '#ffff88';
+    range.surroundContents(span);
+    return true;
+  } catch (err) {
+    try {
+      const span = document.createElement('span');
+      span.className = 'user-highlight';
+      span.dataset.id = id;
+      span.style.background = color || '#ffff88';
+      const content = range.extractContents();
+      span.appendChild(content);
+      range.insertNode(span);
+      return true;
+    } catch (e) {
+      console.warn('Highlight failed', e);
+      return false;
+    }
+  }
+}
+
+// ✅ Fixed and simplified loadHighlights()
+async function loadHighlights() {
+  try {
+    const res = await fetch(`${SCRIPT_URL}?page_id=${encodeURIComponent(PAGE_ID)}`);
+    const arr = await res.json();
+    if (!Array.isArray(arr)) return;
+
+    for (const h of arr) {
+      const pre = h.pre_text || '';
+      const text = h.text || '';
+      const post = h.post_text || '';
+      const color = h.color || '#ffff88';
+      if (!text) continue;
+
+      const startIndex = findContextIndex(pre, text, post);
+      if (startIndex === -1) {
+        console.warn('Could not find highlight text:', text);
+        continue;
+      }
+
+      const range = createRangeForContext(startIndex, text.length);
+      if (range) {
+        applyHighlightRange(range, h.id, color);
+        console.log('Reapplied highlight:', text);
+      }
+    }
+  } catch (err) {
+    console.error('loadHighlights error', err);
+  }
+}
+
+async function saveHighlightToServer(record) {
+  try {
+    const params = new URLSearchParams({
+      action: 'save',
+      data: JSON.stringify(record)
+    });
+    const response = await fetch(`${SCRIPT_URL}?${params.toString()}`);
+    const result = await response.json();
+    return result;
+  } catch (err) {
+    console.error('save highlight failed', err);
+    throw err;
+  }
+}
+
+async function deleteHighlightOnServer(id) {
+  try {
+    const params = new URLSearchParams({
+      action: 'delete',
+      id: id
+    });
+    await fetch(`${SCRIPT_URL}?${params.toString()}`);
+  } catch (err) {
+    console.error('delete failed', err);
+  }
+}
+
+// Context Menu
+const contextMenu = document.createElement('div');
+contextMenu.id = 'highlight-context-menu';
+contextMenu.innerHTML = `
+  <div class="menu-item" data-action="highlight">
+    <span>✨</span> Highlight Selection
+  </div>
+`;
+document.body.appendChild(contextMenu);
+
+let currentSelectionData = null;
+
+document.addEventListener('mouseup', (e) => {
+  const sel = window.getSelection();
+  if (e.target.classList && e.target.classList.contains('user-highlight')) {
+    hideContextMenu();
+    return;
+  }
+  if (!sel || sel.isCollapsed) {
+    hideContextMenu();
+    return;
+  }
+
+  const text = sel.toString().trim();
+  if (!text) {
+    hideContextMenu();
+    return;
+  }
+
+  const range = sel.getRangeAt(0);
+  const bodyText = document.body.innerText;
+  const firstIdx = bodyText.indexOf(text);
+  if (firstIdx === -1) {
+    hideContextMenu();
+    return;
+  }
+
+  const preStart = Math.max(0, firstIdx - 40);
+  const pre = bodyText.substring(preStart, firstIdx);
+  const post = bodyText.substring(firstIdx + text.length, firstIdx + text.length + 40);
+
+  currentSelectionData = {
+    text: text,
+    pre: pre,
+    post: post,
+    firstIdx: firstIdx,
+    startContainer: range.startContainer,
+    startOffset: range.startOffset,
+    endContainer: range.endContainer,
+    endOffset: range.endOffset
+  };
+
+  contextMenu.style.left = e.pageX + 'px';
+  contextMenu.style.top = e.pageY + 'px';
+  contextMenu.classList.add('show');
+});
+
+document.addEventListener('mousedown', (e) => {
+  if (!contextMenu.contains(e.target)) hideContextMenu();
+});
+
+contextMenu.addEventListener('click', async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  const menuItem = e.target.closest('.menu-item');
+  if (!menuItem) return;
+
+  if (menuItem.dataset.action === 'highlight' && currentSelectionData) {
+    await createHighlight();
+  }
+  hideContextMenu();
+});
+
+async function createHighlight() {
+  if (!currentSelectionData) return;
+  const { text, pre, post, firstIdx, startContainer, startOffset, endContainer, endOffset } = currentSelectionData;
+  const range = document.createRange();
+
+  try {
+    range.setStart(startContainer, startOffset);
+    range.setEnd(endContainer, endOffset);
+  } catch {
+    const newRange = createRangeForContext(firstIdx, text.length);
+    if (!newRange) return;
+    range.setStart(newRange.startContainer, newRange.startOffset);
+    range.setEnd(newRange.endContainer, newRange.endOffset);
+  }
+
+  const id = (crypto.randomUUID ? crypto.randomUUID() : ('id-' + Date.now() + '-' + Math.random().toString(36).slice(2,8)));
+  const color = '#ffff88';
+  const success = applyHighlightRange(range, id, color);
+  if (!success) return;
+
+  const record = { id, page_id: PAGE_ID, pre_text: pre, text, post_text: post, color };
+  try {
+    await saveHighlightToServer(record);
+    console.log('Highlight saved successfully!');
+  } catch (err) {
+    console.error('Failed to save highlight:', err);
+  }
+}
+
+function hideContextMenu() {
+  contextMenu.classList.remove('show');
+  setTimeout(() => currentSelectionData = null, 100);
+}
+
+// Delete highlight on click
+document.addEventListener('click', async (e) => {
+  const el = e.target;
+  if (!el.classList || !el.classList.contains('user-highlight')) return;
+  const id = el.dataset.id;
+  if (!id) return;
+  if (!confirm('Remove this highlight?')) return;
+
+  const parent = el.parentNode;
+  parent.replaceChild(document.createTextNode(el.textContent), el);
+  parent.normalize();
+  await deleteHighlightOnServer(id);
+});
+
+// Styles
+const style = document.createElement('style');
+style.textContent = `
+.user-highlight { 
+  cursor: pointer; 
+  background: #ffff88; 
+}
+.user-highlight:hover { 
+  filter: brightness(0.95); 
+}
+
+#highlight-context-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  padding: 4px 0;
+  z-index: 10000;
+  display: none;
+  min-width: 180px;
+}
+
+#highlight-context-menu.show {
+  display: block;
+}
+
+#highlight-context-menu .menu-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #333;
+  user-select: none;
+}
+
+#highlight-context-menu .menu-item:hover {
+  background: #f0f0f0;
+}
+
+#highlight-context-menu .menu-item span {
+  font-size: 16px;
+}
+`;
+document.head.appendChild(style);
+
+// Initialize
+window.addEventListener('DOMContentLoaded', loadHighlights);
+</script>
+
+    </body>
+</html>

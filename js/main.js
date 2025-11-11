@@ -843,18 +843,65 @@ function processAnswerBlocks(lineElements) {
   }
 }
 
-// Optimized blurred block creation
 function createBlurredBlock(group) {
   const wrapper = document.createElement('div');
   wrapper.className = 'blurred-block';
   wrapper.dataset.optimized = 'true';
-  
-  const parent = group[0].parentElement;
-  parent.insertBefore(wrapper, group[0]);
-  
-  const fragment = document.createDocumentFragment();
-  group.forEach(el => fragment.appendChild(el));
-  wrapper.appendChild(fragment);
+
+  // Find the **deepest common indent container** among the group
+  let commonIndentParent = group[0].parentElement;
+  while (commonIndentParent && !commonIndentParent.classList.contains('indent-level-')) {
+    commonIndentParent = commonIndentParent.parentElement;
+  }
+
+  // If no indent-level found, use the direct parent
+  const insertBeforeParent = commonIndentParent || group[0].parentElement;
+
+  // Insert wrapper at the correct position
+  insertBeforeParent.insertBefore(wrapper, group[0]);
+
+  // We'll rebuild the indent structure inside the wrapper
+  const indentRoot = document.createElement('div');
+  indentRoot.style.paddingLeft = '0';
+  indentRoot.style.borderLeft = 'none';
+
+  let currentContainer = indentRoot;
+  const indentStack = [];
+
+  group.forEach((line, index) => {
+    const level = parseInt(line.dataset.level || '0', 10);
+    const baseLevel = parseInt(group[0].dataset.level || '0', 10);
+
+    // Calculate relative level from the first line in the group
+    const relativeLevel = level - baseLevel;
+
+    // Close excess indent levels
+    while (indentStack.length > relativeLevel) {
+      currentContainer = indentStack.pop();
+    }
+
+    // Open new indent levels if needed
+    while (indentStack.length < relativeLevel) {
+      const newIndent = document.createElement('div');
+      newIndent.className = `indent-level-${baseLevel + indentStack.length + 1}`;
+      newIndent.style.paddingLeft = '1rem';
+      newIndent.style.borderLeft = '2px solid #f9f9f9ff';
+      currentContainer.appendChild(newIndent);
+      indentStack.push(currentContainer);
+      currentContainer = newIndent;
+    }
+
+    // Append the line
+    currentContainer.appendChild(line);
+  });
+
+  wrapper.appendChild(indentRoot);
+
+  // Optional: Add subtle visual cue for blurred block
+  wrapper.style.margin = '0.75rem 0';
+  wrapper.style.borderRadius = '6px';
+  wrapper.style.overflow = 'hidden';
+  wrapper.style.position = 'relative';
 }
 
 // Event delegation for better performance
@@ -1624,3 +1671,4 @@ function setupNavigationWarning() {
     document.addEventListener('keydown', handleEscape);
   }
 }
+
