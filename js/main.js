@@ -10,356 +10,40 @@
 // ============================================================================
 // HIGHLIGHT SYSTEM - Configuration
 // ============================================================================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8ZPn5PiKa2NG1V4fmFHXWD0twv5UfsWbD6q9fPcyhvunj1XDZHB9mfoXwVAMtQzVI/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFATm74VEhTNIEhJcaZ_IVSluOWpkMhyFn9VISyYxmdOBqEWZBfEJMzUmvQcOlNAvh/exec";
 const PAGE_ID = window.location.pathname.split('/').filter(Boolean).pop() || document.title.trim();
 
 // ============================================================================
-// OFFLINE HIGHLIGHT SYSTEM - Local Storage + Sync
+// HIGHLIGHT SYSTEM - Simple Online-Only Implementation
 // ============================================================================
 
-const HIGHLIGHT_STORAGE_KEY = `highlights_${PAGE_ID}`;
-const HIGHLIGHT_SYNC_QUEUE_KEY = `highlight_sync_queue_${PAGE_ID}`;
-
-// Load highlights from localStorage (fallback if no internet)
-function loadHighlightsFromLocal() {
-  try {
-    const stored = localStorage.getItem(HIGHLIGHT_STORAGE_KEY);
-    if (!stored) return [];
-
-    const parsed = JSON.parse(stored);
-    console.log(`Loaded ${parsed.length} highlights from localStorage`);
-    return parsed;
-  } catch (err) {
-    console.error('Failed to load local highlights:', err);
-    return [];
-  }
-}
-
-// Save highlights to localStorage
-function saveHighlightsToLocal(highlights) {
-  try {
-    localStorage.setItem(HIGHLIGHT_STORAGE_KEY, JSON.stringify(highlights));
-    console.log(`Saved ${highlights.length} highlights to localStorage`);
-  } catch (err) {
-    console.error('Failed to save local highlights:', err);
-  }
-}
-
-// Queue a highlight for sync when online
-function queueForSync(record, action = 'save') {
-  try {
-    const queue = JSON.parse(localStorage.getItem(HIGHLIGHT_SYNC_QUEUE_KEY) || '[]');
-
-    // Avoid duplicate queue entries
-    const exists = queue.some(q =>
-      q.action === action &&
-      q.id === record.id &&
-      (action === 'delete' ? q.page_id === (record.page_id || PAGE_ID) : true)
-    );
-    if (exists) return;
-
-    queue.push({
-      ...record,
-      action,
-      timestamp: Date.now(),
-      page_id: record.page_id || PAGE_ID
-    });
-    localStorage.setItem(HIGHLIGHT_SYNC_QUEUE_KEY, JSON.stringify(queue));
-    console.log(`Queued ${action} for sync:`, record.id);
-  } catch (err) {
-    console.error('Failed to queue sync:', err);
-  }
-}
-
-// Process sync queue
-// ---------------------------------------------------------------
-// 2. Sync queue – also clean tombstones after delete
-// ---------------------------------------------------------------
-// ============================================================================
-// 1. SAFE SYNC QUEUE PROCESSING (Only one tab at a time)
-// ============================================================================
-let isSyncing = false;
-let syncTimeout = null;
-
-async function processSyncQueue() {
-  if (!navigator.onLine || isSyncing) return;
-  isSyncing = true;
-
-  const queueKey = HIGHLIGHT_SYNC_QUEUE_KEY;
-  let queue = JSON.parse(localStorage.getItem(queueKey) || '[]');
-  if (!queue.length) {
-    isSyncing = false;
-    return;
-  }
-
-  console.log(`Syncing ${queue.length} queued actions…`);
-  const stillQueued = [];
-
-  for (const item of queue) {
-    try {
-      if (item.action === 'save') {
-        await saveHighlightToServer(item);
-      } else if (item.action === 'delete') {
-        const params = new URLSearchParams({
-          action: 'delete',
-          id: item.id,
-          page_id: item.page_id || PAGE_ID
-        });
-        await fetch(`${SCRIPT_URL}?${params.toString()}`);
-
-        // Remove tombstone
-        const local = loadHighlightsFromLocal();
-        const cleaned = local.filter(h => h.id !== item.id);
-        saveHighlightsToLocal(cleaned);
-      }
-      // SUCCESS → do NOT requeue
-    } catch (e) {
-      console.error('Sync failed, keeping in queue:', e);
-      stillQueued.push(item);
-    }
-  }
-
-  // Only write back failed items
-  localStorage.setItem(queueKey, JSON.stringify(stillQueued));
-  console.log(`Sync complete. ${stillQueued.length} left in queue.`);
-
-  isSyncing = false;
-
-  // If more items were added during sync, retry once
-  if (stillQueued.length > 0) {
-    clearTimeout(syncTimeout);
-    syncTimeout = setTimeout(processSyncQueue, 5000);
-  }
-}
-
-// ============================================================================
-// 2. REPLACE setInterval with storage event listener (cross-tab safe)
-// ============================================================================
-// Remove the old setInterval completely
-// window.addEventListener('online', processSyncQueue);
-
-// NEW: Only run sync when queue changes OR online
-window.addEventListener('storage', (e) => {
-  if (e.key === HIGHLIGHT_SYNC_QUEUE_KEY && navigator.onLine) {
-    clearTimeout(syncTimeout);
-    syncTimeout = setTimeout(processSyncQueue, 1000);
-  }
-});
-
-// Also run once on load/online
-window.addEventListener('online', () => {
-  clearTimeout(syncTimeout);
-  syncTimeout = setTimeout(processSyncQueue, 1000);
-});
-
-// Run immediately if online and queue exists
-if (navigator.onLine) {
-  setTimeout(processSyncQueue, 1000);
-}
-
-// Start sync on online
-window.addEventListener('online', () => {
-  console.log('Internet connected — syncing highlights...');
-  processSyncQueue();
-});
-
-// Periodic sync (every 30s when online)
-setInterval(() => {
-  if (navigator.onLine) processSyncQueue();
-}, 5000);
-
-// ============================================================================
-// HIGHLIGHT SYSTEM - Helper Functions
-// ============================================================================
-function escapeRegex(s) { 
-  return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); 
-}
-
-function findNodeAtCharIndex(root, globalIndex) {
-  console.log(`  🔍 Finding node at character index: ${globalIndex}`);
-  
-  // First try to find in .line-content spans
-  const lineContents = document.querySelectorAll('.line-content');
-  let charCount = 0;
-  
-  for (const lineContent of lineContents) {
-    const walker = document.createTreeWalker(lineContent, NodeFilter.SHOW_TEXT, null, false);
-    let node;
-    while (walker.nextNode()) {
-      node = walker.currentNode;
-      const len = node.textContent.length;
-      if (globalIndex <= charCount + len - 1) {
-        const offset = globalIndex - charCount;
-        console.log(`    ✓ Found in .line-content at offset ${offset} in:`, node.textContent.substring(0, 50) + '...');
-        return { node, offset };
-      }
-      charCount += len;
-    }
-  }
-  
-  // Fallback to searching entire document
-  console.log('  🔄 Not found in .line-content, searching entire body...');
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
-  let node;
-  let count = 0;
-  while (walker.nextNode()) {
-    node = walker.currentNode;
-    const len = node.textContent.length;
-    if (globalIndex <= count + len - 1) {
-      console.log(`    ✓ Found at count ${count}, offset ${globalIndex - count} in:`, node.textContent.substring(0, 50) + '...');
-      return { node, offset: globalIndex - count };
-    }
-    count += len;
-  }
-  console.error(`    ❌ Character index ${globalIndex} exceeds total text length ${count}`);
-  return null;
-}
-
-function findContextIndex(pre, text, post) {
-  const bodyText = document.body.innerText.replace(/\s+/g, ' ');
-  const preNorm = pre ? pre.replace(/\s+/g, ' ').trim() : '';
-  const postNorm = post ? post.replace(/\s+/g, ' ').trim() : '';
-  const target = text.replace(/\s+/g, ' ').trim();
-
-  let combined = preNorm + target + postNorm;
-  let idx = bodyText.indexOf(combined);
-  if (idx !== -1) return idx + preNorm.length;
-
-  idx = bodyText.indexOf(target);
-  return idx !== -1 ? idx : -1;
-}
-
-function createRangeForContext(startGlobalIndex, textLength) {
-  console.log(`🎯 Creating range: startIndex=${startGlobalIndex}, length=${textLength}`);
-  
-  const startInfo = findNodeAtCharIndex(document.body, startGlobalIndex);
-  if (!startInfo) {
-    console.error('❌ Could not find start node at index:', startGlobalIndex);
-    return null;
-  }
-  console.log('  ✓ Found start node:', startInfo.node.textContent.substring(0, 30) + '...', 'offset:', startInfo.offset);
-  
-  const endInfo = findNodeAtCharIndex(document.body, startGlobalIndex + textLength);
-  if (!endInfo) {
-    console.error('❌ Could not find end node at index:', startGlobalIndex + textLength);
-    return null;
-  }
-  console.log('  ✓ Found end node:', endInfo.node.textContent.substring(0, 30) + '...', 'offset:', endInfo.offset);
-
-  const range = document.createRange();
-  try {
-    range.setStart(startInfo.node, startInfo.offset);
-    range.setEnd(endInfo.node, endInfo.offset);
-    console.log('  ✓ Range created successfully');
-    return range;
-  } catch (err) {
-    console.error('❌ Failed to create range:', err);
-    return null;
-  }
-}
-
-function applyHighlightRange(range, id, color) {
-  // Remove any existing highlight with same ID
-  const existing = document.querySelector(`[data-id="${id}"]`);
-  if (existing) {
-    existing.outerHTML = existing.textContent; // unwrap
-  }
-
-  try {
-    const span = document.createElement('span');
-    span.className = 'user-highlight';
-    span.dataset.id = id;
-    span.style.background = color || '#ffff88';
-    range.surroundContents(span);
-    console.log('Highlight applied (surroundContents):', id);
-    return true;
-  } catch (err) {
-    // Fallback: extract + insert
-    try {
-      const span = document.createElement('span');
-      span.className = 'user-highlight';
-      span.dataset.id = id;
-      span.style.background = color || '#ffff88';
-      const contents = range.extractContents();
-      span.appendChild(contents);
-      range.insertNode(span);
-      console.log('Highlight applied (extract+insert):', id);
-      return true;
-    } catch (e) {
-      console.warn('Failed to apply highlight:', e);
-      return false;
-    }
-  }
-}
-
-// Store pending highlights that couldn't be applied yet
 let pendingHighlights = [];
 
-// ---------------------------------------------------------------
-// 3. Merge – ignore tombstones when building pendingHighlights
-// ---------------------------------------------------------------
+// Load highlights from server
 async function loadHighlights() {
-  // -------------------------------------------------
-  // 1. Load LOCAL (including tombstones) – instant
-  // -------------------------------------------------
-  const localAll = loadHighlightsFromLocal();
-  const localActive = localAll.filter(h => !h.deleted);   // <-- no deleted
-
-  pendingHighlights = localActive.map(h => ({
-    id: h.id,
-    pre: h.pre_text || '',
-    text: h.text || '',
-    post: h.post_text || '',
-    color: h.color || '#ffff88'
-  }));
-
-  console.log(`Applied ${pendingHighlights.length} local highlights`);
-  applyPendingHighlights();               // <-- **REMOVE THIS LINE**
-
-  // -------------------------------------------------
-  // 2. If we are OFFLINE → stop here
-  // -------------------------------------------------
-  if (!navigator.onLine) {
-    console.log('Offline – staying with local data');
-    return;
-  }
-
-  // -------------------------------------------------
-  // 3. ONLINE → fetch server, merge, **but DO NOT re-apply**
-  // -------------------------------------------------
   try {
     const res = await fetch(`${SCRIPT_URL}?page_id=${encodeURIComponent(PAGE_ID)}`);
-    const serverArr = await res.json();
-    if (!Array.isArray(serverArr)) throw new Error('Invalid server data');
+    if (!res.ok) throw new Error('Failed to fetch highlights');
+    
+    const highlights = await res.json();
+    if (!Array.isArray(highlights)) throw new Error('Invalid server data');
 
-    // Build a map of server records (skip any that are locally tombstoned)
-    const serverMap = new Map();
-    serverArr.forEach(h => {
-      if (!localAll.some(l => l.id === h.id && l.deleted)) {
-        serverMap.set(h.id, h);
-      }
-    });
+    pendingHighlights = highlights.map(h => ({
+      id: h.id,
+      pre: h.pre_text || '',
+      text: h.text || '',
+      post: h.post_text || '',
+      color: h.color || '#ffff88'
+    }));
 
-    // Merge: server wins, keep local *active* records that are missing on server
-    const merged = [...serverArr];
-    localActive.forEach(loc => {
-      if (!serverMap.has(loc.id)) {
-        merged.push(loc);
-        queueForSync(loc, 'save');          // upload offline-created
-      }
-    });
-
-    // Save merged **active** list (no tombstones)
-    saveHighlightsToLocal(merged);
-
-    // **DO NOT CALL applyPendingHighlights() again**
-    // The highlights are already in the DOM from the local pass.
-    console.log(`Server merge complete – ${merged.length} active highlights`);
+    console.log(`Loaded ${pendingHighlights.length} highlights from server`);
+    setTimeout(applyPendingHighlights, 400);
   } catch (err) {
-    console.error('Server load failed – keeping local data', err);
+    console.error('Failed to load highlights:', err);
   }
 }
 
+// Apply highlights to DOM
 function applyPendingHighlights() {
   if (pendingHighlights.length === 0) return;
 
@@ -369,16 +53,13 @@ function applyPendingHighlights() {
   const stillPending = [];
   const notFound = [];
 
-  const REPORT_GROUP_ID = `MISSING_HIGHLIGHTS_${PAGE_ID}`; // Unique per page
-
   for (const h of pendingHighlights) {
-    if (!h.text?.trim()) {
-      console.warn('Skipping highlight with no text');
-      applied.push(h);
-      continue;
+    if (!h.text?.trim()) { 
+      applied.push(h); 
+      continue; 
     }
 
-    const pre = (h.pre || '').replace(/\s+/g, ' ').trim();
+    const pre  = (h.pre  || '').replace(/\s+/g, ' ').trim();
     const text = h.text.replace(/\s+/g, ' ').trim();
     const post = (h.post || '').replace(/\s+/g, ' ').trim();
 
@@ -388,8 +69,8 @@ function applyPendingHighlights() {
     let foundElement = null;
     let highlightStartIndex = -1;
 
-    const lineContents = document.querySelectorAll('.line-content');
-    for (const el of lineContents) {
+    // Search inside every .line-content
+    for (const el of document.querySelectorAll('.line-content')) {
       const lineText = el.textContent.replace(/\s+/g, ' ').trim();
 
       let idx = lineText.indexOf(fullContext);
@@ -408,19 +89,12 @@ function applyPendingHighlights() {
     }
 
     if (!foundElement) {
-      notFound.push({
-        id: h.id,
-        text: h.text,
-        pre: h.pre || '(none)',
-        post: h.post || '(none)',
-        full: fullContext || '(empty)',
-        page: PAGE_ID
-      });
+      notFound.push({ id: h.id, text: h.text, pre: h.pre, post: h.post, full: fullContext });
       stillPending.push(h);
       continue;
     }
 
-    const success = highlightTextInElementPrecise(
+    const ok = highlightTextInElementPrecise(
       foundElement,
       text,
       highlightStartIndex,
@@ -428,49 +102,43 @@ function applyPendingHighlights() {
       h.color
     );
 
-    if (success) {
-      applied.push(h);
-    } else {
-      stillPending.push(h);
-    }
+    if (ok) applied.push(h);
+    else stillPending.push(h);
   }
 
   pendingHighlights = stillPending;
 
-  // === CLEAN, PERSISTENT, UPDATING DEBUG REPORT ===
-  // Collapse old group if exists
-  if (window[REPORT_GROUP_ID]) {
-    console.groupEnd();
+  // Retry pending highlights (for lazy-loaded sections)
+  if (stillPending.length) {
+    console.log(`${stillPending.length} still pending → retry in 2s`);
+    setTimeout(applyPendingHighlights, 2000);
   }
 
-  // Start new group
+  // Console report
+  const REPORT_GROUP_ID = `MISSING_HIGHLIGHTS_${PAGE_ID}`;
+  if (window[REPORT_GROUP_ID]) console.groupEnd();
   window[REPORT_GROUP_ID] = true;
-
-  const shouldCollapse = notFound.length > 0;
-  const groupFn = shouldCollapse ? console.groupCollapsed : console.group;
-
-  groupFn.call(console, `%c Highlights: ${applied.length} applied | ${stillPending.length} pending | ${notFound.length} NOT FOUND`,
-    `background: ${notFound.length > 0 ? '#ffebee' : '#e8f5e9'}; ` +
-    `color: ${notFound.length > 0 ? '#c62828' : '#2e7d32'}; ` +
-    `padding: 4px 8px; border-radius: 4px; font-weight: bold;`
+  const groupFn = notFound.length ? console.groupCollapsed : console.group;
+  groupFn.call(console,
+    `%c Highlights: ${applied.length} applied | ${stillPending.length} pending | ${notFound.length} NOT FOUND`,
+    `background:${notFound.length ? '#ffebee' : '#e8f5e9'};color:${notFound.length ? '#c62828' : '#2e7d32'};padding:4px 8px;border-radius:4px;font-weight:bold;`
   );
-
-  if (notFound.length > 0) {
-    notFound.forEach(item => {
-      console.log(`%cID: %c${item.id}`, 'font-weight: bold;', 'color: #666;');
-      console.log(`   %cText: %c"${item.text}"`, 'color: #1976d2;', 'font-style: italic;');
-      console.log(`   %cPre:  %c"${item.pre}"`, 'color: #7b1fa2;', '');
-      console.log(`   %cPost: %c"${item.post}"`, 'color: #7b1fa2;', '');
-      console.log(`   %cFull: %c"${item.full}"`, 'color: #388e3c;', 'font-family: monospace;');
+  if (notFound.length) {
+    notFound.forEach(i => {
+      console.log(`%cID: %c${i.id}`, 'font-weight:bold;', 'color:#666;');
+      console.log(`   %cText: %c"${i.text}"`, 'color:#1976d2;', 'font-style:italic;');
+      console.log(`   %cPre:  %c"${i.pre}"`, 'color:#7b1fa2;', '');
+      console.log(`   %cPost: %c"${i.post}"`, 'color:#7b1fa2;', '');
+      console.log(`   %cFull: %c"${i.full}"`, 'color:#388e3c;', 'font-family:monospace;');
       console.log('---');
     });
   } else {
-    console.log(`%c All highlights applied successfully!`, 'color: #2e7d32; font-weight: bold;');
+    console.log('%cAll highlights applied!', 'color:#2e7d32;font-weight:bold;');
   }
-
   console.groupEnd();
 }
 
+// Highlight text in element with precise matching
 function highlightTextInElementPrecise(element, searchText, startCharIndex, id, color) {
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
   let currentIndex = 0;
@@ -484,27 +152,22 @@ function highlightTextInElementPrecise(element, searchText, startCharIndex, id, 
     const text = node.textContent;
 
     for (let i = 0; i < text.length; i++) {
-      // Mark start of highlight
       if (currentIndex === startCharIndex && !startNode) {
         startNode = node;
         startOffset = i;
       }
 
-      // Try to match target text
       if (startNode) {
         const nodeChar = text[i];
         const targetChar = target[charsMatched];
-
         const nodeIsSpace = /\s/.test(nodeChar);
         const targetIsSpace = targetChar === ' ';
 
-        // Allow any whitespace to match space
         if (nodeIsSpace && targetIsSpace) {
           charsMatched++;
         } else if (!nodeIsSpace && nodeChar === targetChar) {
           charsMatched++;
         } else {
-          // Mismatch: reset
           startNode = null;
           charsMatched = 0;
           currentIndex -= charsMatched;
@@ -554,155 +217,314 @@ function highlightTextInElementPrecise(element, searchText, startCharIndex, id, 
   }
 }
 
-function applyHighlightToElement(element, searchText, id, color) {
-  try {
-    const text = element.textContent;
-    const normalizedText = text.replace(/\s+/g, ' ');
-    const normalizedSearch = searchText.replace(/\s+/g, ' ').trim();
-
-    // Find the actual position accounting for whitespace normalization
-    let startPos = -1;
-    let realStartPos = 0;
-    let normalizedPos = 0;
-
-    for (let i = 0; i < text.length; i++) {
-      if (normalizedPos === normalizedText.indexOf(normalizedSearch)) {
-        startPos = i;
-        break;
-      }
-      if (!/\s/.test(text[i]) || (i > 0 && !/\s/.test(text[i - 1]))) {
-        normalizedPos++;
-      }
-    }
-
-    // Escape special characters for regex
-    const escapedSearch = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-    // Try to match with flexible whitespace
-    const flexiblePattern = escapedSearch.split(/\s+/).join('\\s+');
-    const regex = new RegExp(`(${flexiblePattern})`, 'i');
-
-    // Use innerHTML replacement for safety
-    if (regex.test(element.textContent)) {
-      element.innerHTML = element.textContent.replace(
-        regex,
-        `<span class="user-highlight" data-id="${id}" style="background: ${color || '#ffff88'};">$1</span>`
-      );
-
-      console.log('✨ Highlight applied via innerHTML replacement');
-
-      // Verify existence
-      setTimeout(() => {
-        const check = document.querySelector(`[data-id="${id}"]`);
-        if (check) {
-          console.log('✅ Highlight verified in DOM:', id);
-        } else {
-          console.error('❌ Highlight missing from DOM:', id);
-        }
-      }, 100);
-
-      return true;
-    }
-
-    console.log('⚠️ Could not match text for replacement');
-    return false;
-  } catch (err) {
-    console.error('❌ Error applying highlight:', err);
-    return false;
-  }
-}
-
+// Save highlight to server
 async function saveHighlightToServer(record) {
-  const localHighlights = loadHighlightsFromLocal();
-  const exists = localHighlights.some(h => h.id === record.id);
-
-  // Always ensure it's in local storage
-  if (!exists) {
-    localHighlights.push({ ...record, synced: false });
-    saveHighlightsToLocal(localHighlights);
-  }
-
-  if (!navigator.onLine) {
-    queueForSync(record, 'save');
-    return { success: true, offline: true };
-  }
-
-  // Skip if already synced
-  if (localHighlights.some(h => h.id === record.id && h.synced)) {
-    return { success: true, alreadySynced: true };
-  }
-
   try {
     const params = new URLSearchParams({
       action: 'save',
       data: JSON.stringify(record)
     });
     const response = await fetch(`${SCRIPT_URL}?${params.toString()}`);
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status} ${response.statusText}`);
+    }
+
     const result = await response.json();
-
-    // Mark as synced
-    const updated = localHighlights.map(h =>
-      h.id === record.id ? { ...h, synced: true } : h
-    );
-    saveHighlightsToLocal(updated);
-
+    console.log('Highlight saved to server:', record.id);
     return result;
   } catch (err) {
-    queueForSync(record, 'save');
+    console.error('Failed to save highlight:', err);
     throw err;
   }
 }
 
-// ---------------------------------------------------------------
-// 1. Delete – local tombstone + queue
-// ---------------------------------------------------------------
+// Delete highlight from server
 async function deleteHighlightOnServer(id) {
-  const local = loadHighlightsFromLocal();
-  const idx = local.findIndex(h => h.id === id);
-  if (idx === -1) {
-    console.warn('Highlight not found locally:', id);
-    return;
-  }
-
-  // tombstone
-  const tombstone = { ...local[idx], deleted: true };
-  local[idx] = tombstone;
-  saveHighlightsToLocal(local);
-
-  // remove from DOM
-  const el = document.querySelector(`[data-id="${id}"]`);
-  if (el) {
-    const parent = el.parentNode;
-    parent.replaceChild(document.createTextNode(el.textContent), el);
-    parent.normalize();
-  }
-
-  // ---- NEW: queue with BOTH id AND page_id ----
-  if (!navigator.onLine) {
-    queueForSync({ id, page_id: PAGE_ID }, 'delete');
-    console.log('Offline: deletion queued');
-    return;
-  }
-
   try {
-    const params = new URLSearchParams({ action: 'delete', id, page_id: PAGE_ID });
-    await fetch(`${SCRIPT_URL}?${params.toString()}`);
-    console.log('Deleted on server');
+    const params = new URLSearchParams({ 
+      action: 'delete', 
+      id, 
+      page_id: PAGE_ID 
+    });
+    const response = await fetch(`${SCRIPT_URL}?${params.toString()}`);
+    
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
 
-    // clean tombstone
-    const after = local.filter(h => h.id !== id);
-    saveHighlightsToLocal(after);
+    console.log('Deleted on server:', id);
+    
+    // Remove from DOM
+    const el = document.querySelector(`[data-id="${id}"]`);
+    if (el) {
+      const parent = el.parentNode;
+      parent.replaceChild(document.createTextNode(el.textContent), el);
+      parent.normalize();
+    }
   } catch (err) {
-    console.error('Server delete failed – will retry later', err);
-    queueForSync({ id, page_id: PAGE_ID }, 'delete');
+    console.error('Failed to delete highlight:', err);
+    throw err;
   }
 }
 
+// Get text context (4 words before/after)
+function getTextContext(range) {
+  const selectedText = range.toString().trim();
+  if (!selectedText) return { pre: '', post: '' };
+
+  const container = range.commonAncestorContainer.nodeType === Node.TEXT_NODE
+    ? range.commonAncestorContainer.parentElement
+    : range.commonAncestorContainer;
+
+  const lineContent = container.closest('.line-content');
+  if (!lineContent) return { pre: '', post: '' };
+
+  const fullText = lineContent.textContent;
+
+  // Compute exact character offset
+  let startIdx = 0;
+  const walker = document.createTreeWalker(lineContent, NodeFilter.SHOW_TEXT, null, false);
+  let node;
+  while ((node = walker.nextNode())) {
+    if (node === range.startContainer) {
+      startIdx += range.startOffset;
+      break;
+    }
+    startIdx += node.textContent.length;
+  }
+
+  const before = fullText.substring(0, startIdx);
+  const after  = fullText.substring(startIdx + selectedText.length);
+
+  const preWords  = before.trim().split(/\s+/).slice(-4);
+  const postWords = after.trim().split(/\s+/).slice(0, 4);
+
+  const pre  = preWords.length  ? preWords.join(' ')  : '';
+  const post = postWords.length ? postWords.join(' ') : '';
+
+  return { pre, post };
+}
+
 // ============================================================================
-// Performance optimizations - Caching and utilities
+// HIGHLIGHT SYSTEM - UI & Event Handlers
 // ============================================================================
-const DOM_CACHE = new Map();
-const COMPUTATION_CACHE = new Map();
+
+// Context menu setup
+const contextMenu = document.createElement('div');
+contextMenu.id = 'highlight-context-menu';
+contextMenu.innerHTML = `
+  <div class="menu-item" data-action="highlight">
+    <span>✨</span> Highlight Selection
+  </div>
+`;
+document.body.appendChild(contextMenu);
+
+let currentSelectionData = null;
+
+// Create highlight from selection
+async function createHighlight() {
+  if (!currentSelectionData) return;
+  
+  const { text, pre, post, startContainer, startOffset, endContainer, endOffset } = currentSelectionData;
+
+  const range = document.createRange();
+  try {
+    range.setStart(startContainer, startOffset);
+    range.setEnd(endContainer, endOffset);
+  } catch (err) {
+    console.error('Failed to recreate range:', err);
+    return;
+  }
+
+  const id = crypto.randomUUID ? crypto.randomUUID() : 'id-' + Date.now();
+  const color = '#ffff88';
+
+  // Apply highlight to DOM immediately
+  const span = document.createElement('span');
+  span.className = 'user-highlight';
+  span.dataset.id = id;
+  span.style.background = color;
+  
+  try {
+    range.surroundContents(span);
+  } catch (err) {
+    console.error('Failed to apply highlight:', err);
+    return;
+  }
+
+  // Save to server
+  const record = { 
+    id, 
+    page_id: PAGE_ID, 
+    pre_text: pre, 
+    text, 
+    post_text: post, 
+    color
+  };
+
+  try {
+    await saveHighlightToServer(record);
+    console.log('Highlight created and saved:', id);
+  } catch (err) {
+    // If save fails, remove from DOM
+    span.outerHTML = span.textContent;
+    alert('Failed to save highlight. Please try again.');
+  }
+
+  hideContextMenu();
+}
+
+function hideContextMenu() {
+  contextMenu.classList.remove('show');
+  setTimeout(() => currentSelectionData = null, 100);
+}
+
+// Mouse selection handler
+document.addEventListener('mouseup', (e) => {
+  const sel = window.getSelection();
+  
+  if (e.target.classList && e.target.classList.contains('user-highlight')) {
+    hideContextMenu();
+    return;
+  }
+  
+  if (!sel || sel.isCollapsed) {
+    hideContextMenu();
+    return;
+  }
+
+  const text = sel.toString().trim();
+  if (!text) {
+    hideContextMenu();
+    return;
+  }
+
+  const range = sel.getRangeAt(0);
+  const context = getTextContext(range);
+
+  currentSelectionData = {
+    text: text,
+    pre: context.pre,
+    post: context.post,
+    startContainer: range.startContainer,
+    startOffset: range.startOffset,
+    endContainer: range.endContainer,
+    endOffset: range.endOffset
+  };
+
+  console.log('Selection context:', {
+    text: text.substring(0, 50) + '...',
+    pre: context.pre,
+    post: context.post
+  });
+
+  // Position menu
+  const menuWidth = 180;
+  const menuHeight = 50;
+  let left = e.pageX;
+  let top = e.pageY;
+  
+  if (left + menuWidth > window.innerWidth + window.scrollX) {
+    left = window.innerWidth + window.scrollX - menuWidth - 10;
+  }
+  if (top + menuHeight > window.innerHeight + window.scrollY) {
+    top = e.pageY - menuHeight - 10;
+  }
+
+  contextMenu.style.left = left + 'px';
+  contextMenu.style.top = top + 'px';
+  contextMenu.classList.add('show');
+});
+
+// Hide menu on click outside
+document.addEventListener('mousedown', (e) => {
+  if (!contextMenu.contains(e.target)) hideContextMenu();
+});
+
+// Menu item click handler
+contextMenu.addEventListener('click', async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  const menuItem = e.target.closest('.menu-item');
+  if (!menuItem) return;
+
+  if (menuItem.dataset.action === 'highlight' && currentSelectionData) {
+    await createHighlight();
+  }
+  
+  hideContextMenu();
+});
+
+// Delete highlight on click
+document.addEventListener('click', async (e) => {
+  const el = e.target;
+  if (!el.classList || !el.classList.contains('user-highlight')) return;
+  
+  const id = el.dataset.id;
+  if (!id) return;
+  
+  if (!confirm('Remove this highlight?')) return;
+
+  try {
+    await deleteHighlightOnServer(id);
+  } catch (err) {
+    alert('Failed to delete highlight. Please try again.');
+  }
+});
+
+// Add styles
+const highlightStyles = document.createElement('style');
+highlightStyles.textContent = `
+  .user-highlight { 
+    cursor: pointer; 
+    background: #ffff88; 
+  }
+  .user-highlight:hover { 
+    filter: brightness(0.95); 
+  }
+
+  #highlight-context-menu {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    padding: 4px 0;
+    z-index: 10000;
+    display: none;
+    min-width: 180px;
+  }
+
+  #highlight-context-menu.show {
+    display: block;
+  }
+
+  #highlight-context-menu .menu-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #333;
+    user-select: none;
+  }
+
+  #highlight-context-menu .menu-item:hover {
+    background: #f0f0f0;
+  }
+
+  #highlight-context-menu .menu-item span {
+    font-size: 16px;
+  }
+`;
+document.head.appendChild(highlightStyles);
+
+// ============================================================================
+// REST OF YOUR EXISTING CODE (Performance optimizations, scroll controls, etc.)
+// ============================================================================
+
 const REGEX_PATTERNS = {
   leadingSpaces: /^ */,
   marker: /^([-•\d+a-zA-Z]+[).\-:]?\s+)(.*)/,
@@ -713,6 +535,9 @@ const REGEX_PATTERNS = {
   colon: /:$/,
   tablePlaceholder: /__TABLE_PLACEHOLDER_\d+__/
 };
+
+const DOM_CACHE = new Map();
+const COMPUTATION_CACHE = new Map();
 
 function getCachedElement(selector) {
   if (!DOM_CACHE.has(selector)) {
@@ -760,7 +585,6 @@ function createSectionChecker() {
 
 const sectionChecker = createSectionChecker();
 
-// Improved Scroll Estimator - Optimized for intermittent tracking
 class ImprovedScrollEstimator {
   constructor() {
     this.dataPoints = [];
@@ -878,7 +702,6 @@ class ImprovedScrollEstimator {
 
 const estimator = new ImprovedScrollEstimator();
 
-// Create DOM elements
 const loading = document.createElement("div");
 loading.className = "loading-overlay";
 loading.innerHTML = `
@@ -916,7 +739,6 @@ scrollControlsDiv.innerHTML = `
   </div>
 `;
 
-// Add CSS styles for the inline progress display
 const scrollProgressStyles = document.createElement('style');
 scrollProgressStyles.textContent = `
   #scroll-controls {
@@ -1004,50 +826,6 @@ scrollProgressStyles.textContent = `
       padding: 2px 6px;
     }
   }
-
-  /* Highlight System Styles */
-  .user-highlight { 
-    cursor: pointer; 
-    background: #ffff88; 
-  }
-  .user-highlight:hover { 
-    filter: brightness(0.95); 
-  }
-
-  #highlight-context-menu {
-    position: absolute;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-    padding: 4px 0;
-    z-index: 10000;
-    display: none;
-    min-width: 180px;
-  }
-
-  #highlight-context-menu.show {
-    display: block;
-  }
-
-  #highlight-context-menu .menu-item {
-    padding: 8px 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 14px;
-    color: #333;
-    user-select: none;
-  }
-
-  #highlight-context-menu .menu-item:hover {
-    background: #f0f0f0;
-  }
-
-  #highlight-context-menu .menu-item span {
-    font-size: 16px;
-  }
 `;
 document.head.appendChild(scrollProgressStyles);
 
@@ -1055,21 +833,6 @@ document.body.prepend(scrollControlsDiv);
 document.body.prepend(controlsDiv);
 document.body.appendChild(loading);
 
-// ============================================================================
-// HIGHLIGHT SYSTEM - Context Menu Setup
-// ============================================================================
-const contextMenu = document.createElement('div');
-contextMenu.id = 'highlight-context-menu';
-contextMenu.innerHTML = `
-  <div class="menu-item" data-action="highlight">
-    <span>✨</span> Highlight Selection
-  </div>
-`;
-document.body.appendChild(contextMenu);
-
-let currentSelectionData = null;
-
-// Optimized variables
 let scrollSpeed = 8;
 let isScrolling = false;
 let isScrollingAllowedByUser = false;
@@ -1088,7 +851,6 @@ let isProcessingSection = false;
 let lastFrameTime = 0;
 let scrollTimeout;
 
-// Optimized smooth scroll with original comfortable timing
 function optimizedSmoothScroll(currentTime) {
   if (!isScrolling) {
     if (animationId) {
@@ -1158,7 +920,6 @@ function pauseAutoScrollTemporarily(ms = 2000) {
   }, ms);
 }
 
-// Optimized scroll handlers with throttling - fixed for iPad
 let isUserTouchScrolling = false;
 let lastScrollDirection = null;
 
@@ -1214,7 +975,6 @@ const debouncedUserScroll = debounce(() => {
   }
 }, 16);
 
-// Function to format time display
 function formatTime(ms) {
   const seconds = Math.round(ms / 1000);
   
@@ -1292,7 +1052,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 500);
 }, { once: true });
 
-// Optimized table processing
 function extractTablesAndContentOptimized(htmlString) {
   const tables = [];
   let tableIndex = 0;
@@ -1371,7 +1130,6 @@ function toggleFullScreenTable(tableContainer) {
   tableContainer.classList.toggle('fullscreen');
 }
 
-// Optimized line processing
 function optimizedProcessLine(line, index, lines) {
   const cacheKey = `${line}_${index}`;
   if (COMPUTATION_CACHE.has(cacheKey)) {
@@ -1417,7 +1175,6 @@ function optimizedProcessLine(line, index, lines) {
   return result;
 }
 
-// Optimized parent lines generation with caching
 const parentLinesCache = new Map();
 function generateParentLines(level, color = "#f4f6f8") {
   const cacheKey = `${level}_${color}`;
@@ -1440,7 +1197,6 @@ function generateParentLines(level, color = "#f4f6f8") {
   return result;
 }
 
-// Optimized section processing with hierarchical indent containers
 function processSection(section) {
   if (loadedSections.has(section.id)) return;
 
@@ -1527,15 +1283,11 @@ function processSection(section) {
   processAnswerBlocks(lineElements);
 
   loadedSections.add(section.id);
-  
-  // Try to apply pending highlights after section is loaded
-  console.log(`✨ Section ${section.id} loaded, trying to apply pending highlights...`);
-  setTimeout(() => {
-    applyPendingHighlights();
-  }, 100);
+
+  // Try to apply any highlights waiting for this section
+  setTimeout(applyPendingHighlights, 120);
 }
 
-// Optimized answer block processing
 function processAnswerBlocks(lineElements) {
   for (let i = 0; i < lineElements.length; i++) {
     const line = lineElements[i];
@@ -1626,60 +1378,6 @@ function createBlurredBlock(group) {
   wrapper.style.position = 'relative';
 }
 
-// ============================================================================
-// HIGHLIGHT SYSTEM - Event Handlers
-// ============================================================================
-async function createHighlight() {
-  if (!currentSelectionData) return;
-  const { text, pre, post, startContainer, startOffset, endContainer, endOffset } = currentSelectionData;
-
-  const range = document.createRange();
-  try {
-    range.setStart(startContainer, startOffset);
-    range.setEnd(endContainer, endOffset);
-  } catch {
-    const newRange = createRangeForContext(0, text.length);
-    if (!newRange) return;
-    range.setStart(newRange.startContainer, newRange.startOffset);
-    range.setEnd(newRange.endContainer, newRange.endOffset);
-  }
-
-  const id = crypto.randomUUID ? crypto.randomUUID() : 'id-' + Date.now();
-  const color = '#ffff88';
-
-  // APPLY HIGHLIGHT ONCE — IMMEDIATELY
-  const success = applyHighlightRange(range, id, color);
-  if (!success) return;
-
-  // SAVE LOCALLY ONLY (no await → no reload)
-  const record = { 
-    id, 
-    page_id: PAGE_ID, 
-    pre_text: pre, 
-    text, 
-    post_text: post, 
-    color,
-    synced: navigator.onLine
-  };
-
-  let local = loadHighlightsFromLocal();
-  if (!local.some(h => h.id === id)) {
-    local.push(record);
-    saveHighlightsToLocal(local);
-  }
-
-  queueForSync(record, 'save');
-  console.log('Highlight created locally:', id);
-
-  hideContextMenu();
-}
-
-function hideContextMenu() {
-  contextMenu.classList.remove('show');
-  setTimeout(() => currentSelectionData = null, 100);
-}
-
-// Event delegation for better performance
 function setupEventDelegation() {
   document.addEventListener('click', (e) => {
     if (e.target.closest('.blurred-block[data-optimized]')) {
@@ -1753,141 +1451,6 @@ function setupEventDelegation() {
   }, { passive: false });
 }
 
-// ============================================================================
-// HIGHLIGHT SYSTEM – Selection context (4 words before / 4 words after)
-// ============================================================================
-
-function getTextContext(range) {
-  const selectedText = range.toString().trim();
-  if (!selectedText) return { pre: '', post: '' };
-
-  // Find the .line-content that contains the whole selection
-  const container = range.commonAncestorContainer.nodeType === Node.TEXT_NODE
-    ? range.commonAncestorContainer.parentElement
-    : range.commonAncestorContainer;
-
-  const lineContent = container.closest('.line-content');
-  if (!lineContent) return { pre: '', post: '' };
-
-  const fullText = lineContent.textContent;
-
-  // ---- 1. Compute the **exact** character offset of the selection inside the line ----
-  let startIdx = 0;
-  const walker = document.createTreeWalker(lineContent, NodeFilter.SHOW_TEXT, null, false);
-  let node;
-  while ((node = walker.nextNode())) {
-    if (node === range.startContainer) {
-      startIdx += range.startOffset;
-      break;
-    }
-    startIdx += node.textContent.length;
-  }
-
-  // ---- 2. Split the text around the selection ----
-  const before = fullText.substring(0, startIdx);
-  const after  = fullText.substring(startIdx + selectedText.length);
-
-  // ---- 3. Take exactly 4 words before / 4 words after ----
-  const preWords  = before.trim().split(/\s+/).slice(-4);
-  const postWords = after.trim().split(/\s+/).slice(0, 4);
-
-  const pre  = preWords.length  ? preWords.join(' ')  : '';
-  const post = postWords.length ? postWords.join(' ') : '';
-
-  return { pre, post };
-}
-
-// ... (the rest of the code remains unchanged)
-
-document.addEventListener('mouseup', (e) => {
-  const sel = window.getSelection();
-  if (e.target.classList && e.target.classList.contains('user-highlight')) {
-    hideContextMenu();
-    return;
-  }
-  if (!sel || sel.isCollapsed) {
-    hideContextMenu();
-    return;
-  }
-
-  const text = sel.toString().trim();
-  if (!text) {
-    hideContextMenu();
-    return;
-  }
-
-  const range = sel.getRangeAt(0);
-  const context = getTextContext(range);
-
-  currentSelectionData = {
-    text: text,
-    pre: context.pre,
-    post: context.post,
-    firstIdx: 0, // Not used anymore
-    startContainer: range.startContainer,
-    startOffset: range.startOffset,
-    endContainer: range.endContainer,
-    endOffset: range.endOffset
-  };
-
-  console.log('Selection context:', {
-    text: text.substring(0, 50) + '...',
-    pre: context.pre,
-    post: context.post
-  });
-
-  // Position menu near mouse but ensure it's visible
-  const menuWidth = 180;
-  const menuHeight = 50;
-  let left = e.pageX;
-  let top = e.pageY;
-  
-  // Adjust if menu would go off screen
-  if (left + menuWidth > window.innerWidth + window.scrollX) {
-    left = window.innerWidth + window.scrollX - menuWidth - 10;
-  }
-  if (top + menuHeight > window.innerHeight + window.scrollY) {
-    top = e.pageY - menuHeight - 10;
-  }
-
-  contextMenu.style.left = left + 'px';
-  contextMenu.style.top = top + 'px';
-  contextMenu.classList.add('show');
-});
-
-document.addEventListener('mousedown', (e) => {
-  if (!contextMenu.contains(e.target)) hideContextMenu();
-});
-
-contextMenu.addEventListener('click', async (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  const menuItem = e.target.closest('.menu-item');
-  if (!menuItem) return;
-
-  if (menuItem.dataset.action === 'highlight' && currentSelectionData) {
-    await createHighlight();
-  }
-  
-  // Hide menu immediately after action
-  hideContextMenu();
-});
-
-// Delete highlight on click
-document.addEventListener('click', async (e) => {
-  const el = e.target;
-  if (!el.classList || !el.classList.contains('user-highlight')) return;
-  const id = el.dataset.id;
-  if (!id) return;
-  if (!confirm('Remove this highlight?')) return;
-
-  const parent = el.parentNode;
-  parent.replaceChild(document.createTextNode(el.textContent), el);
-  parent.normalize();
-  await deleteHighlightOnServer(id);
-});
-
-// Intersection Observer for efficient lazy loading
 const intersectionObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
@@ -2000,14 +1563,16 @@ document.addEventListener("DOMContentLoaded", () => {
       
       // Load highlights after DOM is ready
       setTimeout(() => {
-        console.log('⏰ Loading highlights after initial render...');
+        console.log('Loading highlights after DOM ready...');
         loadHighlights();
-      }, 500);
+      }, 600);
+
+      // Safety net: re-apply once everything is visible
+      setTimeout(applyPendingHighlights, 2500);
     });
   });
 });
 
-// Optimized section toggle creation
 function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
   const wrapper = document.createElement("div");
   wrapper.classList.add("switch-wrapper");
@@ -2039,7 +1604,7 @@ function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
     document.body.appendChild(switchLoading);
     switchLoading.offsetHeight;
     
-          checkbox.disabled = true;
+    checkbox.disabled = true;
     
     setTimeout(() => {
       const targetSection = document.getElementById(sectionId);
