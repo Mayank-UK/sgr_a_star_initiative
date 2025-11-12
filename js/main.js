@@ -1512,39 +1512,50 @@ function setupEventDelegation() {
 }
 
 // ============================================================================
-// HIGHLIGHT SYSTEM - Selection Event Handlers
+// HIGHLIGHT SYSTEM – Selection context (4 words before / 4 words after)
 // ============================================================================
-// Function to get actual text context from DOM nodes
-// Function to get actual text context from DOM nodes - store only 2 words before and after
+
 function getTextContext(range) {
   const selectedText = range.toString().trim();
   if (!selectedText) return { pre: '', post: '' };
 
-  let container = range.commonAncestorContainer;
-  if (container.nodeType === Node.TEXT_NODE) {
-    container = container.parentElement;
-  }
+  // Find the .line-content that contains the whole selection
+  const container = range.commonAncestorContainer.nodeType === Node.TEXT_NODE
+    ? range.commonAncestorContainer.parentElement
+    : range.commonAncestorContainer;
 
   const lineContent = container.closest('.line-content');
   if (!lineContent) return { pre: '', post: '' };
 
   const fullText = lineContent.textContent;
-  const startIdx = fullText.indexOf(selectedText);
-  if (startIdx === -1) return { pre: '', post: '' };
 
+  // ---- 1. Compute the **exact** character offset of the selection inside the line ----
+  let startIdx = 0;
+  const walker = document.createTreeWalker(lineContent, NodeFilter.SHOW_TEXT, null, false);
+  let node;
+  while ((node = walker.nextNode())) {
+    if (node === range.startContainer) {
+      startIdx += range.startOffset;
+      break;
+    }
+    startIdx += node.textContent.length;
+  }
+
+  // ---- 2. Split the text around the selection ----
   const before = fullText.substring(0, startIdx);
-  const after = fullText.substring(startIdx + selectedText.length);
+  const after  = fullText.substring(startIdx + selectedText.length);
 
-  // Get last 4 words before
-  const preWords = before.trim().split(/\s+/).slice(-4);
-  const pre = preWords.length > 0 ? preWords.join(' ') : '';
-
-  // Get first 4 words after
+  // ---- 3. Take exactly 4 words before / 4 words after ----
+  const preWords  = before.trim().split(/\s+/).slice(-4);
   const postWords = after.trim().split(/\s+/).slice(0, 4);
-  const post = postWords.length > 0 ? postWords.join(' ') : '';
+
+  const pre  = preWords.length  ? preWords.join(' ')  : '';
+  const post = postWords.length ? postWords.join(' ') : '';
 
   return { pre, post };
 }
+
+// ... (the rest of the code remains unchanged)
 
 document.addEventListener('mouseup', (e) => {
   const sel = window.getSelection();
