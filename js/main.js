@@ -10,8 +10,30 @@
 // ============================================================================
 // HIGHLIGHT SYSTEM - Configuration
 // ============================================================================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzFATm74VEhTNIEhJcaZ_IVSluOWpkMhyFn9VISyYxmdOBqEWZBfEJMzUmvQcOlNAvh/exec";
-const PAGE_ID = window.location.pathname.split('/').filter(Boolean).pop() || document.title.trim();
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyn1VQnj3cJkpXSW0uHVAaNGmaOXroWEcoz3u4Oq807O_RVQKwh6zVTMv3BIKONozr8/exec";
+// const PAGE_ID = window.location.pathname.split('/').filter(Boolean).pop() || document.title.trim();
+
+function getPageID() {
+  const pathname = window.location.pathname;
+  const parts = pathname.split('/').filter(Boolean);
+
+  // Get last part of the path (e.g., "ancient_india.html" or "index.html")
+  let lastPart = parts[parts.length - 1] || '';
+
+  // Remove .html extension if present
+  lastPart = lastPart.replace(/\.html?$/, '');
+
+  // If empty (like root "/") OR it's "index", always return "index"
+  if (!lastPart || lastPart.toLowerCase() === 'index') {
+    return 'index';
+  }
+
+  // Otherwise, return the page name
+  return lastPart;
+}
+
+const PAGE_ID = getPageID();
+console.log('PAGE_ID:', PAGE_ID);
 
 // ============================================================================
 // HIGHLIGHT SYSTEM - Simple Online-Only Implementation
