@@ -14,6 +14,161 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8ZPn5PiKa2NG1V4fmF
 const PAGE_ID = window.location.pathname.split('/').filter(Boolean).pop() || document.title.trim();
 
 // ============================================================================
+// OFFLINE HIGHLIGHT SYSTEM - Local Storage + Sync
+// ============================================================================
+
+const HIGHLIGHT_STORAGE_KEY = `highlights_${PAGE_ID}`;
+const HIGHLIGHT_SYNC_QUEUE_KEY = `highlight_sync_queue_${PAGE_ID}`;
+
+// Load highlights from localStorage (fallback if no internet)
+function loadHighlightsFromLocal() {
+  try {
+    const stored = localStorage.getItem(HIGHLIGHT_STORAGE_KEY);
+    if (!stored) return [];
+
+    const parsed = JSON.parse(stored);
+    console.log(`Loaded ${parsed.length} highlights from localStorage`);
+    return parsed;
+  } catch (err) {
+    console.error('Failed to load local highlights:', err);
+    return [];
+  }
+}
+
+// Save highlights to localStorage
+function saveHighlightsToLocal(highlights) {
+  try {
+    localStorage.setItem(HIGHLIGHT_STORAGE_KEY, JSON.stringify(highlights));
+    console.log(`Saved ${highlights.length} highlights to localStorage`);
+  } catch (err) {
+    console.error('Failed to save local highlights:', err);
+  }
+}
+
+// Queue a highlight for sync when online
+function queueForSync(record, action = 'save') {
+  try {
+    const queue = JSON.parse(localStorage.getItem(HIGHLIGHT_SYNC_QUEUE_KEY) || '[]');
+
+    // Avoid duplicate queue entries
+    const exists = queue.some(q =>
+      q.action === action &&
+      q.id === record.id &&
+      (action === 'delete' ? q.page_id === (record.page_id || PAGE_ID) : true)
+    );
+    if (exists) return;
+
+    queue.push({
+      ...record,
+      action,
+      timestamp: Date.now(),
+      page_id: record.page_id || PAGE_ID
+    });
+    localStorage.setItem(HIGHLIGHT_SYNC_QUEUE_KEY, JSON.stringify(queue));
+    console.log(`Queued ${action} for sync:`, record.id);
+  } catch (err) {
+    console.error('Failed to queue sync:', err);
+  }
+}
+
+// Process sync queue
+// ---------------------------------------------------------------
+// 2. Sync queue – also clean tombstones after delete
+// ---------------------------------------------------------------
+// ============================================================================
+// 1. SAFE SYNC QUEUE PROCESSING (Only one tab at a time)
+// ============================================================================
+let isSyncing = false;
+let syncTimeout = null;
+
+async function processSyncQueue() {
+  if (!navigator.onLine || isSyncing) return;
+  isSyncing = true;
+
+  const queueKey = HIGHLIGHT_SYNC_QUEUE_KEY;
+  let queue = JSON.parse(localStorage.getItem(queueKey) || '[]');
+  if (!queue.length) {
+    isSyncing = false;
+    return;
+  }
+
+  console.log(`Syncing ${queue.length} queued actions…`);
+  const stillQueued = [];
+
+  for (const item of queue) {
+    try {
+      if (item.action === 'save') {
+        await saveHighlightToServer(item);
+      } else if (item.action === 'delete') {
+        const params = new URLSearchParams({
+          action: 'delete',
+          id: item.id,
+          page_id: item.page_id || PAGE_ID
+        });
+        await fetch(`${SCRIPT_URL}?${params.toString()}`);
+
+        // Remove tombstone
+        const local = loadHighlightsFromLocal();
+        const cleaned = local.filter(h => h.id !== item.id);
+        saveHighlightsToLocal(cleaned);
+      }
+      // SUCCESS → do NOT requeue
+    } catch (e) {
+      console.error('Sync failed, keeping in queue:', e);
+      stillQueued.push(item);
+    }
+  }
+
+  // Only write back failed items
+  localStorage.setItem(queueKey, JSON.stringify(stillQueued));
+  console.log(`Sync complete. ${stillQueued.length} left in queue.`);
+
+  isSyncing = false;
+
+  // If more items were added during sync, retry once
+  if (stillQueued.length > 0) {
+    clearTimeout(syncTimeout);
+    syncTimeout = setTimeout(processSyncQueue, 5000);
+  }
+}
+
+// ============================================================================
+// 2. REPLACE setInterval with storage event listener (cross-tab safe)
+// ============================================================================
+// Remove the old setInterval completely
+// window.addEventListener('online', processSyncQueue);
+
+// NEW: Only run sync when queue changes OR online
+window.addEventListener('storage', (e) => {
+  if (e.key === HIGHLIGHT_SYNC_QUEUE_KEY && navigator.onLine) {
+    clearTimeout(syncTimeout);
+    syncTimeout = setTimeout(processSyncQueue, 1000);
+  }
+});
+
+// Also run once on load/online
+window.addEventListener('online', () => {
+  clearTimeout(syncTimeout);
+  syncTimeout = setTimeout(processSyncQueue, 1000);
+});
+
+// Run immediately if online and queue exists
+if (navigator.onLine) {
+  setTimeout(processSyncQueue, 1000);
+}
+
+// Start sync on online
+window.addEventListener('online', () => {
+  console.log('Internet connected — syncing highlights...');
+  processSyncQueue();
+});
+
+// Periodic sync (every 30s when online)
+setInterval(() => {
+  if (navigator.onLine) processSyncQueue();
+}, 5000);
+
+// ============================================================================
 // HIGHLIGHT SYSTEM - Helper Functions
 // ============================================================================
 function escapeRegex(s) { 
@@ -104,49 +259,34 @@ function createRangeForContext(startGlobalIndex, textLength) {
 }
 
 function applyHighlightRange(range, id, color) {
+  // Remove any existing highlight with same ID
+  const existing = document.querySelector(`[data-id="${id}"]`);
+  if (existing) {
+    existing.outerHTML = existing.textContent; // unwrap
+  }
+
   try {
     const span = document.createElement('span');
     span.className = 'user-highlight';
     span.dataset.id = id;
     span.style.background = color || '#ffff88';
     range.surroundContents(span);
-    console.log('✨ Highlight span created with ID:', id);
-    
-    // Verify it's in the DOM
-    setTimeout(() => {
-      const check = document.querySelector(`[data-id="${id}"]`);
-      if (check) {
-        console.log('✅ Highlight still in DOM after 100ms:', id);
-      } else {
-        console.error('❌ Highlight was REMOVED from DOM:', id);
-      }
-    }, 100);
-    
+    console.log('Highlight applied (surroundContents):', id);
     return true;
   } catch (err) {
+    // Fallback: extract + insert
     try {
       const span = document.createElement('span');
       span.className = 'user-highlight';
       span.dataset.id = id;
       span.style.background = color || '#ffff88';
-      const content = range.extractContents();
-      span.appendChild(content);
+      const contents = range.extractContents();
+      span.appendChild(contents);
       range.insertNode(span);
-      console.log('✨ Highlight span created (method 2) with ID:', id);
-      
-      // Verify it's in the DOM
-      setTimeout(() => {
-        const check = document.querySelector(`[data-id="${id}"]`);
-        if (check) {
-          console.log('✅ Highlight still in DOM after 100ms:', id);
-        } else {
-          console.error('❌ Highlight was REMOVED from DOM:', id);
-        }
-      }, 100);
-      
+      console.log('Highlight applied (extract+insert):', id);
       return true;
     } catch (e) {
-      console.warn('Highlight failed', e);
+      console.warn('Failed to apply highlight:', e);
       return false;
     }
   }
@@ -155,41 +295,68 @@ function applyHighlightRange(range, id, color) {
 // Store pending highlights that couldn't be applied yet
 let pendingHighlights = [];
 
+// ---------------------------------------------------------------
+// 3. Merge – ignore tombstones when building pendingHighlights
+// ---------------------------------------------------------------
 async function loadHighlights() {
-  try {
-    console.log('🔄 Loading highlights from server...');
-    const res = await fetch(`${SCRIPT_URL}?page_id=${encodeURIComponent(PAGE_ID)}`);
-    const arr = await res.json();
-    if (!Array.isArray(arr)) {
-      console.warn('Response is not an array:', arr);
-      return;
-    }
+  // -------------------------------------------------
+  // 1. Load LOCAL (including tombstones) – instant
+  // -------------------------------------------------
+  const localAll = loadHighlightsFromLocal();
+  const localActive = localAll.filter(h => !h.deleted);   // <-- no deleted
 
-    console.log(`📥 Loaded ${arr.length} highlights from server for page: ${PAGE_ID}`);
-    
-    // Store all highlights as pending
-    pendingHighlights = arr.map(h => {
-      console.log('  - Highlight:', {
-        id: h.id,
-        text: h.text ? h.text.substring(0, 50) + '...' : 'NO TEXT',
-        pre: h.pre_text ? h.pre_text.substring(Math.max(0, h.pre_text.length - 20)) : '',
-        post: h.post_text ? h.post_text.substring(0, 20) : ''
-      });
-      
-      return {
-        id: h.id,
-        pre: h.pre_text || '',
-        text: h.text || '',
-        post: h.post_text || '',
-        color: h.color || '#ffff88'
-      };
+  pendingHighlights = localActive.map(h => ({
+    id: h.id,
+    pre: h.pre_text || '',
+    text: h.text || '',
+    post: h.post_text || '',
+    color: h.color || '#ffff88'
+  }));
+
+  console.log(`Applied ${pendingHighlights.length} local highlights`);
+  applyPendingHighlights();               // <-- **REMOVE THIS LINE**
+
+  // -------------------------------------------------
+  // 2. If we are OFFLINE → stop here
+  // -------------------------------------------------
+  if (!navigator.onLine) {
+    console.log('Offline – staying with local data');
+    return;
+  }
+
+  // -------------------------------------------------
+  // 3. ONLINE → fetch server, merge, **but DO NOT re-apply**
+  // -------------------------------------------------
+  try {
+    const res = await fetch(`${SCRIPT_URL}?page_id=${encodeURIComponent(PAGE_ID)}`);
+    const serverArr = await res.json();
+    if (!Array.isArray(serverArr)) throw new Error('Invalid server data');
+
+    // Build a map of server records (skip any that are locally tombstoned)
+    const serverMap = new Map();
+    serverArr.forEach(h => {
+      if (!localAll.some(l => l.id === h.id && l.deleted)) {
+        serverMap.set(h.id, h);
+      }
     });
 
-    // Try to apply highlights immediately
-    console.log('🎯 Attempting initial highlight application...');
-    applyPendingHighlights();
+    // Merge: server wins, keep local *active* records that are missing on server
+    const merged = [...serverArr];
+    localActive.forEach(loc => {
+      if (!serverMap.has(loc.id)) {
+        merged.push(loc);
+        queueForSync(loc, 'save');          // upload offline-created
+      }
+    });
+
+    // Save merged **active** list (no tombstones)
+    saveHighlightsToLocal(merged);
+
+    // **DO NOT CALL applyPendingHighlights() again**
+    // The highlights are already in the DOM from the local pass.
+    console.log(`Server merge complete – ${merged.length} active highlights`);
   } catch (err) {
-    console.error('❌ loadHighlights error:', err);
+    console.error('Server load failed – keeping local data', err);
   }
 }
 
@@ -446,6 +613,25 @@ function applyHighlightToElement(element, searchText, id, color) {
 }
 
 async function saveHighlightToServer(record) {
+  const localHighlights = loadHighlightsFromLocal();
+  const exists = localHighlights.some(h => h.id === record.id);
+
+  // Always ensure it's in local storage
+  if (!exists) {
+    localHighlights.push({ ...record, synced: false });
+    saveHighlightsToLocal(localHighlights);
+  }
+
+  if (!navigator.onLine) {
+    queueForSync(record, 'save');
+    return { success: true, offline: true };
+  }
+
+  // Skip if already synced
+  if (localHighlights.some(h => h.id === record.id && h.synced)) {
+    return { success: true, alreadySynced: true };
+  }
+
   try {
     const params = new URLSearchParams({
       action: 'save',
@@ -453,22 +639,62 @@ async function saveHighlightToServer(record) {
     });
     const response = await fetch(`${SCRIPT_URL}?${params.toString()}`);
     const result = await response.json();
+
+    // Mark as synced
+    const updated = localHighlights.map(h =>
+      h.id === record.id ? { ...h, synced: true } : h
+    );
+    saveHighlightsToLocal(updated);
+
     return result;
   } catch (err) {
-    console.error('save highlight failed', err);
+    queueForSync(record, 'save');
     throw err;
   }
 }
 
+// ---------------------------------------------------------------
+// 1. Delete – local tombstone + queue
+// ---------------------------------------------------------------
 async function deleteHighlightOnServer(id) {
+  const local = loadHighlightsFromLocal();
+  const idx = local.findIndex(h => h.id === id);
+  if (idx === -1) {
+    console.warn('Highlight not found locally:', id);
+    return;
+  }
+
+  // tombstone
+  const tombstone = { ...local[idx], deleted: true };
+  local[idx] = tombstone;
+  saveHighlightsToLocal(local);
+
+  // remove from DOM
+  const el = document.querySelector(`[data-id="${id}"]`);
+  if (el) {
+    const parent = el.parentNode;
+    parent.replaceChild(document.createTextNode(el.textContent), el);
+    parent.normalize();
+  }
+
+  // ---- NEW: queue with BOTH id AND page_id ----
+  if (!navigator.onLine) {
+    queueForSync({ id, page_id: PAGE_ID }, 'delete');
+    console.log('Offline: deletion queued');
+    return;
+  }
+
   try {
-    const params = new URLSearchParams({
-      action: 'delete',
-      id: id
-    });
+    const params = new URLSearchParams({ action: 'delete', id, page_id: PAGE_ID });
     await fetch(`${SCRIPT_URL}?${params.toString()}`);
+    console.log('Deleted on server');
+
+    // clean tombstone
+    const after = local.filter(h => h.id !== id);
+    saveHighlightsToLocal(after);
   } catch (err) {
-    console.error('delete failed', err);
+    console.error('Server delete failed – will retry later', err);
+    queueForSync({ id, page_id: PAGE_ID }, 'delete');
   }
 }
 
@@ -1405,31 +1631,47 @@ function createBlurredBlock(group) {
 // ============================================================================
 async function createHighlight() {
   if (!currentSelectionData) return;
-  const { text, pre, post, firstIdx, startContainer, startOffset, endContainer, endOffset } = currentSelectionData;
-  const range = document.createRange();
+  const { text, pre, post, startContainer, startOffset, endContainer, endOffset } = currentSelectionData;
 
+  const range = document.createRange();
   try {
     range.setStart(startContainer, startOffset);
     range.setEnd(endContainer, endOffset);
   } catch {
-    const newRange = createRangeForContext(firstIdx, text.length);
+    const newRange = createRangeForContext(0, text.length);
     if (!newRange) return;
     range.setStart(newRange.startContainer, newRange.startOffset);
     range.setEnd(newRange.endContainer, newRange.endOffset);
   }
 
-  const id = (crypto.randomUUID ? crypto.randomUUID() : ('id-' + Date.now() + '-' + Math.random().toString(36).slice(2,8)));
+  const id = crypto.randomUUID ? crypto.randomUUID() : 'id-' + Date.now();
   const color = '#ffff88';
+
+  // APPLY HIGHLIGHT ONCE — IMMEDIATELY
   const success = applyHighlightRange(range, id, color);
   if (!success) return;
 
-  const record = { id, page_id: PAGE_ID, pre_text: pre, text, post_text: post, color };
-  try {
-    await saveHighlightToServer(record);
-    console.log('Highlight saved successfully!');
-  } catch (err) {
-    console.error('Failed to save highlight:', err);
+  // SAVE LOCALLY ONLY (no await → no reload)
+  const record = { 
+    id, 
+    page_id: PAGE_ID, 
+    pre_text: pre, 
+    text, 
+    post_text: post, 
+    color,
+    synced: navigator.onLine
+  };
+
+  let local = loadHighlightsFromLocal();
+  if (!local.some(h => h.id === id)) {
+    local.push(record);
+    saveHighlightsToLocal(local);
   }
+
+  queueForSync(record, 'save');
+  console.log('Highlight created locally:', id);
+
+  hideContextMenu();
 }
 
 function hideContextMenu() {
