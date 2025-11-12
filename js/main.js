@@ -7,7 +7,474 @@
   document.title = formattedTitle;
 })();
 
+// ============================================================================
+// HIGHLIGHT SYSTEM - Configuration
+// ============================================================================
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw8ZPn5PiKa2NG1V4fmFHXWD0twv5UfsWbD6q9fPcyhvunj1XDZHB9mfoXwVAMtQzVI/exec";
+const PAGE_ID = window.location.pathname.split('/').filter(Boolean).pop() || document.title.trim();
+
+// ============================================================================
+// HIGHLIGHT SYSTEM - Helper Functions
+// ============================================================================
+function escapeRegex(s) { 
+  return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'); 
+}
+
+function findNodeAtCharIndex(root, globalIndex) {
+  console.log(`  🔍 Finding node at character index: ${globalIndex}`);
+  
+  // First try to find in .line-content spans
+  const lineContents = document.querySelectorAll('.line-content');
+  let charCount = 0;
+  
+  for (const lineContent of lineContents) {
+    const walker = document.createTreeWalker(lineContent, NodeFilter.SHOW_TEXT, null, false);
+    let node;
+    while (walker.nextNode()) {
+      node = walker.currentNode;
+      const len = node.textContent.length;
+      if (globalIndex <= charCount + len - 1) {
+        const offset = globalIndex - charCount;
+        console.log(`    ✓ Found in .line-content at offset ${offset} in:`, node.textContent.substring(0, 50) + '...');
+        return { node, offset };
+      }
+      charCount += len;
+    }
+  }
+  
+  // Fallback to searching entire document
+  console.log('  🔄 Not found in .line-content, searching entire body...');
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null, false);
+  let node;
+  let count = 0;
+  while (walker.nextNode()) {
+    node = walker.currentNode;
+    const len = node.textContent.length;
+    if (globalIndex <= count + len - 1) {
+      console.log(`    ✓ Found at count ${count}, offset ${globalIndex - count} in:`, node.textContent.substring(0, 50) + '...');
+      return { node, offset: globalIndex - count };
+    }
+    count += len;
+  }
+  console.error(`    ❌ Character index ${globalIndex} exceeds total text length ${count}`);
+  return null;
+}
+
+function findContextIndex(pre, text, post) {
+  const bodyText = document.body.innerText.replace(/\s+/g, ' ');
+  const preNorm = pre ? pre.replace(/\s+/g, ' ').trim() : '';
+  const postNorm = post ? post.replace(/\s+/g, ' ').trim() : '';
+  const target = text.replace(/\s+/g, ' ').trim();
+
+  let combined = preNorm + target + postNorm;
+  let idx = bodyText.indexOf(combined);
+  if (idx !== -1) return idx + preNorm.length;
+
+  idx = bodyText.indexOf(target);
+  return idx !== -1 ? idx : -1;
+}
+
+function createRangeForContext(startGlobalIndex, textLength) {
+  console.log(`🎯 Creating range: startIndex=${startGlobalIndex}, length=${textLength}`);
+  
+  const startInfo = findNodeAtCharIndex(document.body, startGlobalIndex);
+  if (!startInfo) {
+    console.error('❌ Could not find start node at index:', startGlobalIndex);
+    return null;
+  }
+  console.log('  ✓ Found start node:', startInfo.node.textContent.substring(0, 30) + '...', 'offset:', startInfo.offset);
+  
+  const endInfo = findNodeAtCharIndex(document.body, startGlobalIndex + textLength);
+  if (!endInfo) {
+    console.error('❌ Could not find end node at index:', startGlobalIndex + textLength);
+    return null;
+  }
+  console.log('  ✓ Found end node:', endInfo.node.textContent.substring(0, 30) + '...', 'offset:', endInfo.offset);
+
+  const range = document.createRange();
+  try {
+    range.setStart(startInfo.node, startInfo.offset);
+    range.setEnd(endInfo.node, endInfo.offset);
+    console.log('  ✓ Range created successfully');
+    return range;
+  } catch (err) {
+    console.error('❌ Failed to create range:', err);
+    return null;
+  }
+}
+
+function applyHighlightRange(range, id, color) {
+  try {
+    const span = document.createElement('span');
+    span.className = 'user-highlight';
+    span.dataset.id = id;
+    span.style.background = color || '#ffff88';
+    range.surroundContents(span);
+    console.log('✨ Highlight span created with ID:', id);
+    
+    // Verify it's in the DOM
+    setTimeout(() => {
+      const check = document.querySelector(`[data-id="${id}"]`);
+      if (check) {
+        console.log('✅ Highlight still in DOM after 100ms:', id);
+      } else {
+        console.error('❌ Highlight was REMOVED from DOM:', id);
+      }
+    }, 100);
+    
+    return true;
+  } catch (err) {
+    try {
+      const span = document.createElement('span');
+      span.className = 'user-highlight';
+      span.dataset.id = id;
+      span.style.background = color || '#ffff88';
+      const content = range.extractContents();
+      span.appendChild(content);
+      range.insertNode(span);
+      console.log('✨ Highlight span created (method 2) with ID:', id);
+      
+      // Verify it's in the DOM
+      setTimeout(() => {
+        const check = document.querySelector(`[data-id="${id}"]`);
+        if (check) {
+          console.log('✅ Highlight still in DOM after 100ms:', id);
+        } else {
+          console.error('❌ Highlight was REMOVED from DOM:', id);
+        }
+      }, 100);
+      
+      return true;
+    } catch (e) {
+      console.warn('Highlight failed', e);
+      return false;
+    }
+  }
+}
+
+// Store pending highlights that couldn't be applied yet
+let pendingHighlights = [];
+
+async function loadHighlights() {
+  try {
+    console.log('🔄 Loading highlights from server...');
+    const res = await fetch(`${SCRIPT_URL}?page_id=${encodeURIComponent(PAGE_ID)}`);
+    const arr = await res.json();
+    if (!Array.isArray(arr)) {
+      console.warn('Response is not an array:', arr);
+      return;
+    }
+
+    console.log(`📥 Loaded ${arr.length} highlights from server for page: ${PAGE_ID}`);
+    
+    // Store all highlights as pending
+    pendingHighlights = arr.map(h => {
+      console.log('  - Highlight:', {
+        id: h.id,
+        text: h.text ? h.text.substring(0, 50) + '...' : 'NO TEXT',
+        pre: h.pre_text ? h.pre_text.substring(Math.max(0, h.pre_text.length - 20)) : '',
+        post: h.post_text ? h.post_text.substring(0, 20) : ''
+      });
+      
+      return {
+        id: h.id,
+        pre: h.pre_text || '',
+        text: h.text || '',
+        post: h.post_text || '',
+        color: h.color || '#ffff88'
+      };
+    });
+
+    // Try to apply highlights immediately
+    console.log('🎯 Attempting initial highlight application...');
+    applyPendingHighlights();
+  } catch (err) {
+    console.error('❌ loadHighlights error:', err);
+  }
+}
+
+function applyPendingHighlights() {
+  if (pendingHighlights.length === 0) return;
+
+  console.log(`Attempting to apply ${pendingHighlights.length} pending highlights...`);
+
+  const applied = [];
+  const stillPending = [];
+  const notFound = [];
+
+  const REPORT_GROUP_ID = `MISSING_HIGHLIGHTS_${PAGE_ID}`; // Unique per page
+
+  for (const h of pendingHighlights) {
+    if (!h.text?.trim()) {
+      console.warn('Skipping highlight with no text');
+      applied.push(h);
+      continue;
+    }
+
+    const pre = (h.pre || '').replace(/\s+/g, ' ').trim();
+    const text = h.text.replace(/\s+/g, ' ').trim();
+    const post = (h.post || '').replace(/\s+/g, ' ').trim();
+
+    const fullContext = [pre, text, post].filter(Boolean).join(' ');
+    const preTextCombo = [pre, text].filter(Boolean).join(' ');
+
+    let foundElement = null;
+    let highlightStartIndex = -1;
+
+    const lineContents = document.querySelectorAll('.line-content');
+    for (const el of lineContents) {
+      const lineText = el.textContent.replace(/\s+/g, ' ').trim();
+
+      let idx = lineText.indexOf(fullContext);
+      if (idx !== -1) {
+        foundElement = el;
+        highlightStartIndex = idx + pre.length + (pre ? 1 : 0);
+        break;
+      }
+
+      idx = lineText.indexOf(preTextCombo);
+      if (idx !== -1) {
+        foundElement = el;
+        highlightStartIndex = idx + pre.length + (pre ? 1 : 0);
+        break;
+      }
+    }
+
+    if (!foundElement) {
+      notFound.push({
+        id: h.id,
+        text: h.text,
+        pre: h.pre || '(none)',
+        post: h.post || '(none)',
+        full: fullContext || '(empty)',
+        page: PAGE_ID
+      });
+      stillPending.push(h);
+      continue;
+    }
+
+    const success = highlightTextInElementPrecise(
+      foundElement,
+      text,
+      highlightStartIndex,
+      h.id,
+      h.color
+    );
+
+    if (success) {
+      applied.push(h);
+    } else {
+      stillPending.push(h);
+    }
+  }
+
+  pendingHighlights = stillPending;
+
+  // === CLEAN, PERSISTENT, UPDATING DEBUG REPORT ===
+  // Collapse old group if exists
+  if (window[REPORT_GROUP_ID]) {
+    console.groupEnd();
+  }
+
+  // Start new group
+  window[REPORT_GROUP_ID] = true;
+
+  const shouldCollapse = notFound.length > 0;
+  const groupFn = shouldCollapse ? console.groupCollapsed : console.group;
+
+  groupFn.call(console, `%c Highlights: ${applied.length} applied | ${stillPending.length} pending | ${notFound.length} NOT FOUND`,
+    `background: ${notFound.length > 0 ? '#ffebee' : '#e8f5e9'}; ` +
+    `color: ${notFound.length > 0 ? '#c62828' : '#2e7d32'}; ` +
+    `padding: 4px 8px; border-radius: 4px; font-weight: bold;`
+  );
+
+  if (notFound.length > 0) {
+    notFound.forEach(item => {
+      console.log(`%cID: %c${item.id}`, 'font-weight: bold;', 'color: #666;');
+      console.log(`   %cText: %c"${item.text}"`, 'color: #1976d2;', 'font-style: italic;');
+      console.log(`   %cPre:  %c"${item.pre}"`, 'color: #7b1fa2;', '');
+      console.log(`   %cPost: %c"${item.post}"`, 'color: #7b1fa2;', '');
+      console.log(`   %cFull: %c"${item.full}"`, 'color: #388e3c;', 'font-family: monospace;');
+      console.log('---');
+    });
+  } else {
+    console.log(`%c All highlights applied successfully!`, 'color: #2e7d32; font-weight: bold;');
+  }
+
+  console.groupEnd();
+}
+
+function highlightTextInElementPrecise(element, searchText, startCharIndex, id, color) {
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+  let currentIndex = 0;
+  let startNode = null, startOffset = 0;
+  let endNode = null, endOffset = 0;
+  let charsMatched = 0;
+  const target = searchText.replace(/\s+/g, ' ').trim();
+
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    const text = node.textContent;
+
+    for (let i = 0; i < text.length; i++) {
+      // Mark start of highlight
+      if (currentIndex === startCharIndex && !startNode) {
+        startNode = node;
+        startOffset = i;
+      }
+
+      // Try to match target text
+      if (startNode) {
+        const nodeChar = text[i];
+        const targetChar = target[charsMatched];
+
+        const nodeIsSpace = /\s/.test(nodeChar);
+        const targetIsSpace = targetChar === ' ';
+
+        // Allow any whitespace to match space
+        if (nodeIsSpace && targetIsSpace) {
+          charsMatched++;
+        } else if (!nodeIsSpace && nodeChar === targetChar) {
+          charsMatched++;
+        } else {
+          // Mismatch: reset
+          startNode = null;
+          charsMatched = 0;
+          currentIndex -= charsMatched;
+          continue;
+        }
+
+        if (charsMatched === target.length) {
+          endNode = node;
+          endOffset = i + 1;
+          break;
+        }
+      }
+
+      currentIndex++;
+    }
+
+    if (endNode) break;
+  }
+
+  if (!startNode || !endNode) {
+    console.warn('Could not map highlight range in DOM tree');
+    return false;
+  }
+
+  const range = document.createRange();
+  try {
+    range.setStart(startNode, startOffset);
+    range.setEnd(endNode, endOffset);
+
+    // Remove duplicate if exists
+    const existing = document.querySelector(`[data-id="${id}"]`);
+    if (existing) {
+      existing.outerHTML = existing.textContent;
+    }
+
+    const span = document.createElement('span');
+    span.className = 'user-highlight';
+    span.dataset.id = id;
+    span.style.background = color || '#ffff88';
+    range.surroundContents(span);
+
+    console.log('Highlight applied via precise range');
+    return true;
+  } catch (err) {
+    console.error('surroundContents failed:', err);
+    return false;
+  }
+}
+
+function applyHighlightToElement(element, searchText, id, color) {
+  try {
+    const text = element.textContent;
+    const normalizedText = text.replace(/\s+/g, ' ');
+    const normalizedSearch = searchText.replace(/\s+/g, ' ').trim();
+
+    // Find the actual position accounting for whitespace normalization
+    let startPos = -1;
+    let realStartPos = 0;
+    let normalizedPos = 0;
+
+    for (let i = 0; i < text.length; i++) {
+      if (normalizedPos === normalizedText.indexOf(normalizedSearch)) {
+        startPos = i;
+        break;
+      }
+      if (!/\s/.test(text[i]) || (i > 0 && !/\s/.test(text[i - 1]))) {
+        normalizedPos++;
+      }
+    }
+
+    // Escape special characters for regex
+    const escapedSearch = searchText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    // Try to match with flexible whitespace
+    const flexiblePattern = escapedSearch.split(/\s+/).join('\\s+');
+    const regex = new RegExp(`(${flexiblePattern})`, 'i');
+
+    // Use innerHTML replacement for safety
+    if (regex.test(element.textContent)) {
+      element.innerHTML = element.textContent.replace(
+        regex,
+        `<span class="user-highlight" data-id="${id}" style="background: ${color || '#ffff88'};">$1</span>`
+      );
+
+      console.log('✨ Highlight applied via innerHTML replacement');
+
+      // Verify existence
+      setTimeout(() => {
+        const check = document.querySelector(`[data-id="${id}"]`);
+        if (check) {
+          console.log('✅ Highlight verified in DOM:', id);
+        } else {
+          console.error('❌ Highlight missing from DOM:', id);
+        }
+      }, 100);
+
+      return true;
+    }
+
+    console.log('⚠️ Could not match text for replacement');
+    return false;
+  } catch (err) {
+    console.error('❌ Error applying highlight:', err);
+    return false;
+  }
+}
+
+async function saveHighlightToServer(record) {
+  try {
+    const params = new URLSearchParams({
+      action: 'save',
+      data: JSON.stringify(record)
+    });
+    const response = await fetch(`${SCRIPT_URL}?${params.toString()}`);
+    const result = await response.json();
+    return result;
+  } catch (err) {
+    console.error('save highlight failed', err);
+    throw err;
+  }
+}
+
+async function deleteHighlightOnServer(id) {
+  try {
+    const params = new URLSearchParams({
+      action: 'delete',
+      id: id
+    });
+    await fetch(`${SCRIPT_URL}?${params.toString()}`);
+  } catch (err) {
+    console.error('delete failed', err);
+  }
+}
+
+// ============================================================================
 // Performance optimizations - Caching and utilities
+// ============================================================================
 const DOM_CACHE = new Map();
 const COMPUTATION_CACHE = new Map();
 const REGEX_PATTERNS = {
@@ -70,28 +537,25 @@ const sectionChecker = createSectionChecker();
 // Improved Scroll Estimator - Optimized for intermittent tracking
 class ImprovedScrollEstimator {
   constructor() {
-    this.dataPoints = []; // { time, scrollPos } - raw scroll data
+    this.dataPoints = [];
     this.windowStart = Date.now();
-    this.recordInterval = 500; // Record scroll every 500ms (more frequent for visible moments)
+    this.recordInterval = 500;
     this.lastRecordTime = Date.now();
     this.lastScrollPos = 0;
     
-    // Adaptive thresholds
-    this.minJitterThreshold = 3; // Only record if changed more than 3px
-    this.dataWindow = 300000; // Keep 5 minutes of data
-    this.minDataPoints = 3; // Only need 3 data points (1.5 seconds of actual scrolling)
-    this.readyTime = 3000; // Ready after just 3 seconds of gathered data
+    this.minJitterThreshold = 3;
+    this.dataWindow = 300000;
+    this.minDataPoints = 3;
+    this.readyTime = 3000;
   }
 
   recordScroll(currentPos, totalHeight) {
     const now = Date.now();
     
-    // Record at intervals
     if (now - this.lastRecordTime < this.recordInterval) {
       return;
     }
 
-    // Filter jitter - only record meaningful movement
     if (Math.abs(currentPos - this.lastScrollPos) < this.minJitterThreshold) {
       return;
     }
@@ -101,7 +565,6 @@ class ImprovedScrollEstimator {
       pos: currentPos
     });
 
-    // Keep only recent data (last 5 minutes)
     const cutoffTime = now - this.dataWindow;
     this.dataPoints = this.dataPoints.filter(dp => dp.time > cutoffTime);
 
@@ -118,13 +581,10 @@ class ImprovedScrollEstimator {
       return 0;
     }
 
-    // Need minimum data points to estimate
     if (this.dataPoints.length < this.minDataPoints) {
       return null;
     }
 
-    // Use recent data points for calculation
-    // Take data from last 30 seconds if available, otherwise use all data
     const now = Date.now();
     const recentCutoff = now - 30000;
     const recentPoints = this.dataPoints.filter(dp => dp.time > recentCutoff);
@@ -135,7 +595,6 @@ class ImprovedScrollEstimator {
       return null;
     }
 
-    // Calculate from oldest to newest for most stable estimate
     const oldestPoint = pointsToUse[0];
     const newestPoint = pointsToUse[pointsToUse.length - 1];
 
@@ -146,21 +605,18 @@ class ImprovedScrollEstimator {
       return null;
     }
 
-    // Calculate pixels per millisecond
     const pixelsPerMs = distanceCovered / timeElapsed;
 
     if (pixelsPerMs <= 0) {
       return null;
     }
 
-    // Calculate remaining distance
     const remainingDistance = totalHeight - currentPos;
     
     if (remainingDistance <= 0) {
       return 0;
     }
 
-    // Estimate time to completion
     const estimatedMs = remainingDistance / pixelsPerMs;
 
     return Math.max(0, Math.round(estimatedMs));
@@ -171,18 +627,15 @@ class ImprovedScrollEstimator {
     const timeSinceStart = now - this.windowStart;
     const dataPoints = this.dataPoints.length;
     
-    // Check if we have enough recent data
     const recentCutoff = now - 30000;
     const recentPoints = this.dataPoints.filter(dp => dp.time > recentCutoff);
 
-    // Ready quickly if we have good recent activity
     if (recentPoints.length >= this.minDataPoints && timeSinceStart > this.readyTime) {
       if (recentPoints.length < 5) return 0.6;
       if (recentPoints.length < 15) return 0.75;
       return 0.9;
     }
 
-    // Otherwise use historical data
     if (dataPoints < this.minDataPoints) return 0;
     if (dataPoints < 10) return 0.4;
     if (dataPoints < 30) return 0.65;
@@ -325,12 +778,70 @@ scrollProgressStyles.textContent = `
       padding: 2px 6px;
     }
   }
+
+  /* Highlight System Styles */
+  .user-highlight { 
+    cursor: pointer; 
+    background: #ffff88; 
+  }
+  .user-highlight:hover { 
+    filter: brightness(0.95); 
+  }
+
+  #highlight-context-menu {
+    position: absolute;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    padding: 4px 0;
+    z-index: 10000;
+    display: none;
+    min-width: 180px;
+  }
+
+  #highlight-context-menu.show {
+    display: block;
+  }
+
+  #highlight-context-menu .menu-item {
+    padding: 8px 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #333;
+    user-select: none;
+  }
+
+  #highlight-context-menu .menu-item:hover {
+    background: #f0f0f0;
+  }
+
+  #highlight-context-menu .menu-item span {
+    font-size: 16px;
+  }
 `;
 document.head.appendChild(scrollProgressStyles);
 
 document.body.prepend(scrollControlsDiv);
 document.body.prepend(controlsDiv);
 document.body.appendChild(loading);
+
+// ============================================================================
+// HIGHLIGHT SYSTEM - Context Menu Setup
+// ============================================================================
+const contextMenu = document.createElement('div');
+contextMenu.id = 'highlight-context-menu';
+contextMenu.innerHTML = `
+  <div class="menu-item" data-action="highlight">
+    <span>✨</span> Highlight Selection
+  </div>
+`;
+document.body.appendChild(contextMenu);
+
+let currentSelectionData = null;
 
 // Optimized variables
 let scrollSpeed = 8;
@@ -430,7 +941,6 @@ const throttledScrollDirection = throttle(() => {
   const goingUp = currentY < lastScrollY;
   
   if (scrollControls) {
-    // Always show on scroll up
     if (goingUp) {
       scrollControls.style.opacity = "1";
       scrollControls.style.pointerEvents = "auto";
@@ -438,23 +948,19 @@ const throttledScrollDirection = throttle(() => {
       lastScrollDirection = 'up';
       if (scrollTimeout) clearTimeout(scrollTimeout);
     } else {
-      // On scroll down, handle differently for touch vs non-touch
       lastScrollDirection = 'down';
       if ('ontouchstart' in window) {
-        // On touch devices, show immediately, then hide after delay
         scrollControls.style.opacity = "1";
         scrollControls.style.pointerEvents = "auto";
         
         if (scrollTimeout) clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
-          // Only hide if still scrolling down and no touch interaction
           if (lastScrollDirection === 'down' && !isUserTouchScrolling) {
             scrollControls.style.opacity = "0";
             scrollControls.style.pointerEvents = "none";
           }
         }, 3000);
       } else {
-        // On desktop, hide immediately on scroll down
         scrollControls.style.opacity = "0";
         scrollControls.style.pointerEvents = "none";
       }
@@ -503,7 +1009,6 @@ function updateScrollProgress() {
   const scrollTop = window.scrollY;
   const docHeight = document.documentElement.scrollHeight - window.innerHeight;
   
-  // Record scroll for estimation
   estimator.recordScroll(scrollTop, document.documentElement.scrollHeight);
   
   const scrollPercent = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
@@ -537,7 +1042,6 @@ function updateScrollProgress() {
         const timeStr = formatTime(etaMs);
         estimatedTimeEl.textContent = timeStr;
         
-        // Color code based on confidence
         if (confidence > 0.7) {
           estimatedTimeEl.style.background = '#fff3cd';
           estimatedTimeEl.style.color = '#856404';
@@ -550,7 +1054,6 @@ function updateScrollProgress() {
   }
 }
 
-// Add optimized scroll event listener for progress tracking
 const throttledProgressUpdate = throttle(updateScrollProgress, 100);
 window.addEventListener('scroll', throttledProgressUpdate, { passive: true });
 
@@ -720,7 +1223,7 @@ function processSection(section) {
   const lines = htmlWithPlaceholders.split("\n");
 
   const transformedLines = [];
-  const indentStack = []; // Track nested indent levels
+  const indentStack = [];
   
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index];
@@ -730,15 +1233,12 @@ function processSection(section) {
 
     const { indentLevel, cleanText } = lineData;
 
-    // Close containers for outdented levels
     while (indentStack.length > 0 && indentStack[indentStack.length - 1] >= indentLevel) {
-      transformedLines.push('</div>'); // Close indent container
+      transformedLines.push('</div>');
       indentStack.pop();
     }
 
-    // Open new container if we're indenting deeper
     if (indentStack.length === 0 || indentStack[indentStack.length - 1] < indentLevel) {
-      // Only add padding for the relative indent increase, not absolute
       const currentIndent = indentStack.length > 0 ? indentStack[indentStack.length - 1] : 0;
       const relativeIndent = (indentLevel - currentIndent) * 1;
       transformedLines.push(`<div class="indent-level-${indentLevel}" style="padding-left: ${relativeIndent}rem; border-left: 2px solid ${indentLevel % 2 === 0 ? '#f8f8f8ff' : '#f9f9f9ff'}">`);
@@ -747,7 +1247,7 @@ function processSection(section) {
 
     const paddingLeft = indentLevel * 1;
     const linePosition = `${paddingLeft + 0.2}rem`;
-    const customStyle = `padding-left: 0rem;`; // No padding needed, container handles it
+    const customStyle = `padding-left: 0rem;`;
 
     if (lineData.isTable) {
       transformedLines.push(`
@@ -789,7 +1289,6 @@ function processSection(section) {
     }
   }
 
-  // Close any remaining open containers
   while (indentStack.length > 0) {
     transformedLines.push('</div>');
     indentStack.pop();
@@ -802,6 +1301,12 @@ function processSection(section) {
   processAnswerBlocks(lineElements);
 
   loadedSections.add(section.id);
+  
+  // Try to apply pending highlights after section is loaded
+  console.log(`✨ Section ${section.id} loaded, trying to apply pending highlights...`);
+  setTimeout(() => {
+    applyPendingHighlights();
+  }, 100);
 }
 
 // Optimized answer block processing
@@ -848,19 +1353,15 @@ function createBlurredBlock(group) {
   wrapper.className = 'blurred-block';
   wrapper.dataset.optimized = 'true';
 
-  // Find the **deepest common indent container** among the group
   let commonIndentParent = group[0].parentElement;
   while (commonIndentParent && !commonIndentParent.classList.contains('indent-level-')) {
     commonIndentParent = commonIndentParent.parentElement;
   }
 
-  // If no indent-level found, use the direct parent
   const insertBeforeParent = commonIndentParent || group[0].parentElement;
 
-  // Insert wrapper at the correct position
   insertBeforeParent.insertBefore(wrapper, group[0]);
 
-  // We'll rebuild the indent structure inside the wrapper
   const indentRoot = document.createElement('div');
   indentRoot.style.paddingLeft = '0';
   indentRoot.style.borderLeft = 'none';
@@ -872,15 +1373,12 @@ function createBlurredBlock(group) {
     const level = parseInt(line.dataset.level || '0', 10);
     const baseLevel = parseInt(group[0].dataset.level || '0', 10);
 
-    // Calculate relative level from the first line in the group
     const relativeLevel = level - baseLevel;
 
-    // Close excess indent levels
     while (indentStack.length > relativeLevel) {
       currentContainer = indentStack.pop();
     }
 
-    // Open new indent levels if needed
     while (indentStack.length < relativeLevel) {
       const newIndent = document.createElement('div');
       newIndent.className = `indent-level-${baseLevel + indentStack.length + 1}`;
@@ -891,17 +1389,52 @@ function createBlurredBlock(group) {
       currentContainer = newIndent;
     }
 
-    // Append the line
     currentContainer.appendChild(line);
   });
 
   wrapper.appendChild(indentRoot);
 
-  // Optional: Add subtle visual cue for blurred block
   wrapper.style.margin = '0.75rem 0';
   wrapper.style.borderRadius = '6px';
   wrapper.style.overflow = 'hidden';
   wrapper.style.position = 'relative';
+}
+
+// ============================================================================
+// HIGHLIGHT SYSTEM - Event Handlers
+// ============================================================================
+async function createHighlight() {
+  if (!currentSelectionData) return;
+  const { text, pre, post, firstIdx, startContainer, startOffset, endContainer, endOffset } = currentSelectionData;
+  const range = document.createRange();
+
+  try {
+    range.setStart(startContainer, startOffset);
+    range.setEnd(endContainer, endOffset);
+  } catch {
+    const newRange = createRangeForContext(firstIdx, text.length);
+    if (!newRange) return;
+    range.setStart(newRange.startContainer, newRange.startOffset);
+    range.setEnd(newRange.endContainer, newRange.endOffset);
+  }
+
+  const id = (crypto.randomUUID ? crypto.randomUUID() : ('id-' + Date.now() + '-' + Math.random().toString(36).slice(2,8)));
+  const color = '#ffff88';
+  const success = applyHighlightRange(range, id, color);
+  if (!success) return;
+
+  const record = { id, page_id: PAGE_ID, pre_text: pre, text, post_text: post, color };
+  try {
+    await saveHighlightToServer(record);
+    console.log('Highlight saved successfully!');
+  } catch (err) {
+    console.error('Failed to save highlight:', err);
+  }
+}
+
+function hideContextMenu() {
+  contextMenu.classList.remove('show');
+  setTimeout(() => currentSelectionData = null, 100);
 }
 
 // Event delegation for better performance
@@ -936,7 +1469,6 @@ function setupEventDelegation() {
       hasScrolled = false;
     }
 
-    // Mark touch interaction for scroll panel
     isUserTouchScrolling = true;
     if (scrollTimeout) clearTimeout(scrollTimeout);
     scrollTimeout = setTimeout(() => {
@@ -975,10 +1507,132 @@ function setupEventDelegation() {
       }
     }
 
-    // Reset touch scrolling flag after touch ends
     isUserTouchScrolling = false;
   }, { passive: false });
 }
+
+// ============================================================================
+// HIGHLIGHT SYSTEM - Selection Event Handlers
+// ============================================================================
+// Function to get actual text context from DOM nodes
+// Function to get actual text context from DOM nodes - store only 2 words before and after
+function getTextContext(range) {
+  const selectedText = range.toString().trim();
+  if (!selectedText) return { pre: '', post: '' };
+
+  let container = range.commonAncestorContainer;
+  if (container.nodeType === Node.TEXT_NODE) {
+    container = container.parentElement;
+  }
+
+  const lineContent = container.closest('.line-content');
+  if (!lineContent) return { pre: '', post: '' };
+
+  const fullText = lineContent.textContent;
+  const startIdx = fullText.indexOf(selectedText);
+  if (startIdx === -1) return { pre: '', post: '' };
+
+  const before = fullText.substring(0, startIdx);
+  const after = fullText.substring(startIdx + selectedText.length);
+
+  // Get last 4 words before
+  const preWords = before.trim().split(/\s+/).slice(-4);
+  const pre = preWords.length > 0 ? preWords.join(' ') : '';
+
+  // Get first 4 words after
+  const postWords = after.trim().split(/\s+/).slice(0, 4);
+  const post = postWords.length > 0 ? postWords.join(' ') : '';
+
+  return { pre, post };
+}
+
+document.addEventListener('mouseup', (e) => {
+  const sel = window.getSelection();
+  if (e.target.classList && e.target.classList.contains('user-highlight')) {
+    hideContextMenu();
+    return;
+  }
+  if (!sel || sel.isCollapsed) {
+    hideContextMenu();
+    return;
+  }
+
+  const text = sel.toString().trim();
+  if (!text) {
+    hideContextMenu();
+    return;
+  }
+
+  const range = sel.getRangeAt(0);
+  const context = getTextContext(range);
+
+  currentSelectionData = {
+    text: text,
+    pre: context.pre,
+    post: context.post,
+    firstIdx: 0, // Not used anymore
+    startContainer: range.startContainer,
+    startOffset: range.startOffset,
+    endContainer: range.endContainer,
+    endOffset: range.endOffset
+  };
+
+  console.log('Selection context:', {
+    text: text.substring(0, 50) + '...',
+    pre: context.pre,
+    post: context.post
+  });
+
+  // Position menu near mouse but ensure it's visible
+  const menuWidth = 180;
+  const menuHeight = 50;
+  let left = e.pageX;
+  let top = e.pageY;
+  
+  // Adjust if menu would go off screen
+  if (left + menuWidth > window.innerWidth + window.scrollX) {
+    left = window.innerWidth + window.scrollX - menuWidth - 10;
+  }
+  if (top + menuHeight > window.innerHeight + window.scrollY) {
+    top = e.pageY - menuHeight - 10;
+  }
+
+  contextMenu.style.left = left + 'px';
+  contextMenu.style.top = top + 'px';
+  contextMenu.classList.add('show');
+});
+
+document.addEventListener('mousedown', (e) => {
+  if (!contextMenu.contains(e.target)) hideContextMenu();
+});
+
+contextMenu.addEventListener('click', async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  const menuItem = e.target.closest('.menu-item');
+  if (!menuItem) return;
+
+  if (menuItem.dataset.action === 'highlight' && currentSelectionData) {
+    await createHighlight();
+  }
+  
+  // Hide menu immediately after action
+  hideContextMenu();
+});
+
+// Delete highlight on click
+document.addEventListener('click', async (e) => {
+  const el = e.target;
+  if (!el.classList || !el.classList.contains('user-highlight')) return;
+  const id = el.dataset.id;
+  if (!id) return;
+  if (!confirm('Remove this highlight?')) return;
+
+  const parent = el.parentNode;
+  parent.replaceChild(document.createTextNode(el.textContent), el);
+  parent.normalize();
+  await deleteHighlightOnServer(id);
+});
 
 // Intersection Observer for efficient lazy loading
 const intersectionObserver = new IntersectionObserver((entries) => {
@@ -1090,6 +1744,12 @@ document.addEventListener("DOMContentLoaded", () => {
       setupNavigationWarning();
       
       updateScrollProgress();
+      
+      // Load highlights after DOM is ready
+      setTimeout(() => {
+        console.log('⏰ Loading highlights after initial render...');
+        loadHighlights();
+      }, 500);
     });
   });
 });
@@ -1126,7 +1786,7 @@ function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
     document.body.appendChild(switchLoading);
     switchLoading.offsetHeight;
     
-    checkbox.disabled = true;
+          checkbox.disabled = true;
     
     setTimeout(() => {
       const targetSection = document.getElementById(sectionId);
@@ -1148,6 +1808,9 @@ function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
           checkbox.disabled = false;
           isProcessingSection = false;
           updateScrollProgress();
+          
+          // Try applying highlights after section becomes visible
+          applyPendingHighlights();
         }, 300);
       } else {
         targetSection.style.transition = "opacity 0.2s ease-out";  
@@ -1671,4 +2334,3 @@ function setupNavigationWarning() {
     document.addEventListener('keydown', handleEscape);
   }
 }
-
