@@ -478,7 +478,6 @@ contextMenu.innerHTML = `
   <div class="menu-item" data-action="highlight">
     <span>✨</span> Highlight Selection
   </div>
-  <div class="menu-hint">Native menu still available above ↑</div>
 `;
 document.body.appendChild(contextMenu);
 
@@ -733,14 +732,6 @@ highlightStyles.textContent = `
     text-transform: uppercase;
     letter-spacing: 0.5px;
     border-bottom: 1px solid #eee;
-  }
-
-  .menu-hint {
-    padding: 4px 16px;
-    font-size: 11px;
-    color: #999;
-    text-align: center;
-    border-top: 1px solid #eee;
   }
 `;
 document.head.appendChild(highlightStyles);
@@ -1280,12 +1271,47 @@ function extractTablesAndContentOptimized(htmlString) {
   const tables = [];
   let tableIndex = 0;
   
-  const htmlWithPlaceholders = htmlString.replace(/<table[\s\S]*?<\/table>/gi, (match) => {
+  // Helper function to extract tables with proper nesting support
+  function extractTable(html, startPos) {
+    const openTag = '<table';
+    const closeTag = '</table>';
+    
+    let depth = 1;
+    let pos = startPos + openTag.length;
+    
+    while (pos < html.length && depth > 0) {
+      const nextOpen = html.indexOf(openTag, pos);
+      const nextClose = html.indexOf(closeTag, pos);
+      
+      if (nextClose === -1) break;
+      
+      if (nextOpen !== -1 && nextOpen < nextClose) {
+        depth++;
+        pos = nextOpen + openTag.length;
+      } else {
+        depth--;
+        pos = nextClose + closeTag.length;
+      }
+    }
+    
+    return pos;
+  }
+  
+  let result = htmlString;
+  let searchPos = 0;
+  
+  while (true) {
+    const tableStart = result.indexOf('<table', searchPos);
+    if (tableStart === -1) break;
+    
+    const tableEnd = extractTable(result, tableStart);
+    const tableHTML = result.substring(tableStart, tableEnd);
+    
     const placeholder = `__TABLE_PLACEHOLDER_${tableIndex++}__`;
     const wrapper = document.createElement('div');
     wrapper.className = 'table-container';
     wrapper.style.position = 'relative';
-    wrapper.innerHTML = match;
+    wrapper.innerHTML = tableHTML;
 
     const expandIcon = document.createElement('i');
     expandIcon.className = 'table-expand-icon';
@@ -1297,10 +1323,11 @@ function extractTablesAndContentOptimized(htmlString) {
       content: wrapper.outerHTML
     });
 
-    return placeholder;
-  });
+    result = result.substring(0, tableStart) + placeholder + result.substring(tableEnd);
+    searchPos = tableStart + placeholder.length;
+  }
 
-  return { htmlWithPlaceholders, tables };
+  return { htmlWithPlaceholders: result, tables };
 }
 
 function restoreTablesInContent(processedContent, tables) {
