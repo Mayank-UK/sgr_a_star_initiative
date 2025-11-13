@@ -1,3 +1,5 @@
+console.log("current js version: 1");
+
 (function setTitleFromFilename() {
   if (document.title && document.title.trim() !== "") return;
   const fileName = window.location.pathname.split("/").pop().split(".")[0];
@@ -11,26 +13,34 @@
 // HIGHLIGHT SYSTEM - Configuration
 // ============================================================================
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyn1VQnj3cJkpXSW0uHVAaNGmaOXroWEcoz3u4Oq807O_RVQKwh6zVTMv3BIKONozr8/exec";
-// const PAGE_ID = window.location.pathname.split('/').filter(Boolean).pop() || document.title.trim();
 
 function getPageID() {
-  const pathname = window.location.pathname;
+  const url = new URL(window.location.href);
+  let pathname = url.pathname.replace(/\/+/g, '/').replace(/\/$/, '');
   const parts = pathname.split('/').filter(Boolean);
 
-  // Get last part of the path (e.g., "ancient_india.html" or "index.html")
+  // Nothing in path → root → index
+  if (parts.length === 0) return 'index';
+
   let lastPart = parts[parts.length - 1] || '';
 
-  // Remove .html extension if present
-  lastPart = lastPart.replace(/\.html?$/, '');
+  // Remove .html or .htm if present
+  lastPart = lastPart.replace(/\.html?$/i, '');
 
-  // If empty (like root "/") OR it's "index", always return "index"
-  if (!lastPart || lastPart.toLowerCase() === 'index') {
-    return 'index';
-  }
+  // If last part is clearly "index" → index
+  if (lastPart.toLowerCase() === 'index') return 'index';
 
-  // Otherwise, return the page name
+  // ✅ Detect folder-based hosting cases like "/hosted/www.sgr_initiative.personal/"
+  // When there’s no .html, and this looks like a folder name (with dots), treat it as root
+  const isFolderRoot =
+    !/\.[a-z0-9]+$/i.test(url.pathname) && lastPart.includes('.');
+
+  if (isFolderRoot) return 'index';
+
+  // Otherwise, normal page name
   return lastPart;
 }
+
 
 const PAGE_ID = getPageID();
 console.log('PAGE_ID:', PAGE_ID);
@@ -65,7 +75,8 @@ async function loadHighlights() {
   }
 }
 
-// Apply highlights to DOM
+// Replace the entire applyPendingHighlights function with this:
+
 function applyPendingHighlights() {
   if (pendingHighlights.length === 0) return;
 
@@ -75,37 +86,50 @@ function applyPendingHighlights() {
   const stillPending = [];
   const notFound = [];
 
+  // Helper function to normalize quotes and whitespace
+  const normalize = (str) => {
+    return (str || '')
+      .replace(/[\u201C\u201D]/g, '"')  // Normalize curly double quotes to straight quotes
+      .replace(/[\u2018\u2019]/g, "'")  // Normalize curly single quotes/apostrophes
+      .replace(/\s+/g, ' ')             // Normalize whitespace
+      .trim();
+  };
+
   for (const h of pendingHighlights) {
     if (!h.text?.trim()) { 
       applied.push(h); 
       continue; 
     }
 
-    const pre  = (h.pre  || '').replace(/\s+/g, ' ').trim();
-    const text = h.text.replace(/\s+/g, ' ').trim();
-    const post = (h.post || '').replace(/\s+/g, ' ').trim();
+    const pre  = normalize(h.pre);
+    const text = normalize(h.text);
+    const post = normalize(h.post);
 
     const fullContext = [pre, text, post].filter(Boolean).join(' ');
     const preTextCombo = [pre, text].filter(Boolean).join(' ');
 
     let foundElement = null;
-    let highlightStartIndex = -1;
 
     // Search inside every .line-content
     for (const el of document.querySelectorAll('.line-content')) {
-      const lineText = el.textContent.replace(/\s+/g, ' ').trim();
+      const lineText = normalize(el.textContent);
 
       let idx = lineText.indexOf(fullContext);
       if (idx !== -1) {
         foundElement = el;
-        highlightStartIndex = idx + pre.length + (pre ? 1 : 0);
         break;
       }
 
       idx = lineText.indexOf(preTextCombo);
       if (idx !== -1) {
         foundElement = el;
-        highlightStartIndex = idx + pre.length + (pre ? 1 : 0);
+        break;
+      }
+      
+      // Try matching just the text if context fails
+      idx = lineText.indexOf(text);
+      if (idx !== -1) {
+        foundElement = el;
         break;
       }
     }
@@ -116,10 +140,10 @@ function applyPendingHighlights() {
       continue;
     }
 
-    const ok = highlightTextInElementPrecise(
+    // Use the new highlighting method that handles normalization internally
+    const ok = highlightTextInElementNormalized(
       foundElement,
       text,
-      highlightStartIndex,
       h.id,
       h.color
     );
@@ -160,13 +184,107 @@ function applyPendingHighlights() {
   console.groupEnd();
 }
 
-// Highlight text in element with precise matching
+// NEW function that handles normalization better
+function highlightTextInElementNormalized(element, searchText, id, color) {
+  // Normalize quote characters for comparison
+  const normalizeChar = (c) => {
+    if (c === '\u201C' || c === '\u201D' || c === '"') return '"';
+    if (c === '\u2018' || c === '\u2019' || c === "'") return "'";
+    return c;
+  };
+  
+  const normalizedSearch = searchText.replace(/\s+/g, ' ').trim();
+  
+  // Find the text using normalized comparison
+  const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+  const textNodes = [];
+  while (walker.nextNode()) {
+    textNodes.push(walker.currentNode);
+  }
+  
+  // Build normalized version of element text with mapping to original positions
+  let elementNormalized = '';
+  const positionMap = []; // Maps normalized index to {node, offset}
+  
+  for (const node of textNodes) {
+    const text = node.textContent;
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      const normalized = normalizeChar(char);
+      
+      if (/\s/.test(char)) {
+        if (elementNormalized.length === 0 || elementNormalized[elementNormalized.length - 1] !== ' ') {
+          elementNormalized += ' ';
+          positionMap.push({ node, offset: i });
+        }
+      } else {
+        elementNormalized += normalized;
+        positionMap.push({ node, offset: i });
+      }
+    }
+  }
+  
+  // Find the search text in normalized element text
+  const startIdx = elementNormalized.indexOf(normalizedSearch);
+  if (startIdx === -1) {
+    console.warn('Could not find text in element:', normalizedSearch);
+    return false;
+  }
+  
+  const endIdx = startIdx + normalizedSearch.length;
+  
+  // Map back to original DOM positions
+  const startPos = positionMap[startIdx];
+  const endPos = positionMap[endIdx - 1];
+  
+  if (!startPos || !endPos) {
+    console.warn('Could not map positions');
+    return false;
+  }
+  
+  const range = document.createRange();
+  try {
+    range.setStart(startPos.node, startPos.offset);
+    range.setEnd(endPos.node, endPos.offset + 1);
+
+    // Remove duplicate if exists
+    const existing = document.querySelector(`[data-id="${id}"]`);
+    if (existing) {
+      existing.outerHTML = existing.textContent;
+    }
+
+    const span = document.createElement('span');
+    span.className = 'user-highlight';
+    span.dataset.id = id;
+    span.style.background = color || '#ffff88';
+    range.surroundContents(span);
+
+    console.log('Highlight applied via normalized matching');
+    return true;
+  } catch (err) {
+    console.error('surroundContents failed:', err);
+    return false;
+  }
+}
+
+// Replace the entire highlightTextInElementPrecise function with this:
+
 function highlightTextInElementPrecise(element, searchText, startCharIndex, id, color) {
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
   let currentIndex = 0;
   let startNode = null, startOffset = 0;
   let endNode = null, endOffset = 0;
   let charsMatched = 0;
+  
+  // Normalize quote characters for comparison
+  const normalizeChar = (c) => {
+    // Handle curly double quotes: " (U+201C) and " (U+201D)
+    if (c === '\u201C' || c === '\u201D' || c === '"') return '"';
+    // Handle curly single quotes: ' (U+2018) and ' (U+2019)
+    if (c === '\u2018' || c === '\u2019' || c === "'") return "'";
+    return c;
+  };
+  
   const target = searchText.replace(/\s+/g, ' ').trim();
 
   while (walker.nextNode()) {
@@ -180,9 +298,9 @@ function highlightTextInElementPrecise(element, searchText, startCharIndex, id, 
       }
 
       if (startNode) {
-        const nodeChar = text[i];
-        const targetChar = target[charsMatched];
-        const nodeIsSpace = /\s/.test(nodeChar);
+        const nodeChar = normalizeChar(text[i]);
+        const targetChar = normalizeChar(target[charsMatched]);
+        const nodeIsSpace = /\s/.test(text[i]);
         const targetIsSpace = targetChar === ' ';
 
         if (nodeIsSpace && targetIsSpace) {
