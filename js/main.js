@@ -107,31 +107,52 @@ function applyPendingHighlights() {
 
     const fullContext = [pre, text, post].filter(Boolean).join(' ');
     const preTextCombo = [pre, text].filter(Boolean).join(' ');
+    const textPostCombo = [text, post].filter(Boolean).join(' ');
 
     let foundElement = null;
+    let bestMatch = null;
+    let bestScore = 0;
 
-    // Search inside every .line-content
+    // Search inside every .line-content and score matches
     for (const el of document.querySelectorAll('.line-content')) {
       const lineText = normalize(el.textContent);
 
-      let idx = lineText.indexOf(fullContext);
-      if (idx !== -1) {
+      // Strategy 1: Full context match (BEST - score 100)
+      if (fullContext && lineText.indexOf(fullContext) !== -1) {
         foundElement = el;
-        break;
+        bestScore = 100;
+        break; // Perfect match, stop searching
       }
 
-      idx = lineText.indexOf(preTextCombo);
-      if (idx !== -1) {
-        foundElement = el;
-        break;
+      // Strategy 2: Pre + Text match (score 80)
+      if (preTextCombo && lineText.indexOf(preTextCombo) !== -1) {
+        if (bestScore < 80) {
+          foundElement = el;
+          bestScore = 80;
+        }
       }
-      
-      // Try matching just the text if context fails
-      idx = lineText.indexOf(text);
-      if (idx !== -1) {
-        foundElement = el;
-        break;
+
+      // Strategy 3: Text + Post match (score 75)
+      if (textPostCombo && lineText.indexOf(textPostCombo) !== -1) {
+        if (bestScore < 75) {
+          foundElement = el;
+          bestScore = 75;
+        }
       }
+
+      // Strategy 4: Just text match (score 50 - LAST RESORT)
+      if (lineText.indexOf(text) !== -1) {
+        if (bestScore < 50) {
+          bestMatch = el;
+          // Don't set foundElement yet - keep looking for better matches
+        }
+      }
+    }
+
+    // If no context match found, use the first text-only match as last resort
+    if (!foundElement && bestMatch) {
+      foundElement = bestMatch;
+      console.warn(`⚠️ Using text-only match for: "${text}" (context not found)`);
     }
 
     if (!foundElement) {
@@ -457,6 +478,7 @@ contextMenu.innerHTML = `
   <div class="menu-item" data-action="highlight">
     <span>✨</span> Highlight Selection
   </div>
+  <div class="menu-hint">Native menu still available above ↑</div>
 `;
 document.body.appendChild(contextMenu);
 
@@ -520,8 +542,11 @@ function hideContextMenu() {
   setTimeout(() => currentSelectionData = null, 100);
 }
 
-// Mouse selection handler
-document.addEventListener('mouseup', (e) => {
+// Mouse and touch selection handler
+document.addEventListener('mouseup', handleSelectionEnd);
+document.addEventListener('touchend', handleSelectionEnd);
+
+function handleSelectionEnd(e) {
   const sel = window.getSelection();
   
   if (e.target.classList && e.target.classList.contains('user-highlight')) {
@@ -559,23 +584,50 @@ document.addEventListener('mouseup', (e) => {
     post: context.post
   });
 
+  // Get coordinates (works for both mouse and touch)
+  let clientX, clientY;
+  if (e.type === 'touchend') {
+    const touch = e.changedTouches[0];
+    clientX = touch.clientX;
+    clientY = touch.clientY;
+  } else {
+    clientX = e.clientX;
+    clientY = e.clientY;
+  }
+
   // Position menu
   const menuWidth = 180;
   const menuHeight = 50;
-  let left = e.pageX;
-  let top = e.pageY;
+  let left = clientX + window.scrollX;
+  let top = clientY + window.scrollY;
+  
+  // On touch devices, show menu slightly offset so it doesn't interfere with native menu
+  const isTouchDevice = 'ontouchstart' in window;
+  if (isTouchDevice) {
+    // Position below and to the right of native menu
+    top += 60; // Offset down to avoid native menu
+    left += 10;
+  }
   
   if (left + menuWidth > window.innerWidth + window.scrollX) {
     left = window.innerWidth + window.scrollX - menuWidth - 10;
   }
   if (top + menuHeight > window.innerHeight + window.scrollY) {
-    top = e.pageY - menuHeight - 10;
+    top = clientY + window.scrollY - menuHeight - 10;
   }
 
   contextMenu.style.left = left + 'px';
   contextMenu.style.top = top + 'px';
-  contextMenu.classList.add('show');
-});
+  
+  // On touch devices, delay showing menu to let native menu appear first
+  if (isTouchDevice) {
+    setTimeout(() => {
+      contextMenu.classList.add('show');
+    }, 300); // Small delay allows native menu to settle
+  } else {
+    contextMenu.classList.add('show');
+  }
+}
 
 // Hide menu on click outside
 document.addEventListener('mousedown', (e) => {
@@ -627,9 +679,9 @@ highlightStyles.textContent = `
   #highlight-context-menu {
     position: absolute;
     background: white;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     padding: 4px 0;
     z-index: 10000;
     display: none;
@@ -638,6 +690,18 @@ highlightStyles.textContent = `
 
   #highlight-context-menu.show {
     display: block;
+    animation: slideIn 0.2s ease-out;
+  }
+
+  @keyframes slideIn {
+    from {
+      opacity: 0;
+      transform: translateY(-5px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   #highlight-context-menu .menu-item {
@@ -649,14 +713,34 @@ highlightStyles.textContent = `
     font-size: 14px;
     color: #333;
     user-select: none;
+    font-weight: 500;
   }
 
   #highlight-context-menu .menu-item:hover {
-    background: #f0f0f0;
+    background: #f0f9f0;
   }
 
   #highlight-context-menu .menu-item span {
-    font-size: 16px;
+    font-size: 18px;
+  }
+
+  #highlight-context-menu::before {
+    content: 'Highlight';
+    display: block;
+    padding: 4px 16px;
+    font-size: 10px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid #eee;
+  }
+
+  .menu-hint {
+    padding: 4px 16px;
+    font-size: 11px;
+    color: #999;
+    text-align: center;
+    border-top: 1px solid #eee;
   }
 `;
 document.head.appendChild(highlightStyles);
