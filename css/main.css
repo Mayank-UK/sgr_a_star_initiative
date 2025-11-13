@@ -401,7 +401,7 @@ table, pre, code {
   white-space: nowrap;
 }
 
-/* This makes sure long tables/images don’t break layout */
+/* This makes sure long tables/images don't break layout */
 .line-content > * {
   max-width: 100%;
   overflow-x: auto;
@@ -554,16 +554,20 @@ input[type="checkbox"]:disabled + .slider {
     opacity: 1;
 }
 
+/* ============================================ */
+/* STICKY TABLE HEADERS - FULLSCREEN MODE */
+/* ============================================ */
+
 .fullscreen-table {
     width: 100%;
-    max-width: 98vw; /* ensure no overflow */
+    max-width: 98vw;
     max-height: 95%;
-    overflow: auto;
+    overflow: auto; /* ✅ This container scrolls */
     border: 1px solid #ddd;
     background: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 1rem;
-    box-sizing: border-box; /* important to include padding in width */
+    box-sizing: border-box;
 }
 
 .fullscreen-table table {
@@ -571,8 +575,123 @@ input[type="checkbox"]:disabled + .slider {
     margin: 0;
     padding: 0;
     border-collapse: collapse;
-    table-layout: fixed;        /* Helps prevent overflow */
+    table-layout: auto; /* Allow natural column widths */
+    overflow: visible; /* ✅ Don't scroll on table itself */
 }
+
+/* Sticky header row */
+.fullscreen-table table thead {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* Sticky header cells */
+.fullscreen-table table thead th {
+    position: sticky;
+    top: 0;
+    background-color: grey;
+    color: white;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15); /* Shadow when scrolling */
+}
+
+/* Sticky first column for body cells */
+/* .fullscreen-table table tbody td:first-child {
+    position: sticky;
+    left: 0;
+    background-color: white;
+    z-index: 50;
+    border-right: 2px solid #ccc;
+} */
+
+/* Sticky first column for header */
+/* .fullscreen-table table thead th:first-child {
+    position: sticky;
+    left: 0;
+    background-color: grey;
+    z-index: 101; 
+    border-right: 2px solid #888;
+} */
+
+/* Handle alternating row colors for sticky column */
+.fullscreen-table table tbody tr:nth-child(even) td:first-child {
+    background-color: #f9f9f9;
+}
+
+.fullscreen-table table tbody tr:hover td:first-child {
+    background-color: #f1f1f1;
+}
+
+/* ============================================ */
+/* STICKY SECTION HEADER ROWS (Topic Separators) */
+/* ============================================ */
+
+/* 
+  Add the class "section-header" to rows that separate topics.
+  These will stick below the main header until next section arrives.
+  
+  HTML example:
+  <tr class="section-header">
+    <td colspan="3">Topic 1: Introduction</td>
+  </tr>
+*/
+
+.fullscreen-table table tbody tr.section-header {
+    position: sticky;
+    top: 48px; /* Adjust based on your header height - usually th height */
+    z-index: 90;
+    background-color: #e0e0e0;
+    font-weight: bold;
+}
+
+.fullscreen-table table tbody tr.section-header td {
+    background-color: #e0e0e0;
+    color: #333;
+    font-weight: bold;
+    padding: 10px 12px;
+    border-top: 2px solid #999;
+    border-bottom: 2px solid #999;
+}
+
+.fullscreen-table table tbody tr.section-header:hover td {
+    background-color: #d5d5d5;
+}
+
+/* If first column should also stick for section headers */
+.fullscreen-table table tbody tr.section-header td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 91;
+    background-color: #e0e0e0;
+    border-right: 2px solid #999;
+}
+
+.fullscreen-table table tbody tr.section-header:hover td:first-child {
+    background-color: #d5d5d5;
+}
+
+/* Alternative: Auto-detect rows with bold/centered text spanning multiple columns */
+.fullscreen-table table tbody tr:has(td[colspan]) {
+    position: sticky;
+    top: 48px; /* Adjust to match your header height */
+    z-index: 90;
+    background-color: #e8e8e8;
+}
+
+.fullscreen-table table tbody tr:has(td[colspan]) td {
+    background-color: #e8e8e8;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+    padding: 10px 12px;
+    border-top: 2px solid #aaa;
+    border-bottom: 2px solid #aaa;
+}
+
+/* ============================================ */
+/* END STICKY TABLE HEADERS */
+/* ============================================ */
 
 .fullscreen-table-close {
     position: absolute;
