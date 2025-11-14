@@ -1350,6 +1350,16 @@ function toggleFullScreenTable(tableContainer) {
         wrapper.remove();
         tableContainer.style.display = 'block';
         isTableFullScreen = false;
+        
+        // Restore body scroll
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.top = '';
+        if (wrapper.dataset.scrollPos) {
+          window.scrollTo(0, parseInt(wrapper.dataset.scrollPos));
+        }
+        
         if (wasScrollingBeforeFullScreen && isScrollingAllowedByUser) {
           startAutoScroll();
         }
@@ -1360,9 +1370,17 @@ function toggleFullScreenTable(tableContainer) {
     isTableFullScreen = true;
     stopAutoScroll();
     
+    // Lock body scroll and save current position
+    const scrollPos = window.scrollY;
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.top = `-${scrollPos}px`;
+    
     tableContainer.style.display = 'none';
     const wrapper = document.createElement('div');
     wrapper.className = 'fullscreen-table-wrapper';
+    wrapper.dataset.scrollPos = scrollPos;
     const fullScreenTable = document.createElement('div');
     fullScreenTable.className = 'fullscreen-table';
     fullScreenTable.innerHTML = table.outerHTML;
