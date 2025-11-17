@@ -1,4 +1,4 @@
-console.log("current js version: 1");
+console.log("current js version: 1.1 - FIXED DUPLICATE HIGHLIGHTS");
 
 (function setTitleFromFilename() {
   if (document.title && document.title.trim() !== "") return;
@@ -19,28 +19,20 @@ function getPageID() {
   let pathname = url.pathname.replace(/\/+/g, '/').replace(/\/$/, '');
   const parts = pathname.split('/').filter(Boolean);
 
-  // Nothing in path → root → index
   if (parts.length === 0) return 'index';
 
   let lastPart = parts[parts.length - 1] || '';
-
-  // Remove .html or .htm if present
   lastPart = lastPart.replace(/\.html?$/i, '');
 
-  // If last part is clearly "index" → index
   if (lastPart.toLowerCase() === 'index') return 'index';
 
-  // ✅ Detect folder-based hosting cases like "/hosted/www.sgr_initiative.personal/"
-  // When there’s no .html, and this looks like a folder name (with dots), treat it as root
   const isFolderRoot =
     !/\.[a-z0-9]+$/i.test(url.pathname) && lastPart.includes('.');
 
   if (isFolderRoot) return 'index';
 
-  // Otherwise, normal page name
   return lastPart;
 }
-
 
 const PAGE_ID = getPageID();
 console.log('PAGE_ID:', PAGE_ID);
@@ -51,7 +43,6 @@ console.log('PAGE_ID:', PAGE_ID);
 
 let pendingHighlights = [];
 
-// Load highlights from server
 async function loadHighlights() {
   try {
     const res = await fetch(`${SCRIPT_URL}?page_id=${encodeURIComponent(PAGE_ID)}`);
@@ -75,8 +66,6 @@ async function loadHighlights() {
   }
 }
 
-// Replace the entire applyPendingHighlights function with this:
-
 function applyPendingHighlights() {
   if (pendingHighlights.length === 0) return;
 
@@ -86,12 +75,11 @@ function applyPendingHighlights() {
   const stillPending = [];
   const notFound = [];
 
-  // Helper function to normalize quotes and whitespace
   const normalize = (str) => {
     return (str || '')
-      .replace(/[\u201C\u201D]/g, '"')  // Normalize curly double quotes to straight quotes
-      .replace(/[\u2018\u2019]/g, "'")  // Normalize curly single quotes/apostrophes
-      .replace(/\s+/g, ' ')             // Normalize whitespace
+      .replace(/[\u201C\u201D]/g, '"')
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/\s+/g, ' ')
       .trim();
   };
 
@@ -113,45 +101,47 @@ function applyPendingHighlights() {
     let bestMatch = null;
     let bestScore = 0;
 
-    // Search inside every .line-content and score matches
     for (const el of document.querySelectorAll('.line-content')) {
       const lineText = normalize(el.textContent);
 
-      // Strategy 1: Full context match (BEST - score 100)
       if (fullContext && lineText.indexOf(fullContext) !== -1) {
+        const contextIndex = lineText.indexOf(fullContext);
+        const textIndexInContext = fullContext.indexOf(text);
         foundElement = el;
         bestScore = 100;
-        break; // Perfect match, stop searching
+        bestMatch = { element: el, startIndex: contextIndex + textIndexInContext };
+        break;
       }
 
-      // Strategy 2: Pre + Text match (score 80)
       if (preTextCombo && lineText.indexOf(preTextCombo) !== -1) {
         if (bestScore < 80) {
+          const preTextIndex = lineText.indexOf(preTextCombo);
+          const textIndexInCombo = preTextCombo.indexOf(text);
           foundElement = el;
           bestScore = 80;
+          bestMatch = { element: el, startIndex: preTextIndex + textIndexInCombo };
         }
       }
 
-      // Strategy 3: Text + Post match (score 75)
       if (textPostCombo && lineText.indexOf(textPostCombo) !== -1) {
         if (bestScore < 75) {
+          const textPostIndex = lineText.indexOf(textPostCombo);
           foundElement = el;
           bestScore = 75;
+          bestMatch = { element: el, startIndex: textPostIndex };
         }
       }
 
-      // Strategy 4: Just text match (score 50 - LAST RESORT)
       if (lineText.indexOf(text) !== -1) {
         if (bestScore < 50) {
-          bestMatch = el;
-          // Don't set foundElement yet - keep looking for better matches
+          const firstMatchIndex = lineText.indexOf(text);
+          bestMatch = { element: el, startIndex: firstMatchIndex };
         }
       }
     }
 
-    // If no context match found, use the first text-only match as last resort
     if (!foundElement && bestMatch) {
-      foundElement = bestMatch;
+      foundElement = bestMatch.element;
       console.warn(`⚠️ Using text-only match for: "${text}" (context not found)`);
     }
 
@@ -161,12 +151,14 @@ function applyPendingHighlights() {
       continue;
     }
 
-    // Use the new highlighting method that handles normalization internally
+    const startCharIndex = bestMatch && bestMatch.startIndex !== undefined ? bestMatch.startIndex : 0;
+    
     const ok = highlightTextInElementNormalized(
       foundElement,
       text,
       h.id,
-      h.color
+      h.color,
+      startCharIndex
     );
 
     if (ok) applied.push(h);
@@ -175,13 +167,11 @@ function applyPendingHighlights() {
 
   pendingHighlights = stillPending;
 
-  // Retry pending highlights (for lazy-loaded sections)
   if (stillPending.length) {
     console.log(`${stillPending.length} still pending → retry in 2s`);
     setTimeout(applyPendingHighlights, 2000);
   }
 
-  // Console report
   const REPORT_GROUP_ID = `MISSING_HIGHLIGHTS_${PAGE_ID}`;
   if (window[REPORT_GROUP_ID]) console.groupEnd();
   window[REPORT_GROUP_ID] = true;
@@ -205,9 +195,7 @@ function applyPendingHighlights() {
   console.groupEnd();
 }
 
-// NEW function that handles normalization better
-function highlightTextInElementNormalized(element, searchText, id, color) {
-  // Normalize quote characters for comparison
+function highlightTextInElementNormalized(element, searchText, id, color, startFromIndex = 0) {
   const normalizeChar = (c) => {
     if (c === '\u201C' || c === '\u201D' || c === '"') return '"';
     if (c === '\u2018' || c === '\u2019' || c === "'") return "'";
@@ -216,16 +204,14 @@ function highlightTextInElementNormalized(element, searchText, id, color) {
   
   const normalizedSearch = searchText.replace(/\s+/g, ' ').trim();
   
-  // Find the text using normalized comparison
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
   const textNodes = [];
   while (walker.nextNode()) {
     textNodes.push(walker.currentNode);
   }
   
-  // Build normalized version of element text with mapping to original positions
   let elementNormalized = '';
-  const positionMap = []; // Maps normalized index to {node, offset}
+  const positionMap = [];
   
   for (const node of textNodes) {
     const text = node.textContent;
@@ -245,8 +231,13 @@ function highlightTextInElementNormalized(element, searchText, id, color) {
     }
   }
   
-  // Find the search text in normalized element text
-  const startIdx = elementNormalized.indexOf(normalizedSearch);
+  let startIdx = -1;
+  if (startFromIndex > 0 && startFromIndex < elementNormalized.length) {
+    startIdx = elementNormalized.indexOf(normalizedSearch, startFromIndex);
+  } else {
+    startIdx = elementNormalized.indexOf(normalizedSearch);
+  }
+  
   if (startIdx === -1) {
     console.warn('Could not find text in element:', normalizedSearch);
     return false;
@@ -254,7 +245,6 @@ function highlightTextInElementNormalized(element, searchText, id, color) {
   
   const endIdx = startIdx + normalizedSearch.length;
   
-  // Map back to original DOM positions
   const startPos = positionMap[startIdx];
   const endPos = positionMap[endIdx - 1];
   
@@ -268,7 +258,6 @@ function highlightTextInElementNormalized(element, searchText, id, color) {
     range.setStart(startPos.node, startPos.offset);
     range.setEnd(endPos.node, endPos.offset + 1);
 
-    // Remove duplicate if exists
     const existing = document.querySelector(`[data-id="${id}"]`);
     if (existing) {
       existing.outerHTML = existing.textContent;
@@ -280,15 +269,13 @@ function highlightTextInElementNormalized(element, searchText, id, color) {
     span.style.background = color || '#ffff88';
     range.surroundContents(span);
 
-    console.log('Highlight applied via normalized matching');
+    console.log('✓ Highlight applied at index:', startIdx);
     return true;
   } catch (err) {
     console.error('surroundContents failed:', err);
     return false;
   }
 }
-
-// Replace the entire highlightTextInElementPrecise function with this:
 
 function highlightTextInElementPrecise(element, searchText, startCharIndex, id, color) {
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
@@ -297,11 +284,8 @@ function highlightTextInElementPrecise(element, searchText, startCharIndex, id, 
   let endNode = null, endOffset = 0;
   let charsMatched = 0;
   
-  // Normalize quote characters for comparison
   const normalizeChar = (c) => {
-    // Handle curly double quotes: " (U+201C) and " (U+201D)
     if (c === '\u201C' || c === '\u201D' || c === '"') return '"';
-    // Handle curly single quotes: ' (U+2018) and ' (U+2019)
     if (c === '\u2018' || c === '\u2019' || c === "'") return "'";
     return c;
   };
@@ -358,7 +342,6 @@ function highlightTextInElementPrecise(element, searchText, startCharIndex, id, 
     range.setStart(startNode, startOffset);
     range.setEnd(endNode, endOffset);
 
-    // Remove duplicate if exists
     const existing = document.querySelector(`[data-id="${id}"]`);
     if (existing) {
       existing.outerHTML = existing.textContent;
@@ -378,7 +361,6 @@ function highlightTextInElementPrecise(element, searchText, startCharIndex, id, 
   }
 }
 
-// Save highlight to server
 async function saveHighlightToServer(record) {
   try {
     const params = new URLSearchParams({
@@ -400,7 +382,6 @@ async function saveHighlightToServer(record) {
   }
 }
 
-// Delete highlight from server
 async function deleteHighlightOnServer(id) {
   try {
     const params = new URLSearchParams({ 
@@ -416,7 +397,6 @@ async function deleteHighlightOnServer(id) {
 
     console.log('Deleted on server:', id);
     
-    // Remove from DOM
     const el = document.querySelector(`[data-id="${id}"]`);
     if (el) {
       const parent = el.parentNode;
@@ -429,7 +409,6 @@ async function deleteHighlightOnServer(id) {
   }
 }
 
-// Get text context (4 words before/after)
 function getTextContext(range) {
   const selectedText = range.toString().trim();
   if (!selectedText) return { pre: '', post: '' };
@@ -443,7 +422,6 @@ function getTextContext(range) {
 
   const fullText = lineContent.textContent;
 
-  // Compute exact character offset
   let startIdx = 0;
   const walker = document.createTreeWalker(lineContent, NodeFilter.SHOW_TEXT, null, false);
   let node;
@@ -467,11 +445,6 @@ function getTextContext(range) {
   return { pre, post };
 }
 
-// ============================================================================
-// HIGHLIGHT SYSTEM - UI & Event Handlers
-// ============================================================================
-
-// Context menu setup
 const contextMenu = document.createElement('div');
 contextMenu.id = 'highlight-context-menu';
 contextMenu.innerHTML = `
@@ -483,7 +456,6 @@ document.body.appendChild(contextMenu);
 
 let currentSelectionData = null;
 
-// Create highlight from selection
 async function createHighlight() {
   if (!currentSelectionData) return;
   
@@ -501,7 +473,6 @@ async function createHighlight() {
   const id = crypto.randomUUID ? crypto.randomUUID() : 'id-' + Date.now();
   const color = '#ffff88';
 
-  // Apply highlight to DOM immediately
   const span = document.createElement('span');
   span.className = 'user-highlight';
   span.dataset.id = id;
@@ -514,7 +485,6 @@ async function createHighlight() {
     return;
   }
 
-  // Save to server
   const record = { 
     id, 
     page_id: PAGE_ID, 
@@ -528,7 +498,6 @@ async function createHighlight() {
     await saveHighlightToServer(record);
     console.log('Highlight created and saved:', id);
   } catch (err) {
-    // If save fails, remove from DOM
     span.outerHTML = span.textContent;
     alert('Failed to save highlight. Please try again.');
   }
@@ -541,7 +510,6 @@ function hideContextMenu() {
   setTimeout(() => currentSelectionData = null, 100);
 }
 
-// Mouse and touch selection handler
 document.addEventListener('mouseup', handleSelectionEnd);
 document.addEventListener('touchend', handleSelectionEnd);
 
@@ -583,7 +551,6 @@ function handleSelectionEnd(e) {
     post: context.post
   });
 
-  // Get coordinates (works for both mouse and touch)
   let clientX, clientY;
   if (e.type === 'touchend') {
     const touch = e.changedTouches[0];
@@ -594,17 +561,14 @@ function handleSelectionEnd(e) {
     clientY = e.clientY;
   }
 
-  // Position menu
   const menuWidth = 180;
   const menuHeight = 50;
   let left = clientX + window.scrollX;
   let top = clientY + window.scrollY;
   
-  // On touch devices, show menu slightly offset so it doesn't interfere with native menu
   const isTouchDevice = 'ontouchstart' in window;
   if (isTouchDevice) {
-    // Position below and to the right of native menu
-    top += 60; // Offset down to avoid native menu
+    top += 60;
     left += 10;
   }
   
@@ -618,22 +582,19 @@ function handleSelectionEnd(e) {
   contextMenu.style.left = left + 'px';
   contextMenu.style.top = top + 'px';
   
-  // On touch devices, delay showing menu to let native menu appear first
   if (isTouchDevice) {
     setTimeout(() => {
       contextMenu.classList.add('show');
-    }, 300); // Small delay allows native menu to settle
+    }, 300);
   } else {
     contextMenu.classList.add('show');
   }
 }
 
-// Hide menu on click outside
 document.addEventListener('mousedown', (e) => {
   if (!contextMenu.contains(e.target)) hideContextMenu();
 });
 
-// Menu item click handler
 contextMenu.addEventListener('click', async (e) => {
   e.preventDefault();
   e.stopPropagation();
@@ -647,7 +608,6 @@ contextMenu.addEventListener('click', async (e) => {
   hideContextMenu();
 });
 
-// Delete highlight on click
 document.addEventListener('click', async (e) => {
   const el = e.target;
   if (!el.classList || !el.classList.contains('user-highlight')) return;
@@ -664,7 +624,6 @@ document.addEventListener('click', async (e) => {
   }
 });
 
-// Add styles
 const highlightStyles = document.createElement('style');
 highlightStyles.textContent = `
   .user-highlight { 
@@ -735,10 +694,6 @@ highlightStyles.textContent = `
   }
 `;
 document.head.appendChild(highlightStyles);
-
-// ============================================================================
-// REST OF YOUR EXISTING CODE (Performance optimizations, scroll controls, etc.)
-// ============================================================================
 
 const REGEX_PATTERNS = {
   leadingSpaces: /^ */,
@@ -1271,7 +1226,6 @@ function extractTablesAndContentOptimized(htmlString) {
   const tables = [];
   let tableIndex = 0;
   
-  // Helper function to extract tables with proper nesting support
   function extractTable(html, startPos) {
     const openTag = '<table';
     const closeTag = '</table>';
@@ -1351,7 +1305,6 @@ function toggleFullScreenTable(tableContainer) {
         tableContainer.style.display = 'block';
         isTableFullScreen = false;
         
-        // Restore body scroll
         document.body.style.overflow = '';
         document.body.style.position = '';
         document.body.style.width = '';
@@ -1370,7 +1323,6 @@ function toggleFullScreenTable(tableContainer) {
     isTableFullScreen = true;
     stopAutoScroll();
     
-    // Lock body scroll and save current position
     const scrollPos = window.scrollY;
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
@@ -1553,7 +1505,6 @@ function processSection(section) {
 
   loadedSections.add(section.id);
 
-  // Try to apply any highlights waiting for this section
   setTimeout(applyPendingHighlights, 120);
 }
 
@@ -1830,13 +1781,11 @@ document.addEventListener("DOMContentLoaded", () => {
       
       updateScrollProgress();
       
-      // Load highlights after DOM is ready
       setTimeout(() => {
         console.log('Loading highlights after DOM ready...');
         loadHighlights();
       }, 600);
 
-      // Safety net: re-apply once everything is visible
       setTimeout(applyPendingHighlights, 2500);
     });
   });
@@ -1896,7 +1845,6 @@ function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
           isProcessingSection = false;
           updateScrollProgress();
           
-          // Try applying highlights after section becomes visible
           applyPendingHighlights();
         }, 300);
       } else {
