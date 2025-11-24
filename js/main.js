@@ -1,4 +1,4 @@
-console.log("current js version: 1.1 - FIXED DUPLICATE HIGHLIGHTS");
+window.alert("version 2");
 
 (function setTitleFromFilename() {
   if (document.title && document.title.trim() !== "") return;
@@ -581,19 +581,17 @@ function handleSelectionEnd(e) {
 
   contextMenu.style.left = left + 'px';
   contextMenu.style.top = top + 'px';
-  
-  if (isTouchDevice) {
-    setTimeout(() => {
-      contextMenu.classList.add('show');
-    }, 300);
-  } else {
-    contextMenu.classList.add('show');
-  }
-}
 
-document.addEventListener('mousedown', (e) => {
-  if (!contextMenu.contains(e.target)) hideContextMenu();
-});
+  contextMenu.classList.add('show');
+  
+  // if (isTouchDevice) {
+  //   setTimeout(() => {
+  //     contextMenu.classList.add('show');
+  //   }, 300);
+  // } else {
+  //   contextMenu.classList.add('show');
+  // }
+}
 
 contextMenu.addEventListener('click', async (e) => {
   e.preventDefault();
@@ -606,6 +604,25 @@ contextMenu.addEventListener('click', async (e) => {
   }
   
   hideContextMenu();
+});
+
+// Add this new listener right after your existing contextMenu.addEventListener('click', ...);
+
+contextMenu.addEventListener('touchend', async (e) => {
+  e.preventDefault();
+  e.stopPropagation();
+  const menuItem = e.target.closest('.menu-item');
+  if (!menuItem) return;
+
+  if (menuItem.dataset.action === 'highlight' && currentSelectionData) {
+    await createHighlight();
+  }
+  
+  hideContextMenu();
+}, { passive: false });
+
+document.addEventListener('mousedown', (e) => {
+  if (!contextMenu.contains(e.target)) hideContextMenu();
 });
 
 document.addEventListener('click', async (e) => {
