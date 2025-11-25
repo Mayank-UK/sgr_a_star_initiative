@@ -1,4 +1,4 @@
-window.alert("version 2");
+// window.alert("version 1");
 
 (function setTitleFromFilename() {
   if (document.title && document.title.trim() !== "") return;
