@@ -1,4 +1,4 @@
-// window.alert("version 1");
+// window.alert("version 2");
 
 (function setTitleFromFilename() {
   if (document.title && document.title.trim() !== "") return;
@@ -1133,7 +1133,7 @@ const throttledScrollDirection = throttle(() => {
             scrollControls.style.opacity = "0";
             scrollControls.style.pointerEvents = "none";
           }
-        }, 3000);
+        }, 500);
       } else {
         scrollControls.style.opacity = "0";
         scrollControls.style.pointerEvents = "none";
@@ -1861,6 +1861,8 @@ function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
           checkbox.disabled = false;
           isProcessingSection = false;
           updateScrollProgress();
+
+          if (window.checkScrollability) window.checkScrollability();
           
           applyPendingHighlights();
         }, 300);
@@ -1873,6 +1875,8 @@ function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
           checkbox.disabled = false;
           isProcessingSection = false;
           updateScrollProgress();
+
+          if (window.checkScrollability) window.checkScrollability();
         }, 200);
       }
     }, 10);
@@ -1894,6 +1898,25 @@ function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
 
 function setupScrollControls() {
   scrollControls = getCachedElement("#scroll-controls") || document.getElementById("scroll-controls");
+
+  // Hide controls if page is not scrollable
+  function checkScrollability() {
+    const isScrollable = document.documentElement.scrollHeight > window.innerHeight;
+    if (scrollControls) {
+      if (isScrollable) {
+        scrollControls.style.display = 'flex';
+      } else {
+        scrollControls.style.display = 'none';
+      }
+    }
+  }
+
+  // Check after a delay to allow content to render, and on resize
+  setTimeout(checkScrollability, 1500);
+  window.addEventListener('resize', checkScrollability);
+  
+  // Also check when sections are toggled (call this in your section toggle handler)
+  window.checkScrollability = checkScrollability;
 
   const speedRange = getCachedElement("#speedRange") || document.getElementById("speedRange");
   const toggleButton = getCachedElement("#toggleScroll") || document.getElementById("toggleScroll");
