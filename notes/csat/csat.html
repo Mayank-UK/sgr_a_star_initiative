@@ -165,44 +165,203 @@
                 - 2 × 4 = 8 or (2 + 2 + 2 + 2) = 8 or (4 + 4) = 8
 
     - Modular Arithmetic:
+        - Some basics
+            - What is mod?
+                - Mod just means - “What is left over after division?”
+            - What is triple-bar sign (≡):
+                - It means congruence or identity
+        - Division Formula (Basic Identity):
+            - Any division statement follows:
+                - \(
+                    \text{Dividend} = (\text{Divisor} \times \text{Quotient}) + \text{Remainder}
+                \)
+            - Example:
+                - \(
+                    17 = 5 \cdot 3 + 2
+                \)
+            - CSAT usage:
+                - Find largest or smallest number satisfying divisibility condition.
+                - Find the largest 4-digit number divisible by 7
+                    - Step 1 – Identify the largest 4-digit number:
+                        - 9999
+                    - Step 2 – Divide by 7 and find remainder:
+                        - 9999 ÷ 7 = 1428 remainder 3
+                    - Step 3 – Subtract remainder to get nearest divisible number:
+                        - 9999 - 3 = 9996
+                    - Step 4 – Conclude:
+                        - Largest 4-digit number divisible by 7 = 9996
+                - Find the smallest 3-digit number divisible by 13
+                    - Step 1 – Identify the smallest 3-digit number:
+                        - 100
+                    - Step 2 – Divide by 13 and find remainder:
+                        - 100 ÷ 13 = 7 remainder 9
+                    - Step 3 – Add difference to get divisible number:
+                        - 100 + (13 - 9) = 104
+                    - Step 4 – Conclude:
+                        - Smallest 3-digit number divisible by 13 = 104
         - Remainder Theorem:
-            - For \(a \div b\), if \(a = bq + r\), then \(r\) is the remainder (where \(0 \leq r &lt; b\)).
-            - Example: 
-                - \(17 \div 5 = 3\) remainder 2, so \(17 \mod 5 = 2\).
-        - Properties:
-            - Addition:
+            - When you divide \(a\) by \(b\), you can always write:
                 - \(
-                (a + b) \mod n = [(a \mod n) + (b \mod n)] \mod n
+                    a = bq + r,\quad 0 \le r &lt; b
                 \)
-                - Example: 
-                    - \((17 + 13) \mod 5 = (17 \mod 5 + 13 \mod 5) \mod 5 = (2 + 3) \mod 5 = 0\).
-            - Multiplication:
+                - where \(q\) is the quotient and \(r\) is the remainder.
+            - CSAT usage: 
+                - Quickly find remainder of large numbers without full division.
+                - Find remainder when 9876 is divided by 13
+                    - Break down: 
+                        - \(9876 = 9800 + 76\)
+                    - Compute remainders separately:
+                        - \(
+                            9800 \bmod 13 = 11, \quad 76 \bmod 13 = 11
+                        \)
+                    - Combine using addition property: 
+                        - \(
+                            (9800 \bmod 13 + 76 \bmod 13) \bmod 13 = (11 + 11) \bmod 13 = 22 \bmod 13 = 9
+                        \)
+                    - Remainder = 9
+        - Addition:
+            - Rule:
                 - \(
-                (a \cdot b) \mod n = [(a \mod n) \cdot (b \mod n)] \mod n
+                    (a + b) \bmod n = \left[(a \bmod n) + (b \bmod n)\right] \bmod n
                 \)
-                - Example: 
-                    - \((17 \times 13) \mod 5 = (2 \times 3) \mod 5 = 6 \mod 5 = 1\).
+                - Code reference
+                    - We can't use "%" to replace "mod" in real maths, but reference is just to get clarity
+                    - In coding the above expression can be written as:
+                        - (a + b) % n = ((a % n) + (b % n)) % n
+            - Intuition:
+                - Write both numbers in remainder form:
+                    - \(
+                        a = nA + r_a,\qquad b = nB + r_b
+                    \)
+                - Add:
+                    - \(
+                        a + b = n(A + B) + (r_a + r_b)
+                    \)
+                - The term \(n(A+B)\) is a multiple of \(n\), so it becomes \(0\) in modulo-\(n\).
+                - Only the remainder sum \(r_a + r_b\) matters.
+            - CSAT Usage: 
+                - Combine multiple numbers under modulo without full sum.
+                - Find remainder when 12345 + 6789 is divided by 7
+                    - \(
+                        12345 \bmod 7 = 4, \quad 6789 \bmod 7 = 0
+                    \)
+                    - \(
+                        (12345 + 6789) \bmod 7 = (4 + 0) \bmod 7 = 4
+                    \)
+        - Multiplication:
+            - Rule:
+                - \(
+                    (a \cdot b) \bmod n = \left[(a \bmod n)(b \bmod n)\right] \bmod n
+                \)
+                - Code reference
+                    - We can't use "%" to replace "mod" in real maths, but reference is just to get clarity
+                    - In coding the above expression can be written as:
+                        - (a.b) % n = ((a % n) . (b % n)) % n
+            - Intuition:
+                - Write:
+                    - \(
+                        a = nA + r_a,\qquad b = nB + r_b
+                    \)
+                - Multiply:
+                    - \(
+                        ab = (nA + r_a)(nB + r_b)
+                    \)
+                    - \(
+                        ab = n^2 AB + nAr_b + nB r_a + r_a r_b
+                    \)
+                - The first three terms are multiples of \(n\), so modulo-\(n\) they vanish.
+                - Only the product of remainders \(r_a r_b\) affects the final remainder.
+            - CSAT usage: 
+                - Simplify multiplication under modulo.
+                - Find remainder when 234 × 567 is divided by 9
+                - \(
+                    234 \bmod 9 = 0, \quad 567 \bmod 9 = 0
+                \)
+                - \(
+                    (234 \cdot 567) \bmod 9 = (0 \cdot 0) \bmod 9 = 0
+                \)
         - Fermat’s Little Theorem:
             - If \(p\) is prime and \(a\) is not divisible by \(p\), then:
                 - \(
-                a^{p-1} \equiv 1 \mod p
+                    a^{p-1} \equiv 1 \pmod p
                 \)
-            - Example: 
-                - For \(p = 5\), \(a = 2\), \(2^4 = 16 \equiv 1 \mod 5\).
+                - Formula explanation
+                    - Compare \(
+                            a^{p-1}
+                        \) and \(
+                            1
+                        \) using the rule “modulo \(p\)”. If they are congruent, it means:
+                        - \(
+                            a^{p-1}
+                        \) and \(
+                            1
+                        \) leave the same remainder when divided by \(p\).
+                    - When you take the number \(a\), raise it to the power \(p-1\), and then look at its remainder when divided by \(p\), the remainder will always be \(1\), as long as \(p\) is prime and \(a\) is not a multiple of \(p\).
+            - Intuition:
+                - The numbers \(1,2,\ldots,p-1\) form a perfect multiplicative cycle under mod \(p\).
+                - Multiplying \(a\) repeatedly cycles through the same set.
+                - After exactly \(p-1\) multiplications, it returns to \(1\).
+            - CSAT usage: 
+                - Quickly find remainder of large exponents with prime divisor using Fermat’s Little Theorem.
+                - Find remainder when \(7^{222}\) is divided by 13
+                    - Step 1 – Identify values: 
+                        - \(a = 7\) (base), \(p = 13\) (prime divisor)
+                    - Step 2 – Apply Fermat’s Little Theorem: 
+                        - Since \(p = 13\) is prime and \(7\) is not divisible by 13: 
+                        - \(
+                            7^{12} \equiv 1 \pmod {13}
+                        \)
+                    - Step 3 – Express exponent in multiples of \(p-1\): 
+                        - Basically express by divisor formula by dividing with (p-1)
+                        - \(222 = 12 \times 18 + 6\)
+                        - \(
+                            7^{222} = 7^{12\cdot 18 + 6} = (7^{12})^{18} \cdot 7^6
+                        \)
+                    - Step 4 – Replace \(7^{12} \equiv 1\) using Fermat: 
+                        - \(
+                            (7^{12})^{18} \cdot 7^6 \equiv 1^{18} \cdot 7^6 \equiv 7^6 \pmod {13}
+                        \)
+                    - Step 5 – Compute smaller power modulo 13: 
+                        - \(7^6 = 117649 \equiv 9 \pmod {13}\)
+                    - Step 6 – Conclude: 
+                        - Remainder = 9
         - Wilson’s Theorem:
-            - For a prime \(p\):
+            - For any prime \(p\):
                 - \(
-                (p-1)! \equiv -1 \mod p
+                    (p-1)! \equiv -1 \pmod p
                 \)
-            - Example: 
-                - For \(p = 5\), \(4! = 24 \equiv -1 \mod 5\) (since \(24 \mod 5 = 4 = -1 \mod 5\)).
-        - Division:
-            - Dividend Formula:
-                - \(
-                \text{Dividend} = (\text{Divisor} \times \text{Quotient}) + \text{Remainder}
-                \)
-            - Example: 
-                - For 17 divided by 5, \(17 = 5 \times 3 + 2\) (quotient = 3, remainder = 2).
+                - Formula explanation
+                    - Compare \((p-1)!\) and \(-1\) using modulo \(p\).
+                    - If they are congruent, it means:
+                        - \((p-1)!\) and \(-1\) leave the same remainder when divided by \(p\).
+            - Intuition:
+                - In mod \(p\), every number \(1\) to \(p-1\) has a unique multiplicative inverse.
+                - Almost all numbers pair up with their inverse and multiply to \(1\).
+                - Only two numbers do not pair:
+                    - \(1\) (self-inverse)
+                    - \(p - 1 \equiv -1 \pmod p\) (also self-inverse)
+                - Thus:
+                    - \(
+                        (p-1)! = 1 \cdot (p-1) \equiv -1 \pmod p
+                    \)
+            - CSAT usage: 
+                - Quickly find remainder of (p-1)! when divided by a prime p using Wilson’s Theorem.
+                - Find remainder of 10! when divided by 11
+                    - Step 1 – Identify values: 
+                        - \(p = 11\) (prime divisor)
+                        - Compute \((p-1)! = 10!\)
+                    - Step 2 – Apply Wilson’s Theorem: 
+                        - For a prime p: 
+                            - \((p-1)! \equiv -1 \pmod p\)
+                        - So: 
+                            - \(
+                                10! \equiv -1 \pmod {11}
+                            \)
+                    - Step 3 – Convert negative remainder to positive: 
+                        - In modulo arithmetic, \(-1 \equiv p-1 \pmod p\)
+                        - \(-1 \equiv 11-1 = 10 \pmod {11}\)
+                    - Step 4 – Conclude: 
+                        - Remainder = 10
 
     - VBODMAS Rule:
         - Order of Operations:
@@ -285,15 +444,19 @@
             - Number divisible by both 3 and 5.  
             - Example:
                 - 90 → ends with 0 (divisible by 5) and \(9 + 0 = 9\) divisible by 3.  
+        - By 16:
+            - Last 4 digits form a number divisible by 16.  
+            - Example:
+                - 8512 → last 4 digits 8512 → \(8512 ÷ 16 = 532\).  
         - By 17:
             - Subtract 5 times the last digit from the remaining number.  
             - If result divisible by 17, so is the number.  
             - Example:
                 - 595 → last digit 5 → \(5×5=25\); \(59 - 25 = 34\); \(34 ÷ 17 = 2\).  
-        - By 16:
-            - Last 4 digits form a number divisible by 16.  
-            - Example:
-                - 8512 → last 4 digits 8512 → \(8512 ÷ 16 = 532\).  
+        - By 18:
+            - Number is even and divisible by 9.
+            - Example: 
+                - 18 is even and divisible by 9 (\(1 + 8 = 9\)), so divisible by 18.
         - By 19:
             - Add twice the last digit to the rest of the number.  
             - If the result is divisible by 19, so is the number.  
@@ -303,10 +466,6 @@
             - Last two digits form a number divisible by 20 (i.e., end with 00, 20, 40, 60, or 80).  
             - Example:
                 - 840 → ends with 40 → divisible by 20.  
-        - By 18:
-            - Number is even and divisible by 9.
-            - Example: 
-                - 18 is even and divisible by 9 (\(1 + 8 = 9\)), so divisible by 18.
         - By 25:
             - Last two digits form a number divisible by 25 or are 00.
             - Example: 
@@ -450,6 +609,12 @@
                     - Unit digits = {9, 1}
                         - If unit digit odd, then 9, or else 1
                     - Cycle = {9, 1} → Cycle length = 2
+                - 10:
+                    - Powers: 
+                        - 10¹ = 10, 10² = 100, 10³ = 1000, ...
+                    - Unit digits = {0}
+                    - Cycle = {0} → Cycle length = 1
+                    - Unit digit always remains 0
             - Complex Cases of Unit Digits (Large Bases and Exponents):
                 - Rule 1:
                     - Only the unit digit of the base matters, not the entire number.
@@ -822,7 +987,8 @@
         - Converting Recurring Decimals into Fractions
             - CASE 1 - Pure Recurring Decimal
                 - All digits after decimal repeat from the start.
-                - Method: Multiply by \(10^r\) (where \(r\) = length of repeating block), then subtract original.
+                - Method: 
+                    - Multiply by \(10^r\) (where \(r\) = length of repeating block), then subtract original.
                 - Example 1: 
                     - \(0.\overline{3}\)
                     - Let \(x = 0.\overline{3}\)
@@ -2125,8 +2291,10 @@
             - Distance = Speed × Time.
             - Time = \( \frac{\text{Distance}}{\text{Speed}} \).
             - Unit conversions:
-                - km/h to m/s: Multiply by \( \frac{5}{18} \).
-                - m/s to km/h: Multiply by \( \frac{18}{5} \).
+                - km/h to m/s: 
+                    - Multiply by \( \frac{5}{18} \).
+                - m/s to km/h: 
+                    - Multiply by \( \frac{18}{5} \).
         - Example:
             - A car travels 240 km at 60 km/h. Find time taken:
                 - Time = \( \frac{240}{60} = 4 \) hours.
