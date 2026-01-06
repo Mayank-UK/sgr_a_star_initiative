@@ -1703,110 +1703,108 @@ const intersectionObserver = new IntersectionObserver((entries) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      const sections = document.querySelectorAll('div[id^="section-"]');
-      if (sections.length === 0) {
-        console.warn("No sections found with id starting with 'section-'");
-        loading.remove();
-        return;
-      }
+        requestAnimationFrame(() => {
+            const sections = document.querySelectorAll('div[id^="section-"]');
+            if (sections.length === 0) {
+                console.warn("No sections found with id starting with 'section-'");
+                loading.remove();
+                return;
+            }
 
-      setupEventDelegation();
+            setupEventDelegation();
 
-      const consolidatedSection = Array.from(sections).find(section => 
-        sectionChecker.isConsolidated(section.id)
-      );
-      const baseSection = Array.from(sections).find(section => 
-        sectionChecker.isBase(section.id)
-      );
+            // --- LOAD SAVED PREFERENCES ---
+            const savedPrefs = localStorage.getItem(`section_prefs_${PAGE_ID}`);
+            const hasSavedData = savedPrefs !== null;
+            const prefs = hasSavedData ? JSON.parse(savedPrefs) : {};
 
-      const prioritySection = consolidatedSection || baseSection;
-      if (prioritySection) {
-        processSection(prioritySection);
-      }
+            const consolidatedSection = Array.from(sections).find(section =>
+                sectionChecker.isConsolidated(section.id)
+            );
 
-      const controls = getCachedElement("#controls") || document.getElementById("controls");
-      if (controls) {
-        const sectionDivs = document.querySelectorAll('div[id^="section-"]');
-        const hasConsolidatedSection = consolidatedSection !== undefined;
-        
-        const controlsFragment = document.createDocumentFragment();
-        
-        sectionDivs.forEach((section) => {
-          const sectionId = section.id;
-          const labelText = sectionId.replace("section-", "");
-          const isConsolidated = sectionChecker.isConsolidated(sectionId);
-          const isBase = sectionChecker.isBase(sectionId);
-          const shouldBeChecked = isConsolidated || (!hasConsolidatedSection && isBase);
+            const controls = getCachedElement("#controls") || document.getElementById("controls");
+            let visibleSectionCount = 0;
 
-          const wrapper = createSectionToggle(section, sectionId, labelText, shouldBeChecked);
-          controlsFragment.appendChild(wrapper);
+            if (controls) {
+                const controlsFragment = document.createDocumentFragment();
 
-          if (!shouldBeChecked) {
-            intersectionObserver.observe(section);
-          }
+                sections.forEach((section) => {
+                    const sectionId = section.id;
+                    const labelText = sectionId.replace("section-", "");
+
+                    // Determine if section should be on: 
+                    // 1. Check LocalStorage first. 
+                    // 2. If no LocalStorage, use the "Consolidated" default logic.
+                    let shouldBeChecked;
+                    if (hasSavedData && prefs.hasOwnProperty(sectionId)) {
+                        shouldBeChecked = prefs[sectionId];
+                    } else {
+                        const isConsolidated = sectionChecker.isConsolidated(sectionId);
+                        const isBase = sectionChecker.isBase(sectionId);
+                        shouldBeChecked = isConsolidated || (!consolidatedSection && isBase);
+                    }
+
+                    // Create the toggle UI
+                    const wrapper = createSectionToggle(section, sectionId, labelText, shouldBeChecked);
+                    controlsFragment.appendChild(wrapper);
+
+                    // Apply Visibility State
+                    if (shouldBeChecked) {
+                        processSection(section);
+                        section.style.setProperty('display', 'block', 'important');
+                        section.style.opacity = "1";
+                        visibleSectionCount++;
+                    } else {
+                        section.style.display = "none";
+                        intersectionObserver.observe(section);
+                    }
+                });
+
+                controls.appendChild(controlsFragment);
+            }
+
+            // --- FINAL PAGE SETUP ---
+            setTimeout(() => {
+                loading.style.opacity = "0";
+                loading.style.transition = "opacity 0.3s ease-out";
+                setTimeout(() => loading.remove(), 300);
+            }, visibleSectionCount * 50 + 100);
+
+            const pageTitle = document.title;
+            const h1 = document.createElement("h1");
+            h1.textContent = pageTitle;
+            h1.style.textAlign = "center";
+            h1.style.margin = "2rem 0";
+
+            const firstSection = document.querySelector('div[id^="section-"]');
+            if (firstSection) {
+                firstSection.parentNode.insertBefore(h1, firstSection);
+            }
+
+            setupScrollControls();
+            setupOutlineFeature();
+            setupCacheBuster();
+            setupNavigationWarning();
+            updateScrollProgress();
+
+            setTimeout(() => {
+                console.log('Loading highlights after DOM ready...');
+                loadHighlights();
+            }, 600);
+
+            setTimeout(applyPendingHighlights, 2500);
         });
-        
-        controls.appendChild(controlsFragment);
-      }
-
-      const sectionsToShow = document.querySelectorAll('div[id^="section-"]');
-      let visibleSectionCount = 0;
-      
-      sectionsToShow.forEach((section, index) => {
-        const isConsolidated = sectionChecker.isConsolidated(section.id);
-        const isBase = sectionChecker.isBase(section.id);
-        const shouldShow = isConsolidated || (!consolidatedSection && isBase);
-        
-        if (shouldShow) {
-          setTimeout(() => {
-            section.style.setProperty('display', 'block', 'important');
-            section.style.opacity = "0";
-            section.style.transition = "opacity 0.3s ease-in-out";
-            requestAnimationFrame(() => {
-              section.style.opacity = "1";
-            });
-          }, visibleSectionCount * 50);
-          visibleSectionCount++;
-        } else {
-          section.style.display = "none";
-        }
-      });
-
-      setTimeout(() => {
-        loading.style.opacity = "0";
-        loading.style.transition = "opacity 0.3s ease-out";
-        setTimeout(() => loading.remove(), 300);
-      }, visibleSectionCount * 50 + 100);
-
-      const pageTitle = document.title;
-      const h1 = document.createElement("h1");
-      h1.textContent = pageTitle;
-      h1.style.textAlign = "center";
-      h1.style.margin = "2rem 0";
-
-      const firstSection = document.querySelector('div[id^="section-"]');
-      if (firstSection) {
-        firstSection.parentNode.insertBefore(h1, firstSection);
-      }
-
-      setupScrollControls();
-      setupOutlineFeature();
-      setupCacheBuster();
-      setupNavigationWarning();
-      
-      updateScrollProgress();
-      
-      setTimeout(() => {
-        console.log('Loading highlights after DOM ready...');
-        loadHighlights();
-      }, 600);
-
-      setTimeout(applyPendingHighlights, 2500);
     });
-  });
 });
+
+// Helper to save current states of all checkboxes
+function saveSectionPreference(sectionId, isChecked) {
+    const storageKey = `section_prefs_${PAGE_ID}`;
+    const currentPrefs = JSON.parse(localStorage.getItem(storageKey) || "{}");
+    currentPrefs[sectionId] = isChecked;
+    localStorage.setItem(storageKey, JSON.stringify(currentPrefs));
+}
 
 function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
   const wrapper = document.createElement("div");
@@ -1820,71 +1818,43 @@ function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
   checkbox.checked = shouldBeChecked;
 
   checkbox.addEventListener("change", (e) => {
-    e.preventDefault();
-    
     if (isProcessingSection) {
       checkbox.checked = !checkbox.checked;
       return;
     }
     
-    isProcessingSection = true;
+    // --- NEW: Save preference immediately on change ---
+    saveSectionPreference(sectionId, checkbox.checked);
     
+    isProcessingSection = true;
     const switchLoading = document.createElement("div");
     switchLoading.className = "loading-overlay";
-    switchLoading.innerHTML = `
-      <div class="loading-spinner"></div>
-      <span>Processing section...</span>
-    `;
-    
+    switchLoading.innerHTML = `<div class="loading-spinner"></div><span>Processing...</span>`;
     document.body.appendChild(switchLoading);
-    switchLoading.offsetHeight;
     
     checkbox.disabled = true;
     
     setTimeout(() => {
       const targetSection = document.getElementById(sectionId);
-      
       if (checkbox.checked) {
-        if (!loadedSections.has(sectionId)) {
-          processSection(targetSection);
-        }
-        
+        if (!loadedSections.has(sectionId)) processSection(targetSection);
         targetSection.style.display = "block";
-        targetSection.style.opacity = "0";
-        targetSection.style.transition = "opacity 0.3s ease-in-out";
-        requestAnimationFrame(() => {
-          targetSection.style.opacity = "1";
-        });
-        
-        setTimeout(() => {
-          switchLoading.remove();
-          checkbox.disabled = false;
-          isProcessingSection = false;
-          updateScrollProgress();
-
-          if (window.checkScrollability) window.checkScrollability();
-          
-          applyPendingHighlights();
-        }, 300);
+        requestAnimationFrame(() => targetSection.style.opacity = "1");
       } else {
-        targetSection.style.transition = "opacity 0.2s ease-out";  
-        targetSection.style.opacity = "0";
-        setTimeout(() => {
-          targetSection.style.display = "none";
-          switchLoading.remove();
-          checkbox.disabled = false;
-          isProcessingSection = false;
-          updateScrollProgress();
-
-          if (window.checkScrollability) window.checkScrollability();
-        }, 200);
+        targetSection.style.display = "none";
       }
-    }, 10);
+      
+      switchLoading.remove();
+      checkbox.disabled = false;
+      isProcessingSection = false;
+      updateScrollProgress();
+      if (window.checkScrollability) window.checkScrollability();
+      applyPendingHighlights();
+    }, 100);
   });
 
   const slider = document.createElement("span");
   slider.classList.add("slider");
-
   const text = document.createElement("span");
   text.textContent = labelText;
 
