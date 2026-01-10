@@ -1658,10 +1658,64 @@
 
     - Percentage Change:
         - Formula: 
-            - \( \text{Percentage change} = \frac{\text{New value} - \text{Old value}}{\text{Old value}} \times 100\% \).
+            - In case of increase:
+                - \( \text{Percentage change} = \frac{\text{New value} - \text{Old value}}{\text{Old value}} \times 100\% \).
+            - In case of decrease:
+                - \( \text{Percentage change} = \frac{\text{Old value} - \text{New value}}{\text{Old value}} \times 100\% \).
+                - Even if increase formula is used to calculate decrease, answer will be same, the first formula will output negative value to represent decrease
+        - Derivation
+            - \( P' = P + P \times \frac{r}{100} \)
+            - \( P' = P \left( 1 + \frac{r}{100} \right) \)
+            - \( \frac{P'}{P} = 1 + \frac{r}{100} \)
+            - \( \frac{P'}{P} - 1 = \frac{r}{100} \)
+            - \( \frac{P' - P}{P} = \frac{r}{100} \)
+            - \( r = \frac{P' - P}{P} \times 100 \)
         - Example: 
             - Price increases from 100 to 120.
                 - Percentage increase = \( \frac{120 - 100}{100} \times 100\% = 20\% \).
+
+    - Successive Percentage Changes:
+        - For successive changes \( a\%, b\%, c\%, ... \):
+            - Step 1: Calculate net multiplier:
+                - Net multiplier = \( \left( 1 + \frac{a}{100} \right)\left( 1 + \frac{b}{100} \right)\left( 1 + \frac{c}{100} \right) \)
+                - Take \( a, b, c \) with signs (+ for increase, − for decrease)
+            - Step 2: Calculate net percentage change:
+                - Net percentage change = \( (\text{Net multiplier} - 1) \times 100\% \)
+        - Derivation
+            - Let:
+                - Initial value = \( P \)
+                - Successive percentage changes = \( a\%, b\%, c\%, \ldots \)
+                - Take \( a, b, c \) with signs (+ for increase, − for decrease)
+            - Step 1: Apply first change
+                - \( P_1 = P \left( 1 + \frac{a}{100} \right) \)
+            - Step 2: Apply second change on \( P_1 \)
+                - \( P_2 = P_1 \left( 1 + \frac{b}{100} \right) \)
+            - Step 3: Apply third change on \( P_2 \)
+                - \( P_3 = P_2 \left( 1 + \frac{c}{100} \right) \)
+            - Step 4: Substitute step by step
+                - \( P_3 = P \left( 1 + \frac{a}{100} \right)
+                    \left( 1 + \frac{b}{100} \right)
+                    \left( 1 + \frac{c}{100} \right) \)
+            - Step 5: Generalize for \( n \) successive changes
+                - \( P_n = P \times \text{Net multiplier} \)
+                - Where  
+                    - \( \text{Net multiplier} = \left( 1 + \frac{a}{100} \right) \left( 1 + \frac{b}{100} \right) \left( 1 + \frac{c}{100} \right)\ldots \)
+            - Step 6: Express ratio of final to initial value
+                - \( \frac{P_n}{P} = \text{Net multiplier} \)
+            - Step 7: Use definition of percentage change
+                - \( \text{Percentage change}
+                    = \frac{P_n - P}{P} \times 100 \)
+            - Step 8: Substitute ratio form
+                - \( \text{Percentage change}
+                    = \left( \frac{P_n}{P} - 1 \right) \times 100 \)
+            - Step 9: Replace \( \frac{P_n}{P} \) by net multiplier
+                - \( \text{Percentage change}
+                    = (\text{Net multiplier} - 1) \times 100\% \)
+        - Example:
+            - For changes +10%, +20% and -15%:
+                - \( \text{Net multiplier} = \left( 1 + \frac{10}{100} \right)\left( 1 + \frac{20}{100} \right)\left( 1 + \frac{-15}{100} \right) = 1.1 \times 1.2 \times 0.85 = 1.122 \)
+            - Conversion to net percentage change
+                - \( \text{Net % change} = (1.122 - 1) \times 100\% = 12.2\% \)
 
     - Applications:
         - Consumption Adjustment for Price Change:
@@ -1672,66 +1726,37 @@
                 - Original quantity consumed = \( Q \)
                 - Original expenditure = \( E = P \times Q \)
             - Case 1 - Price increases by \( r\% \)
-                - New price = \( P' = P \left(1 + \frac{r}{100} \right) \)
+                - New price: 
+                    - \( P' = P + P \times \frac{r}{100} \)
+                    - \( P' = P \left(1 + \frac{r}{100} \right) \)
                 - Let new quantity = \( Q' \), and total expenditure must remain same:
                     - \( E = P \times Q = P' \times Q' \)
                     - \( P \times Q = P \left(1 + \frac{r}{100} \right) \times Q' \)
-                    - Cancel \( P \):  
-                        - \( Q = \left(1 + \frac{r}{100} \right) \times Q' \)
-                    - Solve for \( Q' \):  
-                        - \( Q' = \frac{Q}{1 + \frac{r}{100}} = Q \left(\frac{100}{100 + r}\right) \)
-                - So, percentage reduction in consumption = \( \left(1 - \frac{Q'}{Q} \right) \times 100\% = \left(1 - \frac{100}{100 + r} \right) \times 100\% \)
-                - Final formula:  
-                    - \( \frac{r}{100 + r} \times 100\% \)
+                    - \( Q = \left(1 + \frac{r}{100} \right) \times Q' \)
+                    - \( Q' = \frac{Q}{1 + \frac{r}{100}} = Q \left(\frac{100}{100 + r}\right) \)
+                - So, percentage reduction in consumption:
+                    - \( \frac{Q - Q'}{Q} \times 100\% \)
+                    - \( \left(1 - \frac{Q'}{Q} \right) \times 100\% = \left(1 - \frac{100}{100 + r} \right) \times 100\% \)
+                    - Final formula:  
+                        - \( \frac{r}{100 + r} \times 100\% \)
                 - Example:  
                     - Price increases by \( 10\% \)  
                         - \( \frac{10}{110} \times 100\% \approx 9.09\% \) reduction in consumption
             - Case 2 - Price decreases by \( r\% \)
-                - New price = \( P' = P \left(1 - \frac{r}{100} \right) \)
-                - Again, let new quantity = \( Q' \)  
+                - New price: 
+                    - \( P' = P - P \times \frac{r}{100} \)
+                    - \( P' = P \left(1 - \frac{r}{100} \right) \)
+                - Again, let new quantity = \( Q' \), and total expenditure must remain same:
                     - \( P \times Q = P' \times Q' = P \left(1 - \frac{r}{100} \right) \times Q' \)
-                - Cancel \( P \):  
                     - \( Q = \left(1 - \frac{r}{100} \right) \times Q' \)
-                - Solve for \( Q' \):  
                     - \( Q' = \frac{Q}{1 - \frac{r}{100}} = Q \left(\frac{100}{100 - r}\right) \)
-                - So, percentage increase in consumption =  
+                - So, percentage increase in consumption:  
                     - \( \left( \frac{Q'}{Q} - 1 \right) \times 100\% = \left( \frac{100}{100 - r} - 1 \right) \times 100\% \)
-                - Final formula:  
-                    - \( \frac{r}{100 - r} \times 100\% \)
+                    - Final formula:  
+                        - \( \frac{r}{100 - r} \times 100\% \)
                 - Example:  
                     - Price decreases by \( 20\% \)  
                         - \( \frac{20}{80} \times 100\% = 25\% \) increase in consumption
-        - Successive Percentage Changes:
-            - For two successive changes \( a\% \) and \( b\% \), net percentage change = \( a + b + \frac{a \times b}{100} \)%.
-            - Goal: 
-                - Derive net percentage change after two successive changes of \( a\% \) and \( b\% \)
-            - Derivation:
-                - Let:
-                    - Initial value = \( P \)
-                    - First change = \( a\% \)
-                    - Second change = \( b\% \)
-                - Step 1 
-                    - Apply first change (\( a\% \))
-                    - New value after first change:
-                        - If increase: \( P_1 = P \left(1 + \frac{a}{100}\right) \)
-                        - If decrease: \( P_1 = P \left(1 - \frac{a}{100}\right) \)
-                - Step 2 
-                    - Apply second change (\( b\% \)) on \( P_1 \)
-                    - New value after second change:
-                        - If increase: \( P_2 = P_1 \left(1 + \frac{b}{100}\right) \)
-                        - If decrease: \( P_2 = P_1 \left(1 - \frac{b}{100}\right) \)
-                - Combine both increases:
-                    - \( P_2 = P \left(1 + \frac{a}{100}\right) \left(1 + \frac{b}{100}\right) \)
-                - Multiply:
-                    - \( P_2 = P \left(1 + \frac{a}{100} + \frac{b}{100} + \frac{ab}{10000} \right) \)
-                    - \( P_2 = P \left(1 + \frac{a + b + \frac{ab}{100}}{100} \right) \)
-                - Therefore:
-                    - Net percentage change = \( a + b + \frac{ab}{100} \)\%
-            - Example: 
-                - Price increases by \( 10\% \), then by \( 20\% \):
-                    - Net change = \( 10 + 20 + \frac{10 \times 20}{100} = 30 + 2 = 32\% \).
-            - Alternative: 
-                - Use multiplier method. For \( 10\% \) increase, multiplier = \( 1 + \frac{10}{100} = 1.1 \). For \( 20\% \), multiplier = \( 1.2 \). Net multiplier = \( 1.1 \times 1.2 = 1.32 \), so net change = \( (1.32 - 1) \times 100\% = 32\% \).
         - Profit and Loss:
             - Profit percentage = \( \frac{\text{Selling price} - \text{Cost price}}{\text{Cost price}} \times 100\% \).
             - Example: 
@@ -1741,27 +1766,37 @@
             - Example: 
                 - Marked price = 500, selling price = 400. Discount % = \( \frac{500 - 400}{500} \times 100\% = 20\% \).
         - Population Growth/Depreciation:
-            - For \( r\% \) annual increase over \( n \) years:
-                - Formula: 
-                    - \( \text{Final Value} = P \left(1 + \frac{r}{100} \right)^n \)
-                - Derivation:
-                    - After 1 year: \( P_1 = P \left(1 + \frac{r}{100} \right) \)
-                    - After 2 years: \( P_2 = P_1 \left(1 + \frac{r}{100} \right) = P \left(1 + \frac{r}{100} \right)^2 \)
-                    - ...
-                    - After \( n \) years: \( P_n = P \left(1 + \frac{r}{100} \right)^n \)
-            - For \( r\% \) annual decrease over \( n \) years:
-                - Formula: 
-                    - \( \text{Final Value} = P \left(1 - \frac{r}{100} \right)^n \)
-                - Derivation:
-                    - After 1 year: \( P_1 = P \left(1 - \frac{r}{100} \right) \)
-                    - After 2 years: \( P_2 = P_1 \left(1 - \frac{r}{100} \right) = P \left(1 - \frac{r}{100} \right)^2 \)
-                    - ...
-                    - After \( n \) years: \( P_n = P \left(1 - \frac{r}{100} \right)^n \)
+            - Formula: 
+                - \( \text{Final Value} = P \left(1 + \frac{r}{100} \right)^n \)
+                - Take \( r \) with sign (+ for increase, − for decrease)
+            - Derivation:
+                - After 1 year: \( P_1 = P \left(1 + \frac{r}{100} \right) \)
+                - After 2 years: \( P_2 = P_1 \left(1 + \frac{r}{100} \right) = P \left(1 + \frac{r}{100} \right)^2 \)
+                - ...
+                - After \( n \) years: \( P_n = P \left(1 + \frac{r}{100} \right)^n \)
             - Example: 
                 - Population 1000 grows at \( 10\% \) per year for 2 years:
                     - Final population = \( 1000 \times \left(1 + \frac{10}{100}\right)^2 = 1000 \times 1.1^2 = 1000 \times 1.21 = 1210 \).
         - Aggregate percetage marks:
-            - \( \text{Aggregate Percentage} = \frac{\text{Total Obtained Marks}}{\text{Total Maximum Marks}} \times 100 \)
+            - Formula:
+                - \( \text{Aggregate Percentage} = \frac{\text{Total Obtained Marks}}{\text{Total Maximum Marks}} \times 100 \)
+            - Why aggregate percentage is used (and not average of percentages):
+                - Average of percentages gives a misleading result when subjects have unequal maximum marks, aggregate percentage reflects true overall performance
+                - Example:
+                    - Let:
+                        - Subject A:
+                            - Marks = \( 50/50 \)
+                            - Percentage = \( 100\% \)
+                        - Subject B:
+                            - Marks = \( 50/100 \)
+                            - Percentage = \( 50\% \)
+                    - Average of individual percentages:
+                        - \( \frac{100 + 50}{2} = 75\% \)
+                    - Actual overall performance:
+                        - Total obtained marks = \( 50 + 50 = 100 \)
+                        - Total maximum marks = \( 50 + 100 = 150 \)
+                        - Aggregate percentage
+                            - \( = \frac{100}{150} \times 100 = 66.67\% \)
 
 
 - Order of Magnitude
