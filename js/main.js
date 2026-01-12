@@ -76,12 +76,14 @@ function applyPendingHighlights() {
   const notFound = [];
 
   const normalize = (str) => {
-    return (str || '')
-      .replace(/[\u201C\u201D]/g, '"')
-      .replace(/[\u2018\u2019]/g, "'")
-      .replace(/\s+/g, ' ')
-      .trim();
-  };
+  // Ensure str is a string
+  const s = String(str || '');
+  return s
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/\s+/g, ' ')
+    .trim();
+};
 
   for (const h of pendingHighlights) {
     if (!h.text?.trim()) { 
@@ -93,72 +95,113 @@ function applyPendingHighlights() {
     const text = normalize(h.text);
     const post = normalize(h.post);
 
-    const fullContext = [pre, text, post].filter(Boolean).join(' ');
-    const preTextCombo = [pre, text].filter(Boolean).join(' ');
-    const textPostCombo = [text, post].filter(Boolean).join(' ');
-
     let foundElement = null;
     let bestMatch = null;
     let bestScore = 0;
 
-    for (const el of document.querySelectorAll('.line-content')) {
+    // Search across ALL .line-content elements
+    const allLineContents = Array.from(document.querySelectorAll('.line-content'));
+    
+    for (const el of allLineContents) {
       const lineText = normalize(el.textContent);
 
-      if (fullContext && lineText.indexOf(fullContext) !== -1) {
+      // Try full context match (pre + text + post)
+      if (pre && post) {
+        const fullContext = `${pre} ${text} ${post}`;
         const contextIndex = lineText.indexOf(fullContext);
-        const textIndexInContext = fullContext.indexOf(text);
-        foundElement = el;
-        bestScore = 100;
-        bestMatch = { element: el, startIndex: contextIndex + textIndexInContext };
-        break;
-      }
-
-      if (preTextCombo && lineText.indexOf(preTextCombo) !== -1) {
-        if (bestScore < 80) {
-          const preTextIndex = lineText.indexOf(preTextCombo);
-          const textIndexInCombo = preTextCombo.indexOf(text);
+        if (contextIndex !== -1) {
           foundElement = el;
-          bestScore = 80;
-          bestMatch = { element: el, startIndex: preTextIndex + textIndexInCombo };
+          bestScore = 100;
+          bestMatch = { 
+            element: el, 
+            startIndex: contextIndex + pre.length + 1, // +1 for space after pre
+            matchType: 'full-context'
+          };
+          break;
         }
       }
 
-      if (textPostCombo && lineText.indexOf(textPostCombo) !== -1) {
-        if (bestScore < 75) {
-          const textPostIndex = lineText.indexOf(textPostCombo);
+      // Try pre + text match
+      if (pre && bestScore < 90) {
+        const preTextCombo = `${pre} ${text}`;
+        const preTextIndex = lineText.indexOf(preTextCombo);
+        if (preTextIndex !== -1) {
           foundElement = el;
-          bestScore = 75;
-          bestMatch = { element: el, startIndex: textPostIndex };
+          bestScore = 90;
+          bestMatch = { 
+            element: el, 
+            startIndex: preTextIndex + pre.length + 1,
+            matchType: 'pre-text'
+          };
         }
       }
 
-      if (lineText.indexOf(text) !== -1) {
-        if (bestScore < 50) {
-          const firstMatchIndex = lineText.indexOf(text);
-          bestMatch = { element: el, startIndex: firstMatchIndex };
+      // Try text + post match
+      if (post && bestScore < 85) {
+        const textPostCombo = `${text} ${post}`;
+        const textPostIndex = lineText.indexOf(textPostCombo);
+        if (textPostIndex !== -1) {
+          foundElement = el;
+          bestScore = 85;
+          bestMatch = { 
+            element: el, 
+            startIndex: textPostIndex,
+            matchType: 'text-post'
+          };
         }
       }
-    }
 
-    if (!foundElement && bestMatch) {
-      foundElement = bestMatch.element;
-      console.warn(`⚠️ Using text-only match for: "${text}" (context not found)`);
+      // Try text-only match (lowest priority)
+      if (bestScore < 50) {
+        const textIndex = lineText.indexOf(text);
+        if (textIndex !== -1) {
+          // Verify this is a good match by checking context if available
+          let contextMatchScore = 50;
+          
+          if (pre) {
+            const beforeText = lineText.substring(Math.max(0, textIndex - pre.length - 5), textIndex).trim();
+            if (beforeText.includes(pre)) contextMatchScore += 10;
+          }
+          
+          if (post) {
+            const afterText = lineText.substring(textIndex + text.length, textIndex + text.length + post.length + 5).trim();
+            if (afterText.includes(post)) contextMatchScore += 10;
+          }
+          
+          if (contextMatchScore > bestScore) {
+            foundElement = el;
+            bestScore = contextMatchScore;
+            bestMatch = { 
+              element: el, 
+              startIndex: textIndex,
+              matchType: 'text-only'
+            };
+          }
+        }
+      }
     }
 
     if (!foundElement) {
-      notFound.push({ id: h.id, text: h.text, pre: h.pre, post: h.post, full: fullContext });
+      console.warn(`❌ Could not find highlight: "${text.substring(0, 50)}..."`);
+      console.log(`   Context: "${pre}" | "${text}" | "${post}"`);
+      notFound.push({ 
+        id: h.id, 
+        text: h.text, 
+        pre: h.pre, 
+        post: h.post 
+      });
       stillPending.push(h);
       continue;
     }
 
-    const startCharIndex = bestMatch && bestMatch.startIndex !== undefined ? bestMatch.startIndex : 0;
+    console.log(`✓ Found match (${bestMatch.matchType}): "${text.substring(0, 40)}..."`);
     
     const ok = highlightTextInElementNormalized(
       foundElement,
       text,
       h.id,
       h.color,
-      startCharIndex
+      bestMatch.startIndex
     );
 
     if (ok) applied.push(h);
@@ -186,7 +229,6 @@ function applyPendingHighlights() {
       console.log(`   %cText: %c"${i.text}"`, 'color:#1976d2;', 'font-style:italic;');
       console.log(`   %cPre:  %c"${i.pre}"`, 'color:#7b1fa2;', '');
       console.log(`   %cPost: %c"${i.post}"`, 'color:#7b1fa2;', '');
-      console.log(`   %cFull: %c"${i.full}"`, 'color:#388e3c;', 'font-family:monospace;');
       console.log('---');
     });
   } else {
@@ -210,6 +252,11 @@ function highlightTextInElementNormalized(element, searchText, id, color, startF
     textNodes.push(walker.currentNode);
   }
   
+  if (textNodes.length === 0) {
+    console.warn('No text nodes found in element');
+    return false;
+  }
+  
   let elementNormalized = '';
   const positionMap = [];
   
@@ -231,26 +278,40 @@ function highlightTextInElementNormalized(element, searchText, id, color, startF
     }
   }
   
+  // Try to find the text at the given startFromIndex first
   let startIdx = -1;
-  if (startFromIndex > 0 && startFromIndex < elementNormalized.length) {
+  if (startFromIndex >= 0 && startFromIndex < elementNormalized.length) {
     startIdx = elementNormalized.indexOf(normalizedSearch, startFromIndex);
-  } else {
+  }
+  
+  // If not found at startFromIndex, search from beginning
+  if (startIdx === -1) {
     startIdx = elementNormalized.indexOf(normalizedSearch);
   }
   
   if (startIdx === -1) {
-    console.warn('Could not find text in element:', normalizedSearch);
+    console.warn('Could not find text in element:', normalizedSearch.substring(0, 50) + '...');
+    console.log('Element normalized text:', elementNormalized.substring(0, 200) + '...');
     return false;
   }
   
-  const endIdx = startIdx + normalizedSearch.length;
+  const endIdx = startIdx + normalizedSearch.length - 1;
   
   const startPos = positionMap[startIdx];
-  const endPos = positionMap[endIdx - 1];
+  const endPos = positionMap[endIdx];
   
   if (!startPos || !endPos) {
-    console.warn('Could not map positions');
+    console.warn('Could not map positions - startIdx:', startIdx, 'endIdx:', endIdx, 'mapLength:', positionMap.length);
     return false;
+  }
+  
+  // Remove any existing highlight with this ID
+  const existing = document.querySelector(`[data-id="${id}"]`);
+  if (existing) {
+    const parent = existing.parentNode;
+    const textNode = document.createTextNode(existing.textContent);
+    parent.replaceChild(textNode, existing);
+    parent.normalize();
   }
   
   const range = document.createRange();
@@ -258,21 +319,28 @@ function highlightTextInElementNormalized(element, searchText, id, color, startF
     range.setStart(startPos.node, startPos.offset);
     range.setEnd(endPos.node, endPos.offset + 1);
 
-    const existing = document.querySelector(`[data-id="${id}"]`);
-    if (existing) {
-      existing.outerHTML = existing.textContent;
-    }
-
     const span = document.createElement('span');
     span.className = 'user-highlight';
     span.dataset.id = id;
     span.style.background = color || '#ffff88';
-    range.surroundContents(span);
+    
+    // Try surroundContents, fall back to manual wrapping if it fails
+    try {
+      range.surroundContents(span);
+    } catch (e) {
+      console.warn('surroundContents failed, using extractContents method:', e.message);
+      const contents = range.extractContents();
+      span.appendChild(contents);
+      range.insertNode(span);
+    }
 
-    console.log('✓ Highlight applied at index:', startIdx);
+    console.log('✓ Highlight applied at normalized index:', startIdx);
     return true;
   } catch (err) {
-    console.error('surroundContents failed:', err);
+    console.error('Failed to apply highlight:', err);
+    console.log('  Search text:', normalizedSearch);
+    console.log('  Start pos:', startPos);
+    console.log('  End pos:', endPos);
     return false;
   }
 }
@@ -461,6 +529,13 @@ async function createHighlight() {
   
   const { text, pre, post, startContainer, startOffset, endContainer, endOffset } = currentSelectionData;
 
+  // Ensure text is a string
+  const textStr = String(text || '').trim();
+  if (!textStr) {
+    console.error('Invalid text selection');
+    return;
+  }
+
   const range = document.createRange();
   try {
     range.setStart(startContainer, startOffset);
@@ -488,9 +563,9 @@ async function createHighlight() {
   const record = { 
     id, 
     page_id: PAGE_ID, 
-    pre_text: pre, 
-    text, 
-    post_text: post, 
+    pre_text: String(pre || ''), 
+    text: textStr, 
+    post_text: String(post || ''), 
     color
   };
 
@@ -583,14 +658,6 @@ function handleSelectionEnd(e) {
   contextMenu.style.top = top + 'px';
 
   contextMenu.classList.add('show');
-  
-  // if (isTouchDevice) {
-  //   setTimeout(() => {
-  //     contextMenu.classList.add('show');
-  //   }, 300);
-  // } else {
-  //   contextMenu.classList.add('show');
-  // }
 }
 
 contextMenu.addEventListener('click', async (e) => {
