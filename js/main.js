@@ -2203,16 +2203,36 @@ function setupCacheBuster() {
   cacheBusterButton.id = "bust-cache-button";
   cacheBusterButton.className = "bust-cache-button";
   
-  cacheBusterButton.addEventListener('click', function() {
+  cacheBusterButton.addEventListener('click', async function() {
+    // Clear in-memory caches
     DOM_CACHE.clear();
     COMPUTATION_CACHE.clear();
     parentLinesCache.clear();
     estimator.reset();
     
-    const newCacheBuster = Date.now();
-    const url = new URL(window.location);
-    url.searchParams.set('bust', newCacheBuster);
-    window.location.href = url.toString();
+    // Clear Service Worker caches if available
+    if ('caches' in window) {
+      try {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map(name => caches.delete(name)));
+        console.log('Service Worker caches cleared');
+      } catch (err) {
+        console.warn('Failed to clear Service Worker caches:', err);
+      }
+    }
+    
+    // Clear localStorage for this page
+    try {
+      const storageKey = `section_prefs_${PAGE_ID}`;
+      localStorage.removeItem(storageKey);
+      console.log('LocalStorage cleared');
+    } catch (err) {
+      console.warn('Failed to clear localStorage:', err);
+    }
+    
+    // Perform a hard reload to bypass browser cache
+    // This clears the browser's HTTP cache for all resources
+    window.location.reload(true);
   });
 
   const controls = getCachedElement("#controls") || document.getElementById("controls");
