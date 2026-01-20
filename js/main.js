@@ -99,8 +99,14 @@ function applyPendingHighlights() {
     let bestMatch = null;
     let bestScore = 0;
 
-    // Search across ALL .line-content elements
-    const allLineContents = Array.from(document.querySelectorAll('.line-content'));
+    // Search ONLY in main-content section
+    const mainContentSection = document.getElementById('section-base-content');
+    if (!mainContentSection) {
+      console.warn('main-content section not found');
+      stillPending.push(h);
+      continue;
+    }
+    const allLineContents = Array.from(mainContentSection.querySelectorAll('.line-content'));
     
     for (const el of allLineContents) {
       const lineText = normalize(el.textContent);
@@ -607,7 +613,18 @@ function handleSelectionEnd(e) {
     return;
   }
 
+  // Check if selection is within main-content section
   const range = sel.getRangeAt(0);
+  const container = range.commonAncestorContainer.nodeType === Node.TEXT_NODE
+    ? range.commonAncestorContainer.parentElement
+    : range.commonAncestorContainer;
+  
+  const mainContentSection = container.closest('#section-base-content');
+  if (!mainContentSection) {
+    hideContextMenu();
+    return;
+  }
+
   const context = getTextContext(range);
 
   currentSelectionData = {
