@@ -414,15 +414,16 @@ body, html {
 }
 
 .blurred-block {
-  filter: blur(6px);
   cursor: pointer;
-  transition: filter 0.3s ease;
-  will-change: filter;
-  -webkit-backface-visibility: hidden;
-  -webkit-transform: translateZ(0);
+  position: relative;
 }
 
-.blurred-block.revealed {
+.blurred-block:not(.revealed) > * {
+  filter: blur(6px);
+  transition: filter 0.3s ease;
+}
+
+.blurred-block.revealed > * {
   filter: none;
 }
 
@@ -430,8 +431,8 @@ body, html {
   content: "";
   position: absolute;
   inset: 0;
-  backdrop-filter: blur(6px);
-  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.95);
   z-index: 10;
   transition: opacity 0.25s ease;
   pointer-events: none;
@@ -439,6 +440,23 @@ body, html {
 
 .blurred-block.revealed::before {
   opacity: 0;
+}
+
+.blurred-block:not(.revealed)::after {
+  content: "👆 Tap to reveal answer";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(76, 175, 80, 0.95);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  z-index: 11;
+  pointer-events: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 
