@@ -1570,21 +1570,153 @@
         - Average Age:
             - Type 1 - Replacement (One person leaves, another joins):
                 - If average increases by \( \Delta \), age of newcomer = age of person left + \( n \times \Delta \), where \( n \) is the number of persons.
+                    - Derivation:
+                        - We know that, it can be represented as:
+                            - New total − Old total = Age of Newcomer − Age of Leaver
+                            - Where,
+                                - \(
+                                Total = \text{Average} \times n
+                                \)
+                        - Now, equating mathematically:
+                            - Step 1:
+                                - \(
+                                A_2 \times n - A_1 \times n = \text{Age of newcomer} - \text{Age of person left}
+                                \)
+                                or
+                                - \(
+                                (A_2 - A_1) \times n = \text{Age of newcomer} - \text{Age of person left}
+                                \)
+                                or
+                                - \(
+                                \Delta \times n = \text{Age of newcomer} - \text{Age of person left}
+                                \)
+                            - Step 2:
+                                - \(
+                                \text{Age of newcomer} = \text{Age of person left} + n \times \Delta
+                                \)
                 - If average decreases by \( \Delta \), age of newcomer = age of person left - \( n \times \Delta \).
+                    - Derivation:
+                        - We know that, it can be represented as:
+                            - Old total - New total = Age of Leaver - Age of Newcomer 
+                            - Where,
+                                - \(
+                                Total = \text{Average} \times n
+                                \)
+                        - Now, equating mathematically:
+                            - Step 1:
+                                - \(
+                                A_1 \times n - A_2 \times n = \text{Age of person left} - \text{Age of newcomer}
+                                \)
+                                or
+                                - \(
+                                (A_1 - A_2) \times n = \text{Age of person left} - \text{Age of newcomer}
+                                \)
+                                or
+                                - \(
+                                \Delta \times n = \text{Age of person left} - \text{Age of newcomer}
+                                \)
+                            - Step 2:
+                                - \(
+                                \text{Age of newcomer} = \text{Age of person left} - n \times \Delta
+                                \)
                 - Example: 
                     - Group of 10 friends, average age 10 years. One leaves, another (age 22) joins, new average 8 years. Find age of person who left:
                         - Decrease in average = \( 10 - 8 = 2 \).
                         - Age of person left = \( 22 + 10 \times 2 = 22 + 20 = 42 \) years.
             - Type 2 - Addition (Person joins, no one leaves):
                 - If average increases by \( \Delta \), age of newcomer = previous average + \( (n + 1) \times \Delta \).
+                    - Derivation:
+                        - We know that, it can be represented as:
+                            - New total - Old total  = Age of newcomer 
+                        - Now, equating mathematically:
+                            - Step 1:
+                                - \(
+                                (n+1)A_2 - nA_1 = \text{Age of newcomer}
+                                \)
+                            - Step 2:
+                                - We know that, \( A_2 = A_1 + \Delta \), so
+                                - \(
+                                (n+1)(A_1 + \Delta) - nA_1 = \text{Age of newcomer}
+                                \)
+                            - Step 3:
+                                - \(
+                                (n+1)A_1 + (n+1)\Delta - nA_1 = \text{Age of newcomer}
+                                \)
+                            - Step 4:
+                                - \(
+                                \text{Age of newcomer} = A_1 + (n+1) \times \Delta
+                                \)
                 - If average decreases by \( \Delta \), age of newcomer = previous average - \( (n + 1) \times \Delta \).
+                    - Derivation:
+                        - We know that, it can be represented as:
+                            - Old total - New total  = Age of newcomer 
+                        - Now, equating mathematically:
+                            - Step 1:
+                                - \(
+                                nA_1 - (n-1)A_2 = \text{Age of newcomer}
+                                \)
+                            - Step 2:
+                                - We know that, \( A_2 = A_1 - \Delta \), so
+                                - \(
+                                nA_1 - (n-1)(A_1 - \Delta \ ) = \text{Age of newcomer}
+                                \)
+                            - Step 3:
+                                - \(
+                                nA_1 - (n-1)A_1 + (n-1) \Delta \ = \text{Age of newcomer}
+                                \)
+                            - Step 4:
+                                - \(
+                                \text{Age of newcomer} = A_1 + (n+1) \times \Delta
+                                \)
                 - Example: 
                     - 20 students, average age 5 years. Teacher joins, new average 8 years. Find teacher’s age:
                         - Increase in average = \( 8 - 5 = 3 \).
                         - Teacher’s age = \( 5 + (20 + 1) \times 3 = 5 + 21 \times 3 = 5 + 63 = 68 \) years.
             - Type 3 - Removal (Person leaves, no one joins):
                 - If average increases by \( \Delta \), age of person left = previous average - \( (n - 1) \times \Delta \).
+                    - Derivation:
+                        - We know that, it can be represented as:
+                            - Old total - New total = Age of leaver 
+                        - Now, equating mathematically:
+                            - Step 1:
+                                - \(
+                                nA_1 - (n-1)A_2 -  = \text{Age of leaver}
+                                \)
+                            - Step 2:
+                                - We know that, \( A_2 = A_1 + \Delta \), so
+                                - \(
+                                nA_1 - (n-1)(A_1 + \Delta) = \text{Age of leaver}
+                                \)
+                            - Step 3:
+                                - \(
+                                nA_1 - (n-1)A_1 - (n-1)\Delta= \text{Age of leaver}
+                                \)
+                            - Step 4:
+                                - \(
+                                \text{Age of leaver} = A_1 - (n-1) \times \Delta
+                                \)
                 - If average decreases by \( \Delta \), age of person left = previous average + \( (n - 1) \times \Delta \).
+                    - Derivation:
+                        - We know that, it can be represented as:
+                            - Old total - New total  = Age of leaver 
+                        - Now, equating mathematically:
+                            - Step 1:
+                                - \(
+                                nA_1 - (n-1)A_2 = \text{Age of leaver}
+                                \)
+                            - Step 2:
+                                - We know that, \( A_2 = A_1 - \Delta \), so
+                                - \(
+                                nA_1 - (n-1)(A_1 - \Delta \ ) = \text{Age of leaver}
+                                \)
+                            - Step 3:
+                                - \(
+                                nA_1 - (n-1)A_1 + (n-1) \Delta \ = \text{Age of leaver}
+                                \)
+                            - Step 4:
+                                - \(
+                                \text{Age of leaver} = A_1 + (n-1) \times \Delta
+                                \)
                 - Example: 
                     - 10 friends, average age 15 years. One leaves, new average 16 years. Find age of person who left:
                         - Increase in average = \( 16 - 15 = 1 \).
@@ -1812,21 +1944,179 @@
 
     - Squares:
         - Definition:
-            - The square of a number is the result of multiplying it by itself: \( n^2 = n \times n \).
-            - Example: 
-                - \( 8^2 = 8 \times 8 = 64 \).
+            - The square of a number is the result of multiplying it by itself:
+                - \(
+                n^2 = n \times n
+                \)
+            - Example:
+                - \(
+                8^2 = 8 \times 8 = 64
+                \)
         - Properties:
-            - Always non-negative: \( n^2 \geq 0 \).
-            - Even number’s square is even; odd number’s square is odd.
-            - Cannot end with 2, 3, 7, or 8.
-            - Cannot have an odd number of zeros at the end.
-            - Square of a number ending in 5: \( (a5)^2 = a(a+1)25 \).
-                - Example: 
-                    - \( 75^2 = 7 \times (7+1) \times 25 = 7 \times 8 \times 25 = 5625 \).
-            - Digit sum of a perfect square is 1, 4, 7, or 9.
-            - Every square is a multiple of 3 or exceeds it by 1; a multiple of 4 or exceeds it by 1.
+            - Always non-negative:
+                - \(
+                n^2 \geq 0
+                \)
+            - Parity:
+                - Square of an even number is even.
+                - Square of an odd number is odd.
+            - Last digit:
+                - A perfect square can only end in:
+                    - 0, 1, 4, 5, 6, or 9.
+                - Hence, it cannot end with:
+                    - 2, 3, 7, or 8.
+            - Zeros at the end:
+                - A perfect square cannot have an odd number of zeros at the end.
+                - (Because zeros come from pairs of 10 = 2 × 5)
+            - Square of numbers ending in 5:
+                - Rule:
+                    - If a number ends in 5, then it's square is:
+                        - \(
+                        a(a+1)\,25
+                        \)
+                - Steps:
+                    1. Ignore the last digit 5.
+                    2. Multiply the remaining part by its next integer.
+                    3. Append 25 at the end.
+                - Examples:
+                    - Example 1:
+                        - \(
+                        5^2
+                        \)
+                        - \(a = 0\)
+                        - \(
+                        0 \times 1 = 0
+                        \)
+                        - Append 25:
+                            - \(
+                            5^2 = 25
+                            \)
+                    - Example 2:
+                        - \(
+                        35^2
+                        \)
+                        - \(a = 3\)
+                        - \(
+                        3 \times 4 = 12
+                        \)
+                        - Append 25:
+                            - \(
+                            35^2 = 1225
+                            \)
+                    - Example 3:
+                        - \(
+                        205^2
+                        \)
+                        - \(a = 20\)
+                        - \(
+                        20 \times 21 = 420
+                        \)
+                        - Append 25:
+                            - \(
+                            205^2 = 42025
+                            \)
+            - Remainders (mod properties):
+                - Modulo 3:
+                    - A perfect square is either:
+                        - A multiple of 3, or 1 more than a multiple of 3.
+                        - i.e.,
+                            - \(
+                            n^2 \equiv 0 \text{ or } 1 \pmod{3}
+                            \)
+                    - Reason:
+                        - Any integer n when divided by 3 leaves remainder:
+                            - 0, 1, or 2.
+                        - Hence, since perfect squares cannot end with:
+                            - 2, 3, 7, or 8.
+                        - We are only left with:
+                            - 0 and 1
+                    - Examples:
+                        - \(5^2 = 25\):
+                            - \(25 \div 3 = 8\) remainder 1.
+                        - \(6^2 = 36\):
+                            - \(36 \div 3 = 12\) remainder 0.
+                        - \(7^2 = 49\):
+                            - \(49 \div 3 = 16\) remainder 1.
+                        - Hence:
+                            - No perfect square gives remainder 2 when divided by 3.
+                - Modulo 4:
+                    - A perfect square is either:
+                        - A multiple of 4, or 1 more than a multiple of 4.
+                        - i.e.,
+                            - \(
+                            n^2 \equiv 0 \text{ or } 1 \pmod{4}
+                            \)
+                    - Reason:
+                        - Any integer n when divided by 4 leaves remainder:
+                            - 0, 1, 2, or 3.
+                        - Hence, since perfect squares cannot end with:
+                            - 2, 3, 7, or 8.
+                        - We are only left with:
+                            - 0 and 1
+                    - Examples:
+                        - \(8^2 = 64\):
+                            - \(64 \div 4 = 16\) remainder 0.
+                        - \(9^2 = 81\):
+                            - \(81 \div 4 = 20\) remainder 1.
+                        - \(10^2 = 100\):
+                            - \(100 \div 4 = 25\) remainder 0.
+                        - \(11^2 = 121\):
+                            - \(121 \div 4 = 30\) remainder 1.
+                        - Hence:
+                            - No perfect square gives remainder 2 or 3 when divided by 4.
+            - Digital root:
+                - Definition:
+                    - The digital root of a number is obtained by repeatedly adding its digits until a single digit remains.
+                    - Examples (digital root):
+                        - \(987\):
+                            - \(9 + 8 + 7 = 24\)
+                            - \(2 + 4 = 6\)
+                            - Digital root = 6
+                        - \(1234\):
+                            - \(1 + 2 + 3 + 4 = 10\)
+                            - \(1 + 0 = 1\)
+                            - Digital root = 1
+                - Property for perfect squares:
+                    - The digital root of a perfect square is always:
+                        - 1, 4, 7, or 9.
+                        - (Except the trivial case \(0^2 = 0\))
+                    - The digital root of a perfect square number cannot be:
+                        - 2, 3, 5, 6, or 8,
+                - Method:
+                    - Keep summing digits until one digit is left.
+                - Verification with examples:
+                    - \(4 = 2^2\):
+                        - Digital root = 4
+                    - \(9 = 3^2\):
+                        - Digital root = 9
+                    - \(16 = 4^2\):
+                        - \(1 + 6 = 7\)
+                        - Digital root = 7
+                    - \(25 = 5^2\):
+                        - \(2 + 5 = 7\)
+                        - Digital root = 7
+                    - \(36 = 6^2\):
+                        - \(3 + 6 = 9\)
+                        - Digital root = 9
+                    - \(49 = 7^2\):
+                        - \(4 + 9 = 13\)
+                        - \(1 + 3 = 4\)
+                        - Digital root = 4
+                    - \(64 = 8^2\):
+                        - \(6 + 4 = 10\)
+                        - \(1 + 0 = 1\)
+                        - Digital root = 1
+                    - \(81 = 9^2\):
+                        - \(8 + 1 = 9\)
+                        - Digital root = 9
+                - CSAT application:
+                    - Used to eliminate options quickly in perfect square questions without actual squaring.
         - CSAT Application:
-            - Used in problems involving equal rows and columns (e.g., arranging items in a square grid).
+            - Used in problems involving:
+                - Square grids.
+                - Perfect square checks.
+                - Area problems.
+                - Pattern recognition in number series.
 
     - Square Roots:
         - Definition:
@@ -1841,21 +2131,99 @@
             - If a square ends with 6, its square root ends with 4 or 6 (e.g., \( \sqrt{16} = 4 \), \( \sqrt{36} = 6 \)).
             - For a number with \( n \) digits, the square root has \( \lfloor n/2 \rfloor \) digits (even \( n \)) or \( \lfloor (n+1)/2 \rfloor \) digits (odd \( n \)).
         - Methods to Find Square Root:
-            - Prime Factorization:
+            - Prime Factorization (only perfect square):
                 - Factorize the number into prime factors, pair them, and take one factor from each pair.
+                - Note
+                    - Before applying this method, use digital root to identify if this number is a perfect square or not
                 - Example: 
                     - Find \( \sqrt{4356} \):
                         - \( 4356 = 2^2 \times 3^2 \times 11^2 \).
                         - \( \sqrt{4356} = 2 \times 3 \times 11 = 66 \).
-            - Long Division (for non-perfect squares or large numbers):
-                - Pair digits from the right (each pair is a period).
-                - Find the largest square less than or equal to the first period, subtract, and bring down the next period.
-                - Double the current quotient, append a digit to form a new divisor, and continue.
-                - Example: 
-                    - Find \( \sqrt{1568.6} \) (correct answer is approximately 39.6):
-                        - Note: 
-                            - The document’s answer (396) is incorrect, as \( 396^2 = 156816 \neq 1568.6 \).
-                        - Use long division or approximation for non-perfect squares in CSAT.
+            - Successive approximation (Linear interpolation) method:
+                - Idea:
+                    - If:
+                        - \( a^2 &lt; N &lt; b^2 \)
+                    - Then:
+                        - \( a &lt; \sqrt{N} &lt; b \)
+                    - Approximate using:
+                        - \(
+                        \sqrt{N} \approx a + \frac{N - a^2}{b^2 - a^2}
+                        \)
+                - Example:
+                    - Find \( \sqrt{266} \):
+                        - Step 1:
+                            - Find nearest perfect squares:
+                                - \(16^2 = 256\)
+                                - \(17^2 = 289\)
+                        - Step 2:
+                            - Since:
+                                - \(256 &lt; 266 &lt; 289\)
+                            - Therefore:
+                                - \(16 &lt; \sqrt{266} &lt; 17\)
+                        - Step 3:
+                            - Apply formula:
+                                - \(
+                                \sqrt{266} \approx 16 + \frac{266 - 256}{289 - 256}
+                                \)
+                        - Step 4:
+                            - Simplify:
+                                - \(
+                                \sqrt{266} \approx 16 + \frac{10}{33}
+                                \)
+                        - Step 5:
+                            - Approximate:
+                                - \(
+                                \frac{10}{33} \approx 0.30
+                                \)
+                        - Final answer:
+                            - \(
+                            \sqrt{266} \approx 16.30
+                            \)
+                - How to even choose the numbers for close approximation
+                    - Step 1: Check based on memorized squares
+                    <table>
+                        <thead>
+                            <tr>
+                            <th>n</th>
+                            <th>n²</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>11</td><td>121</td></tr>
+                            <tr><td>12</td><td>144</td></tr>
+                            <tr><td>13</td><td>169</td></tr>
+                            <tr><td>14</td><td>196</td></tr>
+                            <tr><td>15</td><td>225</td></tr>
+                            <tr><td>16</td><td>256</td></tr>
+                            <tr><td>17</td><td>289</td></tr>
+                            <tr><td>18</td><td>324</td></tr>
+                            <tr><td>19</td><td>361</td></tr>
+                        </tbody>
+                    </table>
+                    - Step 2: Rough magnitude (using number of digits)
+                        - \(266\) is a 3-digit number.
+                        - Known squares:
+                            - \(10^2 = 100\)
+                            - \(20^2 = 400\)
+                        - Since:
+                            - \(100 &lt; 266 &lt; 400\)
+                        - Therefore:
+                            - \(10 &lt; \sqrt{266} &lt; 20\)
+                    - Step 3: Narrow inside the range
+                        - Check mid values:
+                            - \(15^2 = 225\)
+                            - \(16^2 = 256\)
+                            - \(17^2 = 289\)
+                        - Compare with 266:
+                            - \(256 &lt; 266 &lt; 289\)
+                    - Conclusion:
+                        - \(16 &lt; \sqrt{266} &lt; 17\)
+                        - Hence, the closest integers are:
+                            - \(a = 16\), \(b = 17\)
+            - Long Division Method:
+                - Examples:
+                    - <img height="400" src="./../images/csat/long_division_method.png" />
+                    - <img height="200" src="./../images/csat/long_division_method_alt.png" />
 
     - Cubes:
         - Definition:
