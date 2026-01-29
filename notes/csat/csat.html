@@ -2221,6 +2221,15 @@
                         - Hence, the closest integers are:
                             - \(a = 16\), \(b = 17\)
             - Long Division Method:
+                - Method
+                    - <iframe width="315" height="560" 
+                        src="https://www.youtube-nocookie.com/embed/WGDtHzpfa2o" 
+                        title="YouTube video" 
+                        frameborder="0" 
+                        referrerpolicy="strict-origin-when-cross-origin"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
                 - Examples:
                     - <img height="400" src="./../images/csat/long_division_method.png" />
                     - <img height="200" src="./../images/csat/long_division_method_alt.png" />
@@ -2242,7 +2251,7 @@
             - Example: 
                 - \( \sqrt[3]{125} = 5 \), since \( 5^3 = 125 \).
         - Methods to Find Cube Root:
-            - Prime Factorization:
+            - Prime Factorization (only for perfect cubes):
                 - Factorize the number, divide the exponents by 3, and take the product.
                 - Example: 
                     - Find \( \sqrt[3]{614125} \):
@@ -2268,7 +2277,8 @@
             - Example: 
                 - \( \sqrt{(-5)^2} = \sqrt{25} = 5 \)
         - \( \sqrt{a + b} \neq \sqrt{a} + \sqrt{b} \)
-            - Counter-example: \( \sqrt{9 + 16} = \sqrt{25} = 5 \), but \( \sqrt{9} + \sqrt{16} = 3 + 4 = 7 \)
+            - Example: 
+                - \( \sqrt{9 + 16} = \sqrt{25} = 5 \), but \( \sqrt{9} + \sqrt{16} = 3 + 4 = 7 \)
         - Rationalizing the denominator:
             - Example: 
                 - Rationalize \( \frac{1}{\sqrt{2}} \):
@@ -2278,6 +2288,7 @@
     - Surds:
         - Definition:
             - A surd is an irrational number expressed as \( \sqrt[n]{a} \), where \( a \) is rational and \( \sqrt[n]{a} \) is irrational.
+            - The word comes from the Latin word surdus, which means "deaf" or "mute" (silent). early mathematicians literally thought of these numbers as "mute" or "voiceless" because they couldn't be expressed as a simple ratio of integers.
         - Example: 
             - \( \sqrt{2} \), \( \sqrt[3]{5} \).
         - Types:
@@ -2292,7 +2303,7 @@
             - Dissimilar Surds: 
                 - Different surds, e.g., \( \sqrt{2} \), \( \sqrt{3} \).
         - Rationalization:
-            - Multiply a surd by its conjugate to make it rational.
+            - Multiply a surd by its conjugate to make it rational. While the denominator becomes rational, the entire number usually remains irrational.
             - Example: 
                 - Rationalize \( \frac{1}{\sqrt{3}} \):
                     - Multiply by \( \frac{\sqrt{3}}{\sqrt{3}} \): \( \frac{1}{\sqrt{3}} \times \frac{\sqrt{3}}{\sqrt{3}} = \frac{\sqrt{3}}{3} \).
@@ -2373,11 +2384,23 @@
         - Example:
             - If the chair (CP = ₹550) is sold for ₹700, then SP = ₹700.
 
+    - Marked Price (MP):
+        - Definition:
+            - The price listed on an article, before any discounts.
+        - Relationship:
+            - MP is typically higher than CP to allow for profit after discounts.
+        - Example:
+            - A pen has MP = ₹15, sold after 20% discount. 
+            - SP = ₹\( 15 \times \frac{100 - 20}{100} = 12 \).
+
     - Profit:
         - Definition:
             - Profit is earned when SP > CP.
             - Profit = SP - CP.
-            - Profit Percentage = \( \frac{\text{Profit}}{\text{CP}} \times 100 \).
+            - Profit percentage formula:
+                - \( \text{Profit Percentage} = \frac{\text{SP} - \text{CP}}{\text{CP}} \times 100 \)
+                or
+                - \( \text{Profit Percentage} = \frac{\text{Profit}}{\text{CP}} \times 100 \)
         - Example:
             - For CP = ₹550, SP = ₹700:
                 - Profit = ₹700 - ₹550 = ₹150.
@@ -2387,92 +2410,103 @@
         - Definition:
             - Loss is incurred when CP > SP.
             - Loss = CP - SP.
-            - Loss Percentage = \( \frac{\text{Loss}}{\text{CP}} \times 100 \).
+        - Loss percentage formula:
+            - \( \text{Loss Percentage} = \frac{\text{CP} - \text{SP}}{\text{CP}} \times 100 \)
+            or
+            - \( \text{Loss Percentage} = \frac{\text{Loss}}{\text{CP}} \times 100 \)
         - Example:
             - For CP = ₹550, SP = ₹500:
                 - Loss = ₹550 - ₹500 = ₹50.
                 - Loss % = \( \frac{50}{550} \times 100 \approx 9.09\% \).
 
-    - Key Formulas:
-        - Profit % = \( \frac{\text{SP} - \text{CP}}{\text{CP}} \times 100 \).
-        - Loss % = \( \frac{\text{CP} - \text{SP}}{\text{CP}} \times 100 \).
-        - SP = \( \text{CP} \times \frac{100 + \text{Profit \%}}{100} \) (for profit).
-        - SP = \( \text{CP} \times \frac{100 - \text{Loss \%}}{100} \) (for loss).
-        - CP = \( \frac{\text{SP} \times 100}{100 + \text{Profit \%}} \) (for profit).
-        - CP = \( \frac{\text{SP} \times 100}{100 - \text{Loss \%}} \) (for loss).
-
     - Discount:
         - Definition:
             - The reduction allowed on the marked price of an article is called a discount.
             - Discount is always calculated on the marked price (MP).
+        - Discount percentage formula:
+            - \( \text{Discount Percentage} = \frac{\text{MP} - \text{SP}}{\text{MP}} \times 100 \)
+            or
+            - \( \text{Discount Percentage} = \frac{\text{Discount}}{\text{MP}} \times 100 \)
+        - Doubt resolution
+            - Whenever in doubt weather profit/loss/discount had MP or SP in denominator, just use the percentage change formula to figure out the denominator
         - Key Formulas:
             - Selling Price (SP) = Marked Price (MP) - Discount
             - Discount = Marked Price - Selling Price
-        - If discount allowed is \( r\% \), then:
-            - Selling Price = \( \left(1 - \frac{r}{100}\right) \times \text{Marked Price} \)
-            - OR: 
-                - \( \text{SP} = \frac{(100 - r)}{100} \times \text{MP} \)
         - Example:
             - Marked Price = ₹1000, Discount = 10%
             - Selling Price = ₹\( \frac{(100 - 10)}{100} \times 1000 = 0.9 \times 1000 = 900 \)
             - Discount = ₹1000 - ₹900 = ₹100
 
-    - Marked Price (MP):
-        - Definition:
-            - The price listed on an article, before any discounts.
-        - Relationship:
-            - MP is typically higher than CP to allow for profit after discounts.
-            - SP = MP × (100 - Discount %) / 100.
-        - Example:
-            - A pen has MP = ₹15, sold after 20% discount. SP = ₹\( 15 \times \frac{100 - 20}{100} = 12 \).
-
     - Successive Discounts:
         - Definition:
             - Multiple discounts applied sequentially on the reduced price after each discount.
-        - Formula:
-            - For two successive discounts \( r_1\% \) and \( r_2\% \), equivalent single discount % = \( r_1 + r_2 - \frac{r_1 \cdot r_2}{100} \).
-            - SP after successive discounts = \( \text{MP} \times \frac{100 - r_1}{100} \times \frac{100 - r_2}{100} \).
-        - Example: 
-            - A store offers 25% discount, then an additional 35% discount. Find total discount %:
-                - Total discount % = \( 25 + 35 - \frac{25 \times 35}{100} = 60 - 8.75 = 51.25\% \).
-                - Answer is: 51.25%.
-        - For three discounts \( r_1, r_2, r_3 \):
-            - SP = \( \text{MP} \times \frac{100 - r_1}{100} \times \frac{100 - r_2}{100} \times \frac{100 - r_3}{100} \).
-            - Equivalent single discount % = \( 100 - \left( \frac{100 - r_1}{100} \times \frac{100 - r_2}{100} \times \frac{100 - r_3}{100} \times 100 \right) \).
+        - For successive discounts a%, b%, c%, ...:
+            - Step 1: Calculate net multiplier:
+                - Net multiplier = \( \left( 1 + \frac{a}{100} \right)\left( 1 + \frac{b}{100} \right)\left( 1 + \frac{c}{100} \right) \)
+                - Take \( a, b, c \) with signs (+ for increase, − for decrease)
+            - Step 2: Calculate net percentage change:
+                - Net percentage change = \( (\text{Net multiplier} - 1) \times 100\% \)
+        - Example:
+            - For successive discounts of 10% and 20%:
+                - \( \text{Net multiplier} = \left( 1 + \frac{10}{100} \right)\left( 1 + \frac{20}{100} \right) = 1.1 \times 1.2 = 1.32 \)
+            - Net percentage change:
+                - \( \text{Net % change} = (1.32 - 1) \times 100\% = 32\% \)  
             
     - Advanced Concepts:
-        - Special case:
-            - Two articles with same SP, one sold at \( x\% \) profit, other at \( x\% \) loss:
-                - Always results in a net loss.
+        - Always loss scenario:
+            - Definition:
+                - If a single article undergoes two successive percentage changes, first an increase of x% and then a decrease of x%, and this always results in a net loss.
+                - This also hold true for:
+                    - Two articles with same SP, one sold at x% profit, other at x% loss, always results in a net loss.
+            - Formula
                 - Net Loss % = \( \frac{x^2}{100} \).
-                - Example: 
-                    - Two articles sold at SP = ₹100 each, one with 20% profit, other with 20% loss:
-                        - CP of first = ₹\( \frac{100 \times 100}{100 + 20} = 83.33 \).
-                        - CP of second = ₹\( \frac{100 \times 100}{100 - 20} = 125 \).
-                        - Total CP = ₹83.33 + ₹125 = ₹208.33, Total SP = ₹200.
-                        - Loss = ₹208.33 - ₹200 = ₹8.33.
-                        - Loss % = \( \frac{8.33}{208.33} \times 100 \approx 4\% \).
-                        - Shortcut: 
-                            - Loss % = \( \frac{20^2}{100} = 4\% \).
+            - Derivation
+                - Base assumption:
+                    - Let the initial price = 100
+                - We know that, new percentage formula is:
+                    - \( \text{New Value} = \text{Original Value} \times \left(1 + \frac{x}{100}\right) \)
+                    - Sign changes based on weather x is positive or negative.
+                - After +x%:
+                    - New value = \( 100 \times \left(1 + \frac{x}{100}\right) = 100 + x \)
+                - After −x%:
+                    - New value = \( (100 + x)\left(1 - \frac{x}{100}\right) \)
+                - Expanding:
+                    - \( (100 + x)\left(1 - \frac{x}{100}\right) = (100 + x)\frac{100 - x}{100} \)
+                    - \( = \frac{10000 - x^2}{100} \)
+                - Final value:
+                    - \( = 100 - \frac{x^2}{100} \)
+                    - Final value is less than initial base price of 100.
+                - Net loss:
+                    - \( = 100 - \left(100 - \frac{x^2}{100}\right) = \frac{x^2}{100} \)
+                    - If the base price had been 200, then this would have turned out to be \( \frac{2x^2}{100} \)
+                - Net Loss %:
+                    - \( \text{Net Loss %} = \frac{x^2}{100} \)
+            - Example: 
+                - Two articles sold at SP = ₹100 each, one with 20% profit, other with 20% loss:
+                - Loss % = \( \frac{20^2}{100} = 4\% \).
         - Dishonest Dealer:
             - A dealer uses faulty weights or measures to cheat customers.
             - Example: 
                 - A dealer uses a 900g weight instead of 1kg, sells at CP per kg, claims no profit/loss:
-                    - True CP = ₹100 for 1kg, but sells 900g for ₹100.
-                    - Effective CP per 900g = ₹\( \frac{100 \times 900}{1000} = 90 \).
-                    - Profit % = \( \frac{100 - 90}{90} \times 100 \approx 11.11\% \).
+                - True CP = ₹100 for 1kg, but sells 900g for ₹100.
+                - Effective CP
+                    - CP per gram:
+                        - \( \text{CP per gram} = \frac{100}{1000} = 0.1 \)
+                    - CP for 900 g:
+                        - \( \text{Effective CP of 900 g} = 900 \times 0.1 = 90 \)
+                - Profit % = \( \frac{100 - 90}{90} \times 100 \approx 11.11\% \).
         - Successive Profit and Loss:
             - Example: 
                 - A product is sold at 20% profit, then the buyer sells it at 25% profit:
-                    - If CP = ₹100, first SP = ₹\( 100 \times 1.2 = 120 \).
-                    - Second SP = ₹\( 120 \times 1.25 = 150 \).
-                    - Net profit % = \( \frac{150 - 100}{100} \times 100 = 50\% \).
+                - If CP = ₹100, first SP = ₹\( 100 \times 1.2 = 120 \).
+                - Second SP = ₹\( 120 \times 1.25 = 150 \).
+                - Net profit % = \( \frac{150 - 100}{100} \times 100 = 50\% \).
         - Break-Even Point:
             - When CP = SP, no profit or loss.
             - Example: 
                 - CP = ₹100, discount = 20% on MP. Find MP for no profit/loss:
-                    - SP = CP = ₹100 = \( \text{MP} \times \frac{100 - 20}{100} \)
-                    - MP = ₹\( \frac{100 \times 100}{80} = 125 \)
+                - SP = CP = ₹100 = \( \text{MP} \times \frac{100 - 20}{100} \)
+                - MP = ₹\( \frac{100 \times 100}{80} = 125 \)
 
 
 - Ratio, Proportion, Partnership and Mixture
