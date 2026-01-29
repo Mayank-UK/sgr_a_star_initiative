@@ -3855,6 +3855,7 @@
             - Helps the RBI decide interest rates and liquidity adjustments.
             - Affects inflation (price levels), credit availability, and deposit interest rates.
             - Understanding different money measures helps evaluate liquidity and monetary health of the economy.
+        - <img height="400" src="./../images/economy/m1_m2_m3_m4.gif" />
         - Narrow Money (M1, M2)
             - M1 (Most Liquid):
                 - Currency with the public
@@ -3899,6 +3900,7 @@
             - M1 and M2 are narrow money (highly liquid, low volume).
             - M3 and M4 are broad money (lower liquidity, higher volume).
         - Formula Summary:
+            - M0 = Currency in circulation + Bankers’ deposits with RBI + Other deposits with RBI
             - M1 = Currency with public + Demand deposits + Other deposits with RBI
             - M2 = M1 + Savings deposits with Post Office (excl. time deposits)
             - M3 = M1 + Time deposits with commercial banks
@@ -3908,88 +3910,17 @@
             - NCERT formulas are simplified and used for prelims-oriented preparation.
             - RBI focuses on M3 as the core aggregate for monetary policy.
             - M0 is not always included in “money supply” in NCERT books but remains important for macroeconomic control.
-        - Categorization Table:
-            - <table>
-                <tr>
-                    <th>Component</th>
-                    <th>M1</th>
-                    <th>M2</th>
-                    <th>M3</th>
-                    <th>M4</th>
-                    <th>Included in Narrow/Broad</th>
-                </tr>
-                <tr>
-                    <td>
-                        <ul>
-                            <li>Currency with Public</li>
-                        </ul>
-                    </td>
-                    <td>✓</td>
-                    <td>✓</td>
-                    <td>✓</td>
-                    <td>✓</td>
-                    <td>Both</td>
-                </tr>
-                <tr>
-                    <td>
-                        <ul>
-                            <li>Demand Deposits (CASA)</li>
-                        </ul>
-                    </td>
-                    <td>✓</td>
-                    <td>✓</td>
-                    <td>✓</td>
-                    <td>✓</td>
-                    <td>Both</td>
-                </tr>
-                <tr>
-                    <td>
-                        <ul>
-                            <li>Other Deposits with RBI</li>
-                        </ul>
-                    </td>
-                    <td>✓</td>
-                    <td>✓</td>
-                    <td>✓</td>
-                    <td>✓</td>
-                    <td>Both</td>
-                </tr>
-                <tr>
-                    <td>
-                        <ul>
-                            <li>Time Deposits with Banks (FDRD)</li>
-                        </ul>
-                    </td>
-                    <td>✗</td>
-                    <td>✗</td>
-                    <td>✓</td>
-                    <td>✓</td>
-                    <td>Broad</td>
-                </tr>
-                <tr>
-                    <td>
-                        <ul>
-                            <li>Post Office Savings Bank Deposits</li>
-                        </ul>
-                    </td>
-                    <td>✗</td>
-                    <td>✓ (only savings)</td>
-                    <td>✗</td>
-                    <td>✓</td>
-                    <td>M2 (narrow), M4 (broad)</td>
-                </tr>
-            </table>
         - Call Money | Notice Money | Term Money
             - Definition:
                 - These terms refer to short-term money market instruments used when banks or Non-Banking Financial Companies (NBFCs) lend or borrow funds among themselves for a duration less than 1 year.
             - Duration Classification:
                 - Call Money:
-                    - Loan duration: 1 day
+                    - Loan duration is 1 day
                     - Also referred to as "overnight" borrowing or lending.
                 - Notice Money:
-                    - Loan duration: 2 to 14 days
+                    - Loan duration is 2 to 14 days
                 - Term Money:
-                    - Loan duration: More than 14 days but less than 1 year
+                    - Loan duration is more than 14 days but less than 1 year
             - Notes:
                 - These are interbank lending instruments, part of the short-term money market.
                 - Should not be confused with:
@@ -3998,75 +3929,124 @@
         - Vault Cash:
             - Refers to cash kept by bankers with themselves for daily operations
 
-
     - Money Multiplier (MM)
         - Definition:
-            - Money Multiplier (MM) measures how much M3 (broad money) a bank generates from each unit of M0 (reserve money/high-powered money) in a fractional reserve banking system.
-            - MM depicts the relationship between the monetary base (M0) and the economy’s money supply (M3), indicating how fast the money supply grows from bank lending.
-            - Higher MM indicates greater liquidity in the market; lower MM indicates reduced liquidity.
+            - Measures how many units of bank money (M3) are supported by one unit of central bank money (M0)
+            - Shows how intensively the banking system reuses base money through lending
+            - What it is NOT:
+                - MM does not mean new physical money is created, RBI alone creates M0 (currency + bank reserves). Banks only create deposit balances and loan claims on that M0
+            - Practical explanation:
+                - When banks lend, they create deposits, these deposits become part of M3
+                - Multiple deposit holders can simultaneously claim the same underlying M0
+                - MM measures how many such claims exist on each unit of base money
+        - Economic meaning:
+            - Higher MM:
+                - More lending
+                - More deposit money
+                - Higher spending power in the economy
+                - Greater financial leverage and risk
+            - Lower MM:
+                - Less lending
+                - More money held as reserves
+                - Lower liquidity
+                - Safer but slower banking system
         - Formula:
-            - MM = Stock of Total Money (M3) / Stock of High Powered Money (M0).
-            - Theoretically: MM = 1 / CRR (e.g., if CRR is 4%, MM = 1 / 0.04 = 25x). In reality, MM is lower due to factors like poor banking penetration.
-        - Fractional Reserve Banking & Credit Creation:
+            - \( MM = \frac{M3}{M0} \)
+        - Cases
+            - Theoretical case (no cash leakages, no excess reserves):
+                - \( MM = \frac{1}{CRR} \)
+                    - CRR (Cash Reserve Ratio) is the percentage of a bank’s total deposits that it must keep with the RBI in cash form.
+                    - I tried to find out why CRR is used in place of M0 in this formula, but could not understand, so better just mug it up and continue.
+                - Example:
+                    - If \( CRR = 4\% = 0.04 \)
+                        - \( MM = \frac{1}{0.04} = 25 \)
+                    - Meaning:
+                        - \( 1 \) unit of \( M0 \) can create \( 25 \) units of \( M3 \)
+            - Real world case:
+                - \( MM_{actual} &lt; \frac{1}{CRR} \)
+                - Due to:
+                    - Cash held by public
+                    - Excess reserves held by banks
+                    - Poor banking penetration
+        - Fractional reserve banking & Credit Creation practical example:
+            - Assumptions:
+                - Initial base money (M0) = 100
+                - Cash Reserve Ratio (CRR) = 10%
+                - All loans are redeposited in the banking system
+                - Only bank can give loan, if an individual gives loan then money is transferred from his account to another and there is no net change
             - <table>
                 <tr>
-                    <th>Bank</th>
-                    <th>Deposits</th>
-                    <th>Loan</th>
-                    <th>10% Reserve (CRR)</th>
+                    <th>Stage</th>
+                    <th>What Happens</th>
+                    <th>Bank Receiving Deposit</th>
+                    <th>Deposit Amount</th>
+                    <th>CRR Kept (10%)</th>
+                    <th>Loan Created</th>
+                    <th>Where the Loan Goes</th>
+                    <th>Total Deposits So Far (M3)</th>
                 </tr>
                 <tr>
+                    <td>1</td>
+                    <td>RBI injects base money</td>
                     <td>Bank #1</td>
                     <td>100</td>
-                    <td>90</td>
                     <td>10</td>
+                    <td>90</td>
+                    <td>Borrower spends it, receiver deposits in Bank #2</td>
+                    <td>100</td>
                 </tr>
                 <tr>
+                    <td>2</td>
+                    <td>First loan returns as a deposit</td>
                     <td>Bank #2</td>
                     <td>90</td>
-                    <td>81</td>
                     <td>9</td>
+                    <td>81</td>
+                    <td>Borrower spends it, receiver deposits in Bank #3</td>
+                    <td>190</td>
                 </tr>
                 <tr>
+                    <td>3</td>
+                    <td>Second loan returns as a deposit</td>
                     <td>Bank #3</td>
                     <td>81</td>
-                    <td>72.9</td>
                     <td>8.1</td>
+                    <td>72.9</td>
+                    <td>Spent and redeposited in next bank</td>
+                    <td>271</td>
                 </tr>
                 <tr>
-                    <td>Total (M3)</td>
-                    <td colspan="3">~1000 (10x M0 with 10% CRR)</td>
+                    <td>…</td>
+                    <td>Process keeps repeating</td>
+                    <td>More banks</td>
+                    <td>Smaller each round</td>
+                    <td>10% each round</td>
+                    <td>Shrinks each round</td>
+                    <td>Loans keep returning as deposits</td>
+                    <td>Approaches 1000</td>
+                </tr>
+                <tr>
+                    <td>Final</td>
+                    <td colspan="7">
+                        Total deposits (M3) ≈ 1000 from original M0 = 100
+                        → Money Multiplier = 10 = 1 / CRR
+                    </td>
                 </tr>
             </table>
         - Characteristics:
             - In a functional economy, MM is always >1, and CRR is always &lt;100%.
             - MM directly increases with a reduction in CRR.
-        - Money Multiplier: Analogies
-            - Similar to boat speed, just as boat speed depends on engine power and water resistance, MM depends on reserve money and systemic leakages (e.g., cash holdings, CRR).
-            - CRR & Cash are leakages to money multiplier says says Exchange Settlement Account 2025 (ES25)
+            - MM depends on reserve money and systemic leakages (e.g., cash holdings, CRR).
+                - CRR & Cash are leakages to money multiplier says says Exchange Settlement Account 2025 (ES25)
         - Factors Affecting Money Multiplier
-            - <table>
-                <tr>
-                    <th>Factor</th>
-                    <th>Implication</th>
-                </tr>
-                <tr>
-                    <td>Cash Holdings</td>
-                    <td>More cash held by individuals reduces bank deposits, acting as a leakage, lowering MM.</td>
-                </tr>
-                <tr>
-                    <td>Cash Reserve Ratio (CRR)</td>
-                    <td>Higher CRR requires banks to hold more reserves with RBI, reducing lendable funds, lowering MM.</td>
-                </tr>
-                <tr>
-                    <td>Banking Penetration</td>
-                    <td>Increased financial inclusion and digital economy boost deposits, raising MM.</td>
-                </tr>
-                <tr>
-                    <td>Economic Conditions</td>
-                    <td>Boom periods with high loan demand or expansionary monetary policy (low CRR) increase MM.</td>
-                </tr>
-            </table>
+            - Cash Holdings
+                - More cash held by individuals reduces bank deposits, acting as a leakage, lowering MM.
+            - Cash Reserve Ratio (CRR)
+                - Higher CRR requires banks to hold more reserves with RBI, reducing lendable funds, lowering MM.
+            - Banking Penetration
+                - Increased financial inclusion and digital economy boost deposits, raising MM.
+            - Economic Conditions
+                - Boom periods with high loan demand or expansionary monetary policy (low CRR) increase MM.
             - Note: 
                 - Statutory Liquidity Ratio (SLR) impact on MM cannot be mathematically quantified.
         - Historical Trends 
@@ -4101,12 +4081,23 @@
             - M0 (also called High Powered Money / Reserve Money / Monetary Base) refers to the total currency created by the RBI.
             - M0 is the base money; everything else (M1–M4) is built upon this
             - It is the liability side of RBI’s balance sheet, created by the Issue Department under the RBI Act.
+                - Why is it a liablity to RBI?
+                    - Your ₹1,000 in a bank is not money in itself it is a liability of the bank a promise that the bank will give you RBI money if you demand it
+                    - RBI is a bank for banks. In the same way individuals deposits are liability to a commercial bank, it is the liability of RBI to hold deposits of banks.
+                    - So:
+                        - RBI money (M0) = liability of the central bank. 
+                        - Bank deposits (M3) = liability of commercial banks
             - For every rupee of currency it issues, RBI’s Issue Department must hold an equivalent value of eligible assets (to maintain public confidence).
         - Why it is called High Powered Money:
             - Because it forms the base for creation of broader money (M1, M2, M3, M4) via fractional reserve system by commercial banks.
             - It has a multiplier effect on the economy’s money supply (explained separately under Money Multiplier).
         - Assets of Issue Department (i.e., backing for currency issued):
-            - Rupee coins (circulated by RBI as Government of India’s agent).
+            - Rupee coins and ₹1 notes
+                - RBI does not issue coins and ₹1 notes, RBI only circulates them as Government of India’s agent.
+                - When RBI holds rupee coins and ₹1 notes in its vaults on behalf of Government of India, those coins and and ₹1 notes are a claim on the Government and therefore an asset to RBI’s Issue Department
+                - Why RBI don't issue coins and ₹1 notes?
+                    - Because coins and ₹1 notes are not about banking, they are about sovereignty.
+                    - The most basic form of money belongs to me, not to my banker.
             - Gold coin and bullion:
                 - RBI must hold a minimum Rs. 200 crore in gold.
                 - Of this, Rs. 115 crore must be in India in the form of coin or bullion.
@@ -4122,6 +4113,7 @@
                 - Used to balance the liability of currency issued when needed.
         - Liabilities of Issue Department (i.e., components of M0):
             - Currency in circulation:
+                - Because a currency is a promise printed on paper. And promises are always liabilities.
                 - Currency with public.
                 - Cash held by banks (vault cash).
             - Bankers' deposits with RBI:
@@ -4142,9 +4134,10 @@
                     - This rise in M0 is not due to new note printing, but due to more reserves being maintained with the Reserve Bank
             - When Net Foreign Assets (NFA) increase, M0 increases
                 - NFA refers to the Net Foreign Assets of the Reserve Bank of India
-                - When the Reserve Bank buys foreign currency (such as United States dollars) from the market to prevent appreciation of the Indian Rupee:
-                    - It pays in Indian Rupees to acquire those foreign currencies
+                - When the Reserve Bank buys foreign currency (such as United States dollars) from the market (Indian banks and not international entities) to prevent appreciation of the Indian Rupee:
+                    - An exporter earns USD from abroad, the bank cannot use USD in India, so it sells those USD to RBI. RBI pays in Indian Rupees to acquire those foreign currencies
                     - This payment injects rupees into the economy, increasing Reserve Money or M0
+                    - RBI is just absorbing foreign currency from Indian banks and issuing rupees in exchange.
                 - Thus, when Net Foreign Assets rise, M0 also rises because:
                     - The Reserve Bank's asset side increases as its foreign exchange holdings go up
                     - The liability side also increases, as more Indian Rupees are released into the system, either as currency in circulation or as reserves of banks
@@ -4175,18 +4168,22 @@
             - The Fiscal Responsibility and Budget Management (FRBM) Act, enacted in 2003, is a law aimed at ensuring fiscal discipline by limiting the government's borrowing and fiscal deficit.
         - Key Provisions:
             - The central government must maintain its fiscal deficit within a specified limit as a percentage of Gross Domestic Product.
+        - Important concepts:
+            - Fiscal deficit
                 - A fiscal deficit occurs when a government's total spending exceeds its total revenue (excluding borrowing) within a specific period, usually a fiscal year
+            - Monetization of Deficit:
+                - This refers to the process of the Reserve Bank of India printing new money to finance the government’s deficit by purchasing government securities directly.
+                - This practice is heavily restricted under the FRBM Act to avoid triggering inflationary pressures in the economy.
+                - It is permitted only under exceptional and clearly defined circumstances.
+        - The FRBM Act bans one very specific thing:
             - The government is not allowed to borrow directly from the Reserve Bank of India by asking it to buy government securities in the primary market.
-            - Exceptions to this rule include:
+            - Exception to this?
                 - Short-term borrowing through Ways and Means Advances.
                 - Emergency situations such as war, natural disasters, agricultural collapse, or sharp decline in Gross Domestic Product.
+        - What FRBM promotes?
             - The Reserve Bank of India is allowed to conduct Open Market Operations, which involve buying and selling government securities in the secondary market to manage liquidity.
                 - The secondary market is the market where already issued financial instruments like stocks, bonds, or government securities are bought and sold between investors.
                 - Provided in detail in later part
-        - Monetization of Deficit:
-            - This refers to the process of the Reserve Bank of India printing new money to finance the government’s deficit by purchasing government securities directly.
-            - This practice is heavily restricted under the FRBM Act to avoid triggering inflationary pressures in the economy.
-            - It is permitted only under exceptional and clearly defined circumstances.
 
     - Currency in Circulation (CIC)
         - Definition:
@@ -4233,6 +4230,7 @@
 
     - Liquidity Overhang
         - Definition:
+            - <img height="300" src="./../images/economy/liquidity_overhang.png" />
             - Liquidity Overhang refers to a situation where there is excess liquidity (money supply) in the banking system that is not being absorbed through credit creation or investment.
             - It implies that banks have more money than they are willing or able to lend.
         - Causes:
@@ -4240,6 +4238,7 @@
                 - Open Market Operations (OMO) purchases
                 - Repo operations
                 - Currency depreciation (foreign exchange purchase by RBI, adding rupees to system)
+                - RBI buying foreign currency (adds rupee liquidity)
             - High government spending without matching absorption capacity
                 - Government increases spending → More money enters the economy.
                 - But economy lacks:
@@ -4248,7 +4247,6 @@
                     - Infrastructure or business readiness.
                 - So the extra money isn't converted into real output.
             - Large capital inflows (Foreign Portfolio Investment / Foreign Direct Investment)
-            - RBI buying foreign currency (adds rupee liquidity)
             - Drop in credit demand (e.g., during economic slowdown or uncertainty)
             - RBI reducing Cash Reserve Ratio (CRR) or Statutory Liquidity Ratio (SLR)
         - Consequences:
@@ -4262,8 +4260,12 @@
             - Increase CRR or SLR
             - Conduct Open Market Operations (OMO) sales (sells G-Secs to absorb liquidity)
             - Conduct Reverse Repo operations (to attract banks to park excess funds with RBI)
+                - Reverse repo is RBI saying “I will borrow money from you for a short time. Park your cash with me.”
+                - Banks give money to RBI, RBI gives them government securities as collateral, RBI pays interest to the banks
+                - This interest given by RBI to banks is called the Reverse Repo Rate, it is opposite of repo rate.
             - Use Market Stabilisation Scheme (MSS) bonds
             - Issue Cash Management Bills (CMBs) to mop up excess funds
+                - Cash Management Bills (CMBs) are very short-term government securities issued by the Government of India to meet temporary mismatches in cash flows.
         - Example:
             - When ₹500 and ₹1000 notes were demonetized in 2016, and again when ₹2000 was withdrawn in 2023, the following happened:
                 1. Public deposited huge cash into banks
@@ -4318,6 +4320,7 @@
             - Employment Generation:
                 - Stimulates economic activity to create jobs, reducing unemployment.
                 - Philip Curve: 
+                    - <img height="200" src="./../images/economy/philip_curve.png" />
                     - Inflation ↑ = unemployment ↓ (and vice versa).
                     - So, stable & moderate inUation is good for the economy.
                 - So, RBI tries to keep inflation with 2-6% Consumer Price Index (CPI) using its bi-monthly monetary policy made by its 6- member statutory Monetary Policy Committee.
@@ -4354,63 +4357,52 @@
             - Bond yields affect monetary transmission by impacting borrowing costs across sectors.
             - Retail participation (via Retail Direct Scheme) deepens the G-Sec market, enhancing liquidity and supporting RBI’s borrowing and yield management strategies.
         - Types of Debt Securities:
-            - <table>
-                <tr><th>Borrower</th><th>Short-Term (&lt;1 year)</th><th>Long-Term (≥1 year)</th><th>Interest Rate Characteristics</th></tr>
-                <tr>
-                    <td>Government</td>
-                    <td>
-                        <ul>
-                            <li>Treasury Bills (T-Bills): 
-                                - 91, 182, 364 days
-                            </li>
-                            <li>Cash Management Bills: 
-                                - Flexible tenures for short-term fiscal needs
-                            </li>
-                        </ul>
-                    </td>
-                    <td>
-                        <ul>
-                            <li>Government Securities (G-Secs): 
-                                - Dated securities (e.g., 5–40 years)
-                            </li>
-                            <li>State Development Loans (SDLs): 
-                                - Issued by state governments
-                            </li>
-                            <li>Sovereign Gold Bonds: 
-                                - Gold-linked, interest-bearing bonds
-                            </li>
-                            <li>Inflation-Indexed Bonds: 
-                                - Adjusted for inflation (Ref: Pillar#1C)
-                            </li>
-                        </ul>
-                    </td>
-                    <td>Lower than corporate securities due to negligible default risk; benchmark for other rates</td>
-                </tr>
-                <tr>
-                    <td>Corporate</td>
-                    <td>
-                        <ul>
-                            <li>Commercial Papers: 
-                                - Unsecured, 7–365 days
-                            </li>
-                            <li>Bills of Exchange, Promissory Notes: 
-                                - Short-term trade financing
-                            </li>
-                        </ul>
-                    </td>
-                    <td>
-                        <ul>
-                            <li>Bonds: 
-                                - Secured, fixed interest (e.g., Reliance Bond: ₹1000, 9.40% p.a., 15 years)
-                            </li>
-                            <li>Debentures: 
-                                - Secured or unsecured, varying tenures
-                            </li>
-                        </ul>
-                    </td>
-                    <td>Higher rates due to default risk; influenced by credit rating, inflation, and market conditions</td>
-                </tr>
-            </table>
+            - Government:
+                - Different government securities:
+                    - Short-term (&lt; 1 year):
+                        - Treasury Bills (T-Bills):
+                            - 91 days
+                            - 182 days
+                            - 364 days
+                        - Cash Management Bills:
+                            - Issued for temporary cash flow mismatches
+                            - Flexible short-term maturity
+                    - Long-term (≥ 1 year):
+                        - Government Securities (G-Secs):
+                            - Dated securities with maturities from 5 to 40 years
+                        - State Development Loans (SDLs):
+                            - Issued by State Governments
+                        - Sovereign Gold Bonds:
+                            - Gold-linked, interest-bearing bonds
+                        - Inflation Indexed Bonds:
+                            - Principal and interest adjusted for inflation
+                - Interest rate characteristics:
+                    - Very low default risk
+                    - Interest rates act as benchmark for the entire financial system
+            - Corporate:
+                - Different government securities:
+                    - Short-term (&lt; 1 year):
+                        - Commercial Papers:
+                            - Unsecured instruments
+                            - Maturity between 7 and 365 days
+                        - Bills of Exchange and Promissory Notes:
+                            - Used for short-term trade financing
+                    - Long-term (≥ 1 year):
+                        - Bonds:
+                            - Usually secured
+                            - Fixed interest
+                            - Example:
+                                - ₹1000 bond at 9.40% for 15 years
+                        - Debentures:
+                            - Can be secured or unsecured
+                            - Issued for various tenures
+                - Interest rate characteristics:
+                    - Higher than government securities
+                    - Depend on:
+                        - Credit rating
+                        - Inflation
+                        - Market conditions
+
         - Retail Direct Scheme (2021):
             - Definition:
                 - Launched by RBI in November 2021, the Retail Direct Scheme allows retail investors (Resident Indians and NRIs) to open Retail Direct Gilt (RDG) accounts on the E-Kuber platform to directly purchase T-Bills, G-Secs, SDLs, and Sovereign Gold Bonds without intermediaries.
@@ -4482,6 +4474,7 @@
                             - RBI doesn't pay interest on this deposit, except in extraordinary circumstances like 1999's Banking slowdown.
                             - RBI can fix any amount of CRR. Legally there is no minimum or maximum limit. Although in real life, RBI will not keep CRR@100% otherwise, no bank can give loans then economy will stop functioning.
                                 - Presently it is 4.50% of Net Demand & Time Liabilities of a bank (NDTL)
+                                - Net Demand and Time Liabilities = the total deposit base of a bank, after adjusting for what it owes to other banks.
                         - Example: 
                             - If CRR is 4 percent and a bank has ₹100 crore in NDTL, it must keep ₹4 crore with the Reserve Bank in the form of cash
                         - Purpose of CRR:
@@ -4528,6 +4521,7 @@
                     - b. Statutory Liquidity Ratio (SLR)
                         - Definition and details:
                             - SLR is the minimum percentage of a commercial bank’s Net Demand and Time Liabilities (NDTL) that it must maintain in the form of approved liquid assets before providing credit to customers
+                                - Net Demand and Time Liabilities = the total deposit base of a bank, after adjusting for what it owes to other banks.
                             - These assets must be kept with the bank itself, not with the Reserve Bank of India
                             - Legally, SLR can't be made more than 40%. Presently it is 18.00% of NDTL.
                             - All Banks must keep CRR.
@@ -4599,21 +4593,22 @@
                             - SLR acts as a leakage in the credit creation process. Higher SLR reduces the money multiplier, and lower SLR increases it.
                         - Does CRR and SLR also apply to the deposits made by foreigners / NRE (Non-Resident External) / FCNR(B) (Foreign Currency Non-Resident - Banks) accounts?
                             - Yes, CRR and SLR do apply, but the treatment varies by type of deposit.
-            - 2. Liquidity Management Facilities
+            - 2. Liquidity Management Framework:
                 - Definition:
-                    - Liquidity Management Facilities are a set of monetary tools used by the Reserve Bank of India (RBI) to manage short-term liquidity mismatches in the banking system.
-                    - These facilities ensure that the system has neither excess nor deficit liquidity beyond what is consistent with the policy stance of RBI.
-                    - They help maintain the overnight interest rate close to the policy repo rate, thus enhancing the effectiveness of monetary transmission.
-                - Objective:
-                    - Stabilize short-term money market interest rates.
-                    - Ensure smooth functioning of payment and settlement systems.
-                    - Absorb or inject liquidity based on evolving macroeconomic and banking conditions.
-                - Instruments under Liquidity Management Facilities include:
+                    - The Liquidity Management Framework is the set of monetary policy tools used by RBI to manage short-term liquidity in the banking system.
+                    - It ensures that system liquidity remains consistent with RBI’s policy stance.
+                    - It helps keep the overnight money market rate aligned with the policy Repo Rate.
+                - Objectives:
+                    - Stabilise short-term interest rates.
+                    - Ensure smooth functioning of the payment and settlement system.
+                    - Absorb excess liquidity or inject liquidity as required.
+                - Components of the Liquidity Management Framework:
                     - Liquidity Adjustment Facility (LAF)
-                    - Marginal Standing Facility (MSF)
-                    - Standing Deposit Facility (SDF)
-                - Istruments:
-                    - a. Liquidity Adjustment Facility (LAF)
+                    - Standing Facilities:
+                        - Marginal Standing Facility (MSF)
+                        - Standing Deposit Facility (SDF)
+                - Components:
+                    - i. Liquidity Adjustment Facility (LAF)
                         - Definition and details:
                             - Introduced by RBI in June 2000 based on recommendations of the Narasimham Committee (1998) and later reinforced by the Working Group on Money Market (Y.V. Reddy Committee).
                             - It is the primary instrument used by RBI to manage day-to-day liquidity mismatches in the banking system.
@@ -4624,10 +4619,15 @@
                             - Control short-term interest rates.
                             - Signal stance of monetary policy.
                             - Manage inflation and money supply.
-                        - Part of the monetary policy corridor:
-                            - Reverse Repo (floor)
-                            - Repo (mid-point/anchor)
-                            - MSF (ceiling)
+                        - Role in the monetary policy corridor:
+                            - Earlier framework (before April 2022):
+                                - Reverse Repo → Floor
+                                - Repo → Middle
+                                - MSF → Ceiling
+                            - Current framework (after April 2022):
+                                - Standing Deposit Facility (SDF) → Floor
+                                - Repo → Middle
+                                - Marginal Standing Facility (MSF) → Ceiling
                         - Components:
                             - a. Repo Rate
                                 - Definition and details:
@@ -4848,42 +4848,43 @@
                                         </tr>
                                     </tbody>
                                     </table>
-                    - b. Marginal Standing Facility (MSF)
-                        - Definition:
-                            - Introduced in May 2011 as a safety valve to provide overnight liquidity to banks.
-                            - Banks can borrow up to 3% of their Net Demand and Time Liabilities (NDTL) by pledging SLR-eligible government securities.
-                            - Rate is usually 25 bps above the Repo rate.
-                            - Accessible only after banks exhaust their normal LAF limit.
-                            - No collateral haircut applied unlike LAF repo.
-                        - Purpuse:
-                            - Helps curb volatility in the overnight money market.
-                            - Acts as the upper bound of the monetary policy corridor.
-                            - Important during periods of:
-                                - Sudden liquidity crunch
-                                - Global shocks
-                                - Monetary tightening
-                    - c. Standing Deposit Facility (SDF)
-                        - Definition and details:
-                            - Introduced in April 2022 Monetary Policy to replace Reverse Repo as the floor of the policy corridor.
-                            - Recommended by Urjit Patel Committee (2014) to overcome collateral-related limitations of reverse repo.
-                            - Allows RBI to absorb liquidity without offering collateral (i.e., without issuing securities).
-                            - It is a facility for banks to park surplus funds with RBI at a fixed rate (below Repo).
-                            - SDF rate is 25 bps below the Repo rate.
-                        - Features:
-                            - Uncollateralized
-                                - The Standing Deposit Facility (SDF) is not a loan from RBI to banks, but rather like a savings account for banks at the RBI and collateral is mostly required for borrowing/lending
-                            - Available at RBI’s discretion
-                            - Open to Scheduled Commercial Banks (SCBs)
-                        - Objective:
-                            - Strengthen RBI’s liquidity management framework.
-                            - Enhance flexibility in sterilization operations especially in surplus liquidity scenarios.
-                        - It ensures the liquidity absorption function of RBI continues even when securities availability is limited (unlike Reverse Repo).
-                    - d. System-Level Liquidity:
-                        - Definition:
-                            - Net liquidity in the banking system, calculated as [(Reverse Repo + SDF) – (Repo + MSF)].
-                        - Impact:
-                            - Positive: Surplus liquidity; Negative: Deficit liquidity.
-                            - Example: 2023 deficit of ₹0.42–1.61 lakh crore due to inflation control measures.
+                    - ii Standing facilities
+                        - a. Marginal Standing Facility (MSF)
+                            - Definition:
+                                - Introduced in May 2011 as a safety valve to provide overnight liquidity to banks.
+                                - Banks can borrow up to 3% of their Net Demand and Time Liabilities (NDTL) by pledging SLR-eligible government securities.
+                                - Rate is usually 25 bps above the Repo rate.
+                                - Accessible only after banks exhaust their normal LAF limit.
+                                - No collateral haircut applied unlike LAF repo.
+                            - Purpuse:
+                                - Helps curb volatility in the overnight money market.
+                                - Acts as the upper bound of the monetary policy corridor.
+                                - Important during periods of:
+                                    - Sudden liquidity crunch
+                                    - Global shocks
+                                    - Monetary tightening
+                        - b. Standing Deposit Facility (SDF)
+                            - Definition and details:
+                                - Introduced in April 2022 Monetary Policy to replace Reverse Repo as the floor of the policy corridor.
+                                - Recommended by Urjit Patel Committee (2014) to overcome collateral-related limitations of reverse repo.
+                                - Allows RBI to absorb liquidity without offering collateral (i.e., without issuing securities).
+                                - It is a facility for banks to park surplus funds with RBI at a fixed rate (below Repo).
+                                - SDF rate is 25 bps below the Repo rate.
+                            - Features:
+                                - Uncollateralized
+                                    - The Standing Deposit Facility (SDF) is not a loan from RBI to banks, but rather like a savings account for banks at the RBI and collateral is mostly required for borrowing/lending
+                                - Available at RBI’s discretion
+                                - Open to Scheduled Commercial Banks (SCBs)
+                            - Objective:
+                                - Strengthen RBI’s liquidity management framework.
+                                - Enhance flexibility in sterilization operations especially in surplus liquidity scenarios.
+                            - It ensures the liquidity absorption function of RBI continues even when securities availability is limited (unlike Reverse Repo).
+                            - System-Level Liquidity:
+                                - Definition:
+                                    - Net liquidity in the banking system, calculated as [(Reverse Repo + SDF) – (Repo + MSF)].
+                                - Impact:
+                                    - Positive: Surplus liquidity; Negative: Deficit liquidity.
+                                    - Example: 2023 deficit of ₹0.42–1.61 lakh crore due to inflation control measures.
             - 3. Market-Based Instruments
                 - Definition:
                     - These are indirect monetary policy tools used by the RBI to regulate liquidity and interest rates in the economy through financial market operations.
@@ -4893,68 +4894,66 @@
                         - Market Stabilization Scheme (MSS)
                     - Their effectiveness depends on the depth and development of financial markets.
                 - Subtypes:
-                    - a. Open Market Operations (OMOs)
+                    - i. Open Market Operations (OMOs)
                         - Definition:
                             - The RBI’s buying or selling of government securities (G-Secs) in the secondary market to manage liquidity in the economy.
                             - It influences the short-term interest rates and overall liquidity conditions.
-                        - Subtypes:
-                            - Repo OMO:
-                                - RBI buys G-Secs from banks with an agreement to sell them back after a specified time.
-                                - This temporarily injects liquidity into the banking system.
-                            - Outright OMO:
+                        - Types of OMOs:
+                            - a. Outright OMOs:
                                 - RBI permanently buys or sells G-Secs without any repurchase agreement.
                                 - Buying → increases money supply (liquidity injection)
                                 - Selling → decreases money supply (liquidity absorption)
-                            - Operation Twist – RBI's Special OMO
-                                - Officially called Special Open Market Operation (OMO) 
-                                - Background
-                                    - Post-2019, banks were hesitant to lend due to problem of Non-Performing Assets (NPAs)/Bad loans and credit risks.
-                                    - Despite repo rate cuts by RBI, lending rates for corporates remained high.
-                                    - Poor transmission of monetary policy to the real economy.
-                                    - Private companies continued to face high interest rates for loans and bonds.
-                                - Objective
-                                    - To reduce long-term interest rates, especially on corporate and government borrowings.
-                                    - To improve transmission of repo rate cuts into the broader economy.
-                                    - To encourage investments, borrowing, job creation, and economic growth.
-                                - Mechanism
-                                    - RBI conducts simultaneous purchase and sale of government securities (Special OMO).
-                                    - RBI buys long-term G-Secs (e.g., 10-year bonds).
-                                    - RBI sells short-term G-Secs (e.g., Treasury Bills).
-                                - How It Works
-                                    - RBI buys long-term securities 
-                                        - demand ↑ → price ↑ → yield (interest rate) ↓.
-                                    - RBI sells short-term securities 
-                                        - demand ↓ → price ↓ → short-term yields ↑ or stable.
-                                    - This flattening or downward shift in the yield curve encourages long-term borrowing.
-                                        - Cheaper borrowing for Private sector Companies. Because they can borrow money by issuing their (long term) Corporate-Bonds at much cheaper interest rate than before. 
-                                        - When a private company meets a bank manager to borrow money, it can negotiate the loan price, If your bank does not lend me money at this cheaper interest % then I will issue my own corporate bonds.
-                                        - Cheaper borrowing for Government. For reasons similar to above.
-                                        - Investor of long term G-Sec will feel discouraged to hold the G-Sec till maturity (10-14 years) because of low returns, He will try to sell it to another party/RBI and pull out his money, then he may park –– it a Corporate Bond/Bungalow/car/Goa-vacation etc. Thus, it helps boost the consumption → economy grows.
-                                - Example
-                                    - In December 2019 and multiple times in 2020, RBI conducted Operation Twist.
-                                    - Bought ₹10,000 crore worth long-term G-Secs while simultaneously selling ₹10,000 crore worth short-term papers.
-                                    - Objective was to address elevated long-term yields despite sufficient liquidity.
-                                - Notes
-                                    - Called "Operation Twist" after a similar policy used by the US Federal Reserve in the 1960s.
-                                    - Unlike standard OMO that affects liquidity, Operation Twist alters the maturity structure without changing net liquidity.
-                            - Government Securities Acquisition Programme (G-SAP):
-                                - RBI committed upfront to buy a fixed amount of G-Secs in a quarter to manage yield volatility and ensure adequate liquidity post-COVID.
-                                - G-SAP 1.0: ₹1.0 lakh crore in Q1 2021-22
-                                - G-SAP 2.0: ₹1.2 lakh crore in Q2 2021-22
-                                - Provided market certainty and improved monetary transmission.
-                                - Benefits
-                                    - Increases money supply in the economy.
-                                    - Boosts economic activity by injecting liquidity directly into the system.
-                                    - Investors who sell G-Secs to RBI receive money:
-                                        - They may spend it (↑ consumption).
-                                        - Or reinvest in equity, corporate bonds, startups, etc. (↑ investment).
-                                    - This spending and investing → leads to economic growth.
-                                    - Helps RBI support the economy without needing to cut Repo Rate:
-                                        - Not everyone wants to borrow money.
-                                        - Some investors simply want to unlock liquidity from old G-Secs.
-                                    - Avoids side effects of Repo Rate cut:
-                                        - Excessive repo cut → may lead to inflation.
-                                        - Also reduces interest on savings accounts → hurts middle-class & pensioners.
+                            - b. Special OMOs (Variants of Outright OMOs):
+                                - Operation Twist – RBI's Special OMO
+                                    - Officially called Special Open Market Operation (OMO) 
+                                    - Background
+                                        - Post-2019, banks were hesitant to lend due to problem of Non-Performing Assets (NPAs)/Bad loans and credit risks.
+                                        - Despite repo rate cuts by RBI, lending rates for corporates remained high.
+                                        - Poor transmission of monetary policy to the real economy.
+                                        - Private companies continued to face high interest rates for loans and bonds.
+                                    - Objective
+                                        - To reduce long-term interest rates, especially on corporate and government borrowings.
+                                        - To improve transmission of repo rate cuts into the broader economy.
+                                        - To encourage investments, borrowing, job creation, and economic growth.
+                                    - Mechanism
+                                        - RBI conducts simultaneous purchase and sale of government securities (Special OMO).
+                                        - RBI buys long-term G-Secs (e.g., 10-year bonds).
+                                        - RBI sells short-term G-Secs (e.g., Treasury Bills).
+                                    - How It Works
+                                        - RBI buys long-term securities 
+                                            - demand ↑ → price ↑ → yield (interest rate) ↓.
+                                        - RBI sells short-term securities 
+                                            - demand ↓ → price ↓ → short-term yields ↑ or stable.
+                                        - This flattening or downward shift in the yield curve encourages long-term borrowing.
+                                            - Cheaper borrowing for Private sector Companies. Because they can borrow money by issuing their (long term) Corporate-Bonds at much cheaper interest rate than before. 
+                                            - When a private company meets a bank manager to borrow money, it can negotiate the loan price, If your bank does not lend me money at this cheaper interest % then I will issue my own corporate bonds.
+                                            - Cheaper borrowing for Government. For reasons similar to above.
+                                            - Investor of long term G-Sec will feel discouraged to hold the G-Sec till maturity (10-14 years) because of low returns, He will try to sell it to another party/RBI and pull out his money, then he may park –– it a Corporate Bond/Bungalow/car/Goa-vacation etc. Thus, it helps boost the consumption → economy grows.
+                                    - Example
+                                        - In December 2019 and multiple times in 2020, RBI conducted Operation Twist.
+                                        - Bought ₹10,000 crore worth long-term G-Secs while simultaneously selling ₹10,000 crore worth short-term papers.
+                                        - Objective was to address elevated long-term yields despite sufficient liquidity.
+                                    - Notes
+                                        - Called "Operation Twist" after a similar policy used by the US Federal Reserve in the 1960s.
+                                        - Unlike standard OMO that affects liquidity, Operation Twist alters the maturity structure without changing net liquidity.
+                                - Government Securities Acquisition Programme (G-SAP):
+                                    - RBI committed upfront to buy a fixed amount of G-Secs in a quarter to manage yield volatility and ensure adequate liquidity post-COVID.
+                                    - G-SAP 1.0: ₹1.0 lakh crore in Q1 2021-22
+                                    - G-SAP 2.0: ₹1.2 lakh crore in Q2 2021-22
+                                    - Provided market certainty and improved monetary transmission.
+                                    - Benefits
+                                        - Increases money supply in the economy.
+                                        - Boosts economic activity by injecting liquidity directly into the system.
+                                        - Investors who sell G-Secs to RBI receive money:
+                                            - They may spend it (↑ consumption).
+                                            - Or reinvest in equity, corporate bonds, startups, etc. (↑ investment).
+                                        - This spending and investing → leads to economic growth.
+                                        - Helps RBI support the economy without needing to cut Repo Rate:
+                                            - Not everyone wants to borrow money.
+                                            - Some investors simply want to unlock liquidity from old G-Secs.
+                                        - Avoids side effects of Repo Rate cut:
+                                            - Excessive repo cut → may lead to inflation.
+                                            - Also reduces interest on savings accounts → hurts middle-class & pensioners.
                         - Impact:
                             - OMO Purchase (buying G-Secs):
                                 - Liquidity injection
@@ -4962,7 +4961,7 @@
                             - OMO Sale (selling G-Secs):
                                 - Liquidity absorption
                                 - Used to control inflation
-                    - b. Market Stabilization Scheme (MSS)
+                    - ii. Market Stabilization Scheme (MSS)
                         - Definition:
                             - A monetary tool used by the RBI to absorb excess liquidity arising from large capital inflows, especially during times of external shocks like FII inflows or forex interventions.
                             - Unlike normal OMOs, MSS involves issuance of special government securities, specifically for liquidity absorption, not for budgetary spending.
@@ -4976,7 +4975,7 @@
                         - Example:
                             - MSS bonds used in 2016 during demonetization when RBI needed to absorb excess liquidity from the banking system.
             - 4. Other quantative tools
-                - Bank Rate
+                - i. Bank Rate
                     - Definition:
                         - RBI Act, 1934 states that bank rate is the standard rate at which RBI buys or rediscounts first class securities, bills of exchange or other commercial papers
                         - Differs from repo, which is short-term and secured.
@@ -8530,13 +8529,13 @@
 
     - Fugitive Economic Offenders Act, 2018
         - Targets economic offenders accused of:
-            – Cheque dishonor
-            – Loan fraud
-            – Investment scams
-            – Chit-fund scams
-            – money&#8203; laundering
-            – Any such offence involving ₹100 crores or more
-            – Offender must have fled India to avoid prosecution/arrest
+            - Cheque dishonor
+            - Loan fraud
+            - Investment scams
+            - Chit-fund scams
+            - Money&#8203; laundering
+            - Any such offence involving ₹100 crores or more
+            - Offender must have fled India to avoid prosecution/arrest
         - Legal Framework:
             - Special courts under the PMLA (Prevention of Money-Laundering Act, 2002)
             - Court will order appearance within 6 weeks
@@ -14069,7 +14068,8 @@
                     - Accepts individual and corporate donations.
                     - Donations eligible for 100% Income Tax deduction under Section 80G.
                     - Does not receive funds from Consolidated Fund of India.
-                - PM CARES Fund (Prime Minister’s Citizen Assistance and Relief in Emergency Situations):
+                - PM CARES Fund
+                    - Prime Minister’s Citizen Assistance and Relief in Emergency Situations
                     - Set up in 2020 to deal with COVID-19 pandemic.
                     - For disaster management and research funding (e.g., ventilators, vaccines).
                     - Donations:
@@ -14081,8 +14081,9 @@
                         - Lack of transparency.
                         - Overlap with existing funds like PMNRF.
                         - Not subject to RTI as per PMO’s response.
-                - CM Relief Funds (e.g., Maharashtra CM’s Relief Fund, Tamil Nadu CM Relief Fund):
+                - CM Relief Funds 
                     - State-level counterparts to PMNRF.
+                        - e.g., Maharashtra CM’s Relief Fund, Tamil Nadu CM Relief Fund
                     - Accept public donations for natural calamities, accidents, medical emergencies.
                     - Eligibility for tax deduction and CSR support varies by state and notification.
             - Notes
@@ -14094,7 +14095,7 @@
                 - RTI Controversy: 
                     - PM CARES is not currently subject to Right to Information (RTI) disclosures; this has led to criticism and ongoing legal debate regarding public accountability.
 
-    – Three Documents Related to Budget (Constitutional and Legal Basis)
+    - Three Documents Related to Budget (Constitutional and Legal Basis)
         - Definition:
             - The Indian Constitution mandates the Union Government to present a set of financial documents before Parliament every financial year. These are not just formalities but are required for legal authorization of revenue collection and expenditure.
         - Origin:
@@ -17089,9 +17090,9 @@
             </table>
 
 
-- Pillar 2B2: black&#8203; money & Allied Issues
+- Pillar 2B2: Black&#8203; money & Allied Issues
     - Definitions and concepts:
-        - black&#8203; money:
+        - Black&#8203; money:
             - black&#8203; money refers to income or transactions that are taxable but deliberately concealed from tax authorities to evade taxes. It operates within a parallel economy, undermining fiscal integrity and reducing government revenue for welfare and development. Unlike legal tax planning (e.g., investing in LIC or PPF for deductions), which is ethical and lawful, black&#8203; money involves illegal practices like tax&#8203; evasion or money&#8203; laundering.
         - Tax Planning / Tax Mitigation: 
             - Legally reducing tax liability using provisions like LIC, PPF, pension funds, etc.; it is legal and ethical.
@@ -17101,7 +17102,7 @@
             - Legally disclosing income but exploiting loopholes to reduce tax (e.g., profit shifting via shell companies); legal but often unethical.
         - Tax Haven: 
             - Countries with low/zero tax and secrecy laws (e.g., Panama, Mauritius, Cayman Islands) that attract foreign individuals or firms seeking to avoid/evade taxes.
-        - money&#8203; laundering:
+        - Money&#8203; laundering:
             - Definition: 
                 - The process of converting “dirty money” (illegally earned) into “clean money” (legally usable).
                 - Involves disguising the origin, ownership, or destination of money obtained through criminal activities.
@@ -17284,7 +17285,7 @@
                 </tr>
             </table>
 
-    - tax&#8203; evasion (Hiding Income/Transaction)
+    - Tax&#8203; evasion (Hiding Income/Transaction)
         - Prevention of money&#8203; laundering Act (PMLA-2002)
             - Definition:
                 - Enacted in 2002 following the 1998 UN General Assembly declaration on money&#8203; laundering.
