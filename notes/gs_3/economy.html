@@ -5970,6 +5970,7 @@
                     - Cannot borrow under Repo/MSF/SLF, unless RBI opens a special liquidity window (e.g. COVID-19 special LTRO)
         - Agency Banks:
             - Handle tax collection, government transactions, and fund transfers on behalf of the government (e.g., SCBs like SBI, authorized by RBI).
+            - In the world of finance, "agency" simply means one person or business is officially authorized to act for another.
             - FAQ: 
                 - How can a bank collect the tax isn't it the work of the income tax officer 
                     - Yes, it is the function of income tax oxcer. But, Tax money is to be transferred from tax payersp bank account to govt account. Agency banks deal with that aspect of money collection/storage/transfer work.
@@ -5978,15 +5979,18 @@
                 - Unclaimed Deposits Gateway to Access Information.
                 - Enables searching unclaimed deposits (unclaimed for 10+ years, transferred to RBI’s Depositor Education and Awareness Fund) using Aadhaar/PAN.
             - PRAVAAH Portal (2023):
-                - Platform for Regulatory Application, Validation, and Authorization.
+                - Platform for Regulatory Application, Validation, And Authorization.
                 - Streamlines licensing for banks, NBFCs, and payment companies, enhancing ease of doing business.
             - Daksh Portal (2022):
                 - Web-based supervisory system for banks/NBFCs to submit compliance reports, enabling RBI to monitor frauds and issue guidelines.
+                - "Daksh" (दक्ष) is a Sanskrit word that literally means efficient, competent, or skillful
             - E-Kuber Portal:
                 - RBI’s core banking solution for NEFT/RTGS, repo, OMO, and retail G-Sec purchases (Ref: 12.6).
             - New Domain Names (Effective April 2025):
                 - Banks: 
-                    - .bank.in (e.g., SBI.bank.in); NBFCs: .fin.in (e.g., Bajajfinserve.fin.in).
+                    - .bank.in (e.g., SBI.bank.in)
+                - NBFCs: 
+                    - .fin.in (e.g., Bajajfinserve.fin.in).
                 - Managed by RBI’s IDRBT to reduce phishing and cyber frauds.
             - FREE-AI Framework (Dec 2024):
                 - Framework for Responsible and Ethical Enablement of AI in finance, led by Prof. Pushpak Bhattacharyya (IIT Bombay).
@@ -6018,24 +6022,63 @@
             - Portals like E-Kuber and PRAVAAH enhance monetary policy transmission and regulatory efficiency.
             - Cybersecurity and AI initiatives align with global standards, ensuring robust financial systems.
 
+    - Mental model of banking system
+        - Banking System
+            - Scheduled
+                - Commercial banks
+                - Cooperative banks
+            - Non-scheduled
+                - Commercial banks
+                - Cooperative banks
+        - Non-Banking Financial Institutions
+        - Fintech and digital platforms
+        - Informal Financial Intermediaries
+        - Why NBFC and other below are not part of Non-scheduled?
+            - “Non-scheduled” is a word that applies only to banks. It has zero meaning outside the banking system.
+            - RBI’s Second Schedule of the RBI Act lists banks. So only institutions that are legally banks can be:
+                - Scheduled banks
+                - Non-scheduled banks
+            - NBFCs, fintechs, MFIs, SHGs, etc. are not banks at all, so they are not even eligible to be scheduled or non-scheduled.
+
     - Scheduled Banks
         - Definition:
             - Banks listed in the Second Schedule of the RBI Act, 1934, meeting specific criteria for financial stability and depositor safety.
         - Criteria to meet simultaneously:
-            - 1. Minimum paid-up capital and reserves of ₹5 lakh.
+            - 1. Minimum paid-up capital and reserves of ₹5 lakh
                 - What is Paid-up capital?
                     - Portion of a bank's capital that has been funded by shareholders.
-            - 2. Operations not detrimental to depositors’ interests.
-        - ₹5 Lakh Capital Sufficiency:
-            - Does this mean every bank with ₹5 lakh deposits becomes a scheduled bank on Day 1?
-                - RBI also checks Condition #2 (bank must not harm depositor interests).
-                - RBI usually observes the bank’s conduct for 1 year after licensing before conferring "Scheduled Bank" status.
-                - So, banks don’t become scheduled immediately upon inception, even if ₹5 lakh criterion is met.
-            - The ₹5 lakh capital requirement, set in 1934, is outdated due to inflation and economic growth. Modern banks require significantly higher capital (e.g., ₹500 crore for new private banks under 2016 on-tap licensing).
-                - The act is not amended, instead ₹5 lakh capital it is interpretated based on inflation for todays scenerio
-            - Remains a historical criterion for scheduled status but is insufficient for operational viability today.
-            - Even if a bank meets these two conditions, it does not become "scheduled" automatically.
-            - The RBI must officially notify and include the bank in the Second Schedule via Gazette notification.
+                    - Paid-up capital is the portion of share capital for which shareholders have already paid money to the company.
+                    - Example
+                        - Think of a bank or company raising capital
+                            - 1. It first decides how much capital it wants to raise
+                            - 2. It issues shares
+                            - 3. People buy those shares
+                            - 4. They pay money
+                        - That money received = paid-up capital.
+                - ₹5 Lakh Capital Sufficiency:
+                    - Does this mean every bank with ₹5 lakh deposits becomes a scheduled bank on Day 1?
+                        - RBI also checks Condition #2 (bank must not harm depositor interests).
+                        - RBI usually observes the bank’s conduct for 1 year after licensing before conferring "Scheduled Bank" status.
+                        - So, banks don’t become scheduled immediately upon inception, even if ₹5 lakh criterion is met.
+                    - The ₹5 lakh capital requirement, set in 1934, is outdated due to inflation and economic growth. Modern banks require significantly higher capital (e.g., ₹500 crore for new private banks under 2016 on-tap licensing).
+                        - The act is not amended, instead ₹5 lakh capital it is interpretated based on inflation for todays scenerio
+                    - Remains a historical criterion for scheduled status but is insufficient for operational viability today.
+                    - Even if a bank meets these two conditions, it does not become "scheduled" automatically.
+                    - The RBI must officially notify and include the bank in the Second Schedule via Gazette notification.
+            - 2. Operations not detrimental to depositors’ interests
+                - A scheduled bank is allowed to do things like:
+                    - Accept deposits
+                    - Give loans and advances
+                    - Invest money safely in assets like Government securities, Treasury bills, Approved bonds, etc
+                        - Not crypto, not gambling, not some shady startup run by a cousin.
+                    - Payment and settlement services
+                    - Foreign exchange and trade finance
+                - What they are NOT allowed to do, for example:
+                    - Speculating in stock markets with depositors’ money
+                    - Investing in highly risky assets
+                    - Giving huge unsecured loans to friends of the promoter
+                    - Running casinos, real estate empires, or movie studios
+                    - Anything that can recklessly blow up depositor money
         - Features:
             - Must maintain Cash Reserve Ratio (CRR) with RBI.
             - Eligible for RBI’s liquidity facilities (e.g., repo, MSF).
@@ -6113,762 +6156,757 @@
                         </tr>
                     </tbody>
                 </table>
-
-    - Commercial Banks
-        - Definition:
-            - Banks accepting demand and time deposits, providing loans, and operating under RBI regulation to support economic activity.
-        - Pre-Independence Evolution:
-            - <table>
-            <thead>
-                <tr>
-                <th>Year</th>
-                <th>Bank Name</th>
-                <th>Ownership</th>
-                <th>Founder / Details</th>
-                <th>Legacy / Development</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                <td>1770</td>
-                <td>Bank of Hindustan</td>
-                <td>European</td>
-                <td>Established in Calcutta</td>
-                <td>First bank in India; not Swadeshi</td>
-                </tr>
-                <tr>
-                <td>1806</td>
-                <td>Bank of Bengal</td>
-                <td>British Government</td>
-                <td>First Presidency Bank</td>
-                <td>Merged into Imperial Bank (1921)</td>
-                </tr>
-                <tr>
-                <td>1840</td>
-                <td>Bank of Bombay</td>
-                <td>British Government</td>
-                <td>Second Presidency Bank</td>
-                <td>Merged into Imperial Bank (1921)</td>
-                </tr>
-                <tr>
-                <td>1843</td>
-                <td>Bank of Madras</td>
-                <td>British Government</td>
-                <td>Third Presidency Bank</td>
-                <td>Merged into Imperial Bank (1921)</td>
-                </tr>
-                <tr>
-                <td>1861</td>
-                <td>—</td>
-                <td>—</td>
-                <td>Govt. of India Act</td>
-                <td>Authorized Presidency Banks to issue currency</td>
-                </tr>
-                <tr>
-                <td>1865</td>
-                <td>Allahabad Bank</td>
-                <td>European</td>
-                <td>Oldest Joint Stock Bank in India</td>
-                <td>Later merged with Indian Bank (2020)</td>
-                </tr>
-                <tr>
-                <td>1894</td>
-                <td>Punjab National Bank (PNB)</td>
-                <td>Indian</td>
-                <td>Lala Lajpat Rai helped in foundation</td>
-                <td>Remains a major PSU bank</td>
-                </tr>
-                <tr>
-                <td>1908</td>
-                <td>Bank of Baroda</td>
-                <td>Indian</td>
-                <td>Maharaja Sayajirao Gaekwad III (Baroda State)</td>
-                <td>Remains a major PSU bank</td>
-                </tr>
-                <tr>
-                <td>1913–30s</td>
-                <td>State Bank of Mysore, Patiala, etc.</td>
-                <td>Princely States</td>
-                <td>Multiple small banks, many collapsed</td>
-                <td>Need for central bank → RBI (1935)</td>
-                </tr>
-                <tr>
-                <td>1921</td>
-                <td>Imperial Bank of India</td>
-                <td>Merger of Presidency Banks</td>
-                <td>Controlled banking before RBI</td>
-                <td>Converted into SBI in 1955</td>
-                </tr>
-                <tr>
-                <td>1940s</td>
-                <td>State Banks of Bikaner, Jaipur, Hyderabad, Travancore</td>
-                <td>Princely States</td>
-                <td>Founded by respective Nawabs/States</td>
-                <td>Became SBI Associate Banks; Merged into SBI in 2017</td>
-                </tr>
-            </tbody>
-            </table>
-        - Post-Independence Nationalization:
-            - NEXUS between Banks and Industrialists: 
-                - From 1950s to 60- only 188 elite people controlled the economy by being in board of top 20 banks, 1452 companies.
-                - This led to reckless lending to directors and their firms. So, Banks failed frequently, RBI had to close them.
-                - Private Banks unwilling to open in rural areas- this did not help in financial inclusion of poor, farmers, MSME or achievement of Five Year Plan (FYP) targets or reducing regional imbalance.
-            - Nationalization & merger of banks:
+        - Commercial Banks
+            - Definition:
+                - Banks accepting demand and time deposits, providing loans, and operating under RBI regulation to support economic activity.
+            - Pre-Independence Evolution:
                 - <table>
                 <thead>
                     <tr>
                     <th>Year</th>
-                    <th>Event</th>
-                    <th>Details</th>
+                    <th>Bank Name</th>
+                    <th>Ownership</th>
+                    <th>Founder / Details</th>
+                    <th>Legacy / Development</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                    <td>1948</td>
-                    <td>RBI Ownership Transfer Act</td>
-                    <td>RBI nationalized under this act to establish full state control over monetary policy.</td>
+                    <td>1770</td>
+                    <td>Bank of Hindustan</td>
+                    <td>European</td>
+                    <td>Established in Calcutta</td>
+                    <td>First bank in India; not Swadeshi</td>
                     </tr>
                     <tr>
-                    <td>1955</td>
-                    <td>Imperial Bank → SBI</td>
-                    <td>Imperial Bank nationalized and renamed as State Bank of India (SBI).</td>
+                    <td>1806</td>
+                    <td>Bank of Bengal</td>
+                    <td>British Government</td>
+                    <td>First Presidency Bank</td>
+                    <td>Merged into Imperial Bank (1921)</td>
                     </tr>
                     <tr>
-                    <td>1956</td>
-                    <td>LIC Act</td>
-                    <td>Life Insurance Corporation of India created by nationalizing all private life insurance companies.</td>
+                    <td>1840</td>
+                    <td>Bank of Bombay</td>
+                    <td>British Government</td>
+                    <td>Second Presidency Bank</td>
+                    <td>Merged into Imperial Bank (1921)</td>
                     </tr>
                     <tr>
-                    <td>1963</td>
-                    <td>SBI Associates Merger</td>
-                    <td>State Bank of Jaipur and State Bank of Bikaner merged into State Bank of Bikaner and Jaipur.</td>
+                    <td>1843</td>
+                    <td>Bank of Madras</td>
+                    <td>British Government</td>
+                    <td>Third Presidency Bank</td>
+                    <td>Merged into Imperial Bank (1921)</td>
                     </tr>
                     <tr>
-                    <td>1969</td>
-                    <td>1st Bank Nationalization</td>
-                    <td>
-                        <ul>
-                        <li>Banking Companies (Acquisition & Transfer of Undertakings) Ordinance passed.</li>
-                        <li>14 major private banks with deposits > ₹50 crore were nationalized.</li>
-                        <li>Examples: Bank of Baroda, PNB, Dena Bank, Canara Bank.</li>
-                        </ul>
-                    </td>
+                    <td>1861</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>Govt. of India Act</td>
+                    <td>Authorized Presidency Banks to issue currency</td>
                     </tr>
                     <tr>
-                    <td>1972-73</td>
-                    <td>GIC Act</td>
-                    <td>
-                        <ul>
-                        <li>General Insurance Corporation (GIC) established.</li>
-                        <li>4 Subsidiaries: National Insurance, New India Assurance, Oriental Insurance, United India Insurance.</li>
-                        </ul>
-                    </td>
+                    <td>1865</td>
+                    <td>Allahabad Bank</td>
+                    <td>European</td>
+                    <td>Oldest Joint Stock Bank in India</td>
+                    <td>Later merged with Indian Bank (2020)</td>
                     </tr>
                     <tr>
-                    <td>1980</td>
-                    <td>2nd Bank Nationalization</td>
-                    <td>
-                        <ul>
-                        <li>6 more private banks with deposits > ₹200 crore were nationalized.</li>
-                        <li>Examples: Corporation Bank, Vijaya Bank, Oriental Bank of Commerce.</li>
-                        </ul>
-                    </td>
+                    <td>1894</td>
+                    <td>Punjab National Bank (PNB)</td>
+                    <td>Indian</td>
+                    <td>Lala Lajpat Rai helped in foundation</td>
+                    <td>Remains a major PSU bank</td>
                     </tr>
                     <tr>
-                    <td>2019</td>
-                    <td>J&K Bank Ownership</td>
-                    <td>
-                        <ul>
-                        <li>Earlier: 60% owned by J&K State Government.</li>
-                        <li>Post Article 370 abrogation: Union Government took over the stake.</li>
-                        </ul>
-                    </td>
+                    <td>1908</td>
+                    <td>Bank of Baroda</td>
+                    <td>Indian</td>
+                    <td>Maharaja Sayajirao Gaekwad III (Baroda State)</td>
+                    <td>Remains a major PSU bank</td>
                     </tr>
                     <tr>
-                    <td>1991</td>
-                    <td>Narasimham Committee-I</td>
-                    <td>
-                        <ul>
-                        <li>Recommended reducing CRR, SLR, and phasing out priority sector lending.</li>
-                        <li>Introduced concept of NPAs, prudential norms, capital adequacy.</li>
-                        </ul>
-                    </td>
+                    <td>1913–30s</td>
+                    <td>State Bank of Mysore, Patiala, etc.</td>
+                    <td>Princely States</td>
+                    <td>Multiple small banks, many collapsed</td>
+                    <td>Need for central bank → RBI (1935)</td>
                     </tr>
                     <tr>
-                    <td>1997</td>
-                    <td>Narasimham Committee-II</td>
-                    <td>
-                        <ul>
-                        <li>Suggested bank mergers, recapitalization, and setting up of ARCs.</li>
-                        <li>Strengthened governance and autonomy of PSBs.</li>
-                        </ul>
-                    </td>
+                    <td>1921</td>
+                    <td>Imperial Bank of India</td>
+                    <td>Merger of Presidency Banks</td>
+                    <td>Controlled banking before RBI</td>
+                    <td>Converted into SBI in 1955</td>
                     </tr>
                     <tr>
-                    <td>2007</td>
-                    <td>Raghuram Rajan Committee</td>
-                    <td>Focused on financial sector reforms and deepening of financial inclusion.</td>
-                    </tr>
-                    <tr>
-                    <td>2014</td>
-                    <td>P J Nayak Committee</td>
-                    <td>Suggested reducing government stake below 50% in PSBs and setting up a Bank Investment Company (BIC).</td>
-                    </tr>
-                    <tr>
-                    <td>2021</td>
-                    <td>Death of M Narasimham</td>
-                    <td>Known as “Father of Indian Banking Reforms”; ex-RBI Governor and key architect of banking sector reforms.</td>
-                    </tr>
-                    <tr>
-                    <td>--</td>
-                    <td>Old Private Banks</td>
-                    <td>
-                        <ul>
-                        <li>Examples: Catholic Syrian Bank (1920, Kerala), Dhanlaxmi Bank, Ratnakar Bank.</li>
-                        <li>Not nationalized due to smaller deposits (&lt; ₹50 cr).</li>
-                        </ul>
-                    </td>
+                    <td>1940s</td>
+                    <td>State Banks of Bikaner, Jaipur, Hyderabad, Travancore</td>
+                    <td>Princely States</td>
+                    <td>Founded by respective Nawabs/States</td>
+                    <td>Became SBI Associate Banks; Merged into SBI in 2017</td>
                     </tr>
                 </tbody>
                 </table>
-        - Public Sector Banks (PSBs):
-            - Definition:
-                - Public Sector Banks are banks in which the majority (more than 50%) of the equity stake is held by the Government of India.
-                - They are established by the government to serve the public interest and economic development goals.
-                - They include nationalized banks, State Bank of India and its associates, and other banks where the Union Government holds controlling stake.
-            - Consolidation of PSBs
-                - Definition:
-                    - Public Sector Bank (PSB) consolidation refers to the process where two or more PSBs are merged into a single, stronger bank. This enhances operational efficiency, reduces redundancy, and helps create globally competitive banks.
-                - PSB Consolidation involves two types of reforms:
-                    - a. Merger
-                        - Definition:
-                            - Merger in banking refers to the combination of two or more banks into one, where one bank absorbs the other(s), and their businesses, assets, and liabilities are consolidated under a single banking entity.
-                        - Example: 
-                            - The merger of Vijaya Bank and Dena Bank into Bank of Baroda in 2019.
-                        - Notable PSB Mergers Before April 2019
-                            - <table>
-                                <thead>
-                                <tr>
-                                    <th>Year</th>
-                                    <th>Merger Details</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>2008–2010</td>
-                                    <td>State Bank of Saurashtra and State Bank of Indore merged into SBI.</td>
-                                </tr>
-                                <tr>
-                                    <td>2013</td>
-                                    <td>
-                                    Bharatiya Mahila Bank (BMB) set up as a PSB.<br>
-                                    <ul>
-                                        <li>Headquarters: Delhi</li>
-                                        <li>Ownership: 100% by Union Government</li>
-                                        <li>Board of Directors: All women</li>
-                                        <li>Customers: Both men and women</li>
-                                        <li>Loans: Predominantly to women, without collaterals</li>
-                                    </ul>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2017</td>
-                                    <td>
-                                    <ul>
-                                        <li>BMB and 5 Associate Banks of SBI (SBBJ, SBH, SBM, SBP, SBT) merged with SBI.</li>
-                                        <li>Alternative Mechanism (AM) Panel set up under Finance Minister to examine merger proposals and forward to Cabinet for approval.</li>
-                                        <li>Department of Financial Services coordinated the process.</li>
-                                    </ul>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>2019, April 1</td>
-                                    <td>
-                                    Vijaya Bank and Dena Bank merged into Bank of Baroda (BoB).<br>
-                                    <ul>
-                                        <li>BoB (est. 1908) > Vijaya Bank (1931) > Dena Bank (1938)</li>
-                                    </ul>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        - Major 2019 PSB Mergers (10 into 4 Anchor Banks):
-                            - <table>
-                                <thead>
-                                <tr>
-                                    <th>Amalgamating Banks</th>
-                                    <th>Anchor Bank</th>
-                                    <th>Notes</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr>
-                                    <td>
-                                    <ul>
-                                        <li>Oriental Bank of Commerce (1943, Gurugram)</li>
-                                        <li>United Bank of India (1950, Kolkata)</li>
-                                    </ul>
-                                    </td>
-                                    <td>Punjab National Bank (1984, Delhi)</td>
-                                    <td>Becomes 2nd largest after SBI in business size and branch network.</td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                    <ul>
-                                        <li>Syndicate Bank (1925, Manipal, Karnataka)</li>
-                                    </ul>
-                                    </td>
-                                    <td>Canara Bank (1906, Bengaluru)</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                    <ul>
-                                        <li>Andhra Bank (1923, Hyderabad)</li>
-                                        <li>Corporation Bank (1906, Mangaluru)</li>
-                                    </ul>
-                                    </td>
-                                    <td>Union Bank of India (1919, Mumbai)</td>
-                                    <td></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                    <ul>
-                                        <li>Allahabad Bank (1865, Kolkata)</li>
-                                    </ul>
-                                    </td>
-                                    <td>Indian Bank (1907, Chennai)</td>
-                                    <td></td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        - After this process is over, we'll be left with only 12 PSBs (+1 India Post Payment Bank)
-                        - Benefits: 
-                            - Enhanced geographical and technological synergies (e.g., ATM networks, IT costs).
-                    - b. Privatization
-                        - Definition:
-                            - Privatization refers to the transfer of ownership and control of a Public Sector Bank from the government to private entities by selling off the majority stake (more than 50%) to non-government players.
-                            - The aim is to increase competition, improve governance, and ensure efficient banking operations driven by market forces.
-                        - Examples of PSB Privatization:
-                            - Axis Bank:
-                                - Originally promoted by UTI (a government-owned institution).
-                                - Renamed from UTI Bank to Axis Bank.
-                                - Now classified as a private sector bank.
-                            - IDBI Bank:
-                                - Initially a public sector bank.
-                                - Majority stake acquired by LIC (a government-owned insurer).
-                                - RBI reclassified it as a private bank in 2019.
-                - Challenges in PSB Consolidation:
-                    - Political Interference:
-                        - Decision-making in PSBs often influenced by political considerations rather than commercial merit.
-                        - Can delay or derail merger processes or post-merger reforms.
-                    - Low Loan Recovery:
-                        - High levels of NPAs (Non-Performing Assets) reduce financial health of merging banks.
-                        - Mergers may compound bad loan issues if due diligence is weak.
-                    - Union Resistance:
-                        - Bank employee unions often oppose mergers due to fear of job losses, transfers, or dilution of benefits.
-                        - Can lead to strikes and operational disruptions.
-                    - Low Profitability due to Administered Rates:
-                        - PSBs have limited flexibility in setting lending/deposit rates due to government mandates.
-                        - Reduces their ability to improve margins and compete effectively post-merger.
-            - Banking Investment Company (BIC):
-                - Definition:
-                    - A proposed government-owned holding company that would hold the equity stakes of the Government of India in various Public Sector Banks (PSBs).
-                - Objective:
-                    - To separate ownership and management in PSBs.
-                    - To allow the government to act as a passive investor, thus reducing direct interference in bank operations.
-                - Rationale:
-                    - Recommended by the P.J. Nayak Committee (2014) to improve governance in PSBs.
-                    - Helps professionalize the boards and improve autonomy of PSBs.
-                - Status:
-                    - The idea was removed from Mrunal handouts because the topic became outdated and no substantial progress was made by the Finance Ministry.
-        - Private Sector Banks (PvBs):
-            - Definition:
-                - Banks in which majority stake (>50%) is held by private shareholders rather than the government. They are regulated by the Reserve Bank of India (RBI) under the Banking Regulation Act, 1949.
-            - Background:
-                - After nationalization of banks (1969 & 1980), most banks in India were PSBs.
-                - However, PSBs started facing issues like:
-                    - Government-administered interest rates → Reduced profitability.
-                    - Political interference → Poor loan recovery.
-                    - Employee unions → Resistance to reform and innovation.
-                - Result: 
-                    - Inefficiencies, non-performing assets (NPAs), and stagnation in banking innovation.
-            - Post-1991 Reforms:
-                - Trigger: 
-                    - 1991 Balance of Payments (BoP) crisis → Urgent need for banking sector reform.
-                - M. Narasimham Committee (1991) Recommendations:
-                    - Reduce government shareholding in PSBs.
-                    - Lower CRR (Cash Reserve Ratio) and SLR (Statutory Liquidity Ratio).
-                    - Liberalize interest rates and branch expansion.
-                    - Allow entry of:
-                        - New Private Sector Banks.
-                        - New Foreign Banks.
-            - Rounds of Private Bank Licensing in India:
-                - <table>
-                    <thead>
-                        <tr>
-                            <th>Licensing Round</th>
-                            <th>Years</th>
-                            <th>Banks Licensed</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Round-1</td>
-                            <td>1993–95</td>
-                            <td>
-                                <ul>
-                                    <li>ICICI Bank</li>
-                                    <li>HDFC Bank</li>
-                                    <li>IndusInd Bank</li>
-                                    <li>DCB Bank</li>
-                                    <li>UTI Bank → Later renamed as Axis Bank</li>
-                                    <li>IDBI Bank → Now owned by LIC, treated as a private bank</li>
-                                    <li>Global Trust Bank → Later merged with Oriental Bank</li>
-                                    <li>Others (merged later): 
-                                        <ul>
-                                            <li>Bank of Punjab</li>
-                                            <li>Centurion Bank</li>
-                                            <li>Times Bank (→ merged into HDFC Bank)</li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Round-2</td>
-                            <td>2001–04</td>
-                            <td>
-                                <ul>
-                                    <li>Kotak Mahindra Bank</li>
-                                    <li>Yes Bank (Founded by Rana Kapoor)</li>
-                                </ul>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Round-3</td>
-                            <td>2013–16</td>
-                            <td>
-                                <ul>
-                                    <li>Bandhan Bank (from a Microfinance NBFC in West Bengal)</li>
-                                    <li>IDFC Bank → Later merged with Capital First NBFC to form IDFC First Bank</li>
-                                </ul>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                - Note:
-                    - These are often termed "New-Generation Private Sector Banks".
-                    - Although UTI Bank and IDBI were not initially PvBs, they are now categorized as such due to current ownership structures.
-            - On-Tap Licensing of Private Sector Banks (2016):
-                - Definition:
-                    - A system introduced by RBI where eligible entities can apply for a banking license any time (like a driving license), instead of waiting for RBI to invite applications.
-                    - If RBI approves, the entity gets a Banking License — becomes a new bank.
-                - Eligibility Conditions:
-                    - Minimum ₹500 crore paid-up capital.
-                    - Minimum 10 years' experience in banking and finance.
-                    - Fit and proper criteria as per RBI norms.
-                - Objective:
-                    - Promote competition and innovation in banking.
-                    - Improve financial inclusion and credit access.
-                - Scheduled Bank Status and On-Tap
-                    - Even after getting a license, RBI must still notify inclusion in Second Schedule separately.
-            - Allowing NBFCs / Large Corporates to Set Up Banks:
-                - This topic was marked as shifted to Mains-QEP in the Mrunal handout.
-                - Key points (for awareness):
-                    - RBI’s Internal Working Group (2020) suggested allowing large corporates and NBFCs into banking.
-                    - Highly controversial due to concerns over:
-                        - Conflict of interest
-                        - Crony capitalism
-                        - Weak corporate governance
-                    - As of now, RBI remains cautious and has not implemented this.
-            - FAQ Highlights:
-                - Why are UTI Bank and IDBI Bank listed under PvBs if they were not private originally?
-                    - Because at present, they are private sector banks due to change in ownership. The classification is based on current status, not origin.
-                - Isn't the ₹500 crore capital rule conflicting with Scheduled Commercial Bank definition?
-                    - Not really. The licensing and scheduling are two-step processes.
-        - Foreign Banks
-            - Definition:
-                - These are banks that are registered and headquartered outside India and operate in India through a branch or a subsidiary.
-                - Examples of foreign banks in India:
-                    - Citibank
-                    - Bank of America
-                    - HSBC
-            - Historical Context
-                - During Nehruvian Socialist period:
-                    - The government was cautious about allowing foreign banks in India.
-                    - Only a few foreign banks were given permission to open branches.
-                - After 1991 Economic Reforms
-                    - India liberalized its financial sector.
-                    - The rules for foreign banks to enter the Indian market became easier.
-            - Rules and Regulations by RBI
-                - These banks must follow Indian regulations like:
-                    - CRR (Cash Reserve Ratio)
-                    - SLR (Statutory Liquidity Ratio)
-                    - Other banking norms issued by the Reserve Bank of India.
-                - Priority Sector Lending (PSL):
-                    - Rules vary depending on how many branches a foreign bank has in India.
-                    - Full details are available in the Priority Sector Lending section.
-                - Licensing:
-                    - RBI offers licenses on a continuous basis (on-tap licensing).
-                    - Based on mutual agreement:
-                        - If a foreign country allows Indian banks, then India allows their banks too.
-                - RBI Rules for Wholly Owned Subsidiaries of Foreign Banks:
-                    - These are banks fully owned by a foreign parent but set up as Indian subsidiaries.
-                    - Key requirements:
-                        - Minimum 5 billion rupees as capital base.
-                        - At least 50% of the board members must be Indian citizens.
-            - Foreign Investment limits in Indian Banks
-                - <table>
-                    <thead>
-                        <tr>
-                            <th>Bank Type</th>
-                            <th>Foreign Investment Rules</th>
-                            <th>Examples</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Public Sector Banks (PSBs)</td>
-                            <td>
-                                <ul>
-                                    <li>Foreign investors can hold up to 20% shares</li>
-                                </ul>
-                            </td>
-                            <td>
-                                <ul>
-                                    <li>SBI: 14% foreign shareholding</li>
-                                    <li>PNB: 13% foreign shareholding</li>
-                                </ul>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Private Sector Banks</td>
-                            <td>
-                                <ul>
-                                    <li>Up to 49% foreign investment allowed automatically</li>
-                                    <li>Up to 74% allowed with government approval</li>
-                                    <li>Proposal under discussion:
-                                        <ul>
-                                            <li>Allowing up to 100% foreign ownership</li>
-                                            <li>To help raise capital under BASEL-III norms</li>
-                                            <li>More info in NPA and BASEL-III section</li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </td>
-                            <td>
-                                <ul>
-                                    <li>HDFC Bank: 73% foreign ownership</li>
-                                    <li>ICICI Bank: 59% foreign ownership</li>
-                                    <li>Axis Bank: 52% foreign ownership</li>
-                                </ul>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-        - Differential Banks
-            - Definition:
-                - Differential banks are specialized financial institutions with restricted operational scope (e.g., geographical, functional) to promote financial inclusion, unlike universal banks (e.g., SBI, ICICI) with broader operations.
-            - Chronology:
-                - <table>
-                <thead>
-                    <tr>
-                    <th>Year</th>
-                    <th>Banking Innovation/Development</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                    <td>1976</td>
-                    <td>
-                        <ul>
-                        <li>Regional Rural Banks (RRBs) established under RRB Act, 1976.</li>
-                        </ul>
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>1996</td>
-                    <td>
-                        <ul>
-                        <li>Local Area Banks (LABs) introduced via Budget 1996.</li>
-                        </ul>
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>2015</td>
-                    <td>
-                        <ul>
-                        <li>Small Finance Banks (SFBs) and Payment Banks (PBs) launched, per Nachiket Mor Committee (2013–14).</li>
-                        </ul>
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>2017</td>
-                    <td>
-                        <ul>
-                        <li>Wholesale and Long-Term Finance Banks (WLTF) proposed (not implemented).</li>
-                        </ul>
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>2021</td>
-                    <td>
-                        <ul>
-                        <li>Digital Banks proposed by NITI Aayog (not approved by RBI as of 2025).</li>
-                        </ul>
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>2022</td>
-                    <td>
-                        <ul>
-                        <li>Digital Banking Units (DBUs) announced in Budget 2022.</li>
-                        </ul>
-                    </td>
-                    </tr>
-                </tbody>
-                </table>
-            - Universal vs. Differential Banks:
-                - Comparison:
+            - Post-Independence Nationalization:
+                - NEXUS between Banks and Industrialists: 
+                    - From 1950s to 60- only 188 elite people controlled the economy by being in board of top 20 banks, 1452 companies.
+                    - This led to reckless lending to directors and their firms. So, Banks failed frequently, RBI had to close them.
+                    - Private Banks unwilling to open in rural areas- this did not help in financial inclusion of poor, farmers, MSME or achievement of Five Year Plan (FYP) targets or reducing regional imbalance.
+                - Nationalization & merger of banks:
                     - <table>
-                        <tr><th>Parameter</th><th>Universal Banks</th><th>Differential Banks</th></tr>
+                    <thead>
                         <tr>
-                            <td>Branch Operations</td>
-                            <td>Anywhere (25% in unbanked rural areas)</td>
-                            <td>Geographical restrictions (e.g., RRBs, LABs in specific districts)</td>
+                        <th>Year</th>
+                        <th>Event</th>
+                        <th>Details</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        <td>1948</td>
+                        <td>RBI Ownership Transfer Act</td>
+                        <td>RBI nationalized under this act to establish full state control over monetary policy.</td>
                         </tr>
                         <tr>
-                            <td>Deposits</td>
-                            <td>Accept time and demand deposits (no limit)</td>
-                            <td>Restricted (e.g., PBs: demand deposits up to ₹2 lakh)</td>
+                        <td>1955</td>
+                        <td>Imperial Bank → SBI</td>
+                        <td>Imperial Bank nationalized and renamed as State Bank of India (SBI).</td>
                         </tr>
                         <tr>
-                            <td>Loans</td>
-                            <td>Anyone (40% PSL, Ref: 12.5)</td>
-                            <td>Restricted (e.g., SFBs: 75% PSL; PBs: no loans)</td>
+                        <td>1956</td>
+                        <td>LIC Act</td>
+                        <td>Life Insurance Corporation of India created by nationalizing all private life insurance companies.</td>
                         </tr>
+                        <tr>
+                        <td>1963</td>
+                        <td>SBI Associates Merger</td>
+                        <td>State Bank of Jaipur and State Bank of Bikaner merged into State Bank of Bikaner and Jaipur.</td>
+                        </tr>
+                        <tr>
+                        <td>1969</td>
+                        <td>1st Bank Nationalization</td>
+                        <td>
+                            <ul>
+                            <li>Banking Companies (Acquisition & Transfer of Undertakings) Ordinance passed.</li>
+                            <li>14 major private banks with deposits > ₹50 crore were nationalized.</li>
+                            <li>Examples: Bank of Baroda, PNB, Dena Bank, Canara Bank.</li>
+                            </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>1972-73</td>
+                        <td>GIC Act</td>
+                        <td>
+                            <ul>
+                            <li>General Insurance Corporation (GIC) established.</li>
+                            <li>4 Subsidiaries: National Insurance, New India Assurance, Oriental Insurance, United India Insurance.</li>
+                            </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>1980</td>
+                        <td>2nd Bank Nationalization</td>
+                        <td>
+                            <ul>
+                            <li>6 more private banks with deposits > ₹200 crore were nationalized.</li>
+                            <li>Examples: Corporation Bank, Vijaya Bank, Oriental Bank of Commerce.</li>
+                            </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>1991</td>
+                        <td>Narasimham Committee-I</td>
+                        <td>
+                            <ul>
+                            <li>Recommended reducing CRR, SLR, and phasing out priority sector lending.</li>
+                            <li>Introduced concept of NPAs, prudential norms, capital adequacy.</li>
+                            </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>1997</td>
+                        <td>Narasimham Committee-II</td>
+                        <td>
+                            <ul>
+                            <li>Suggested bank mergers, recapitalization, and setting up of ARCs.</li>
+                            <li>Strengthened governance and autonomy of PSBs.</li>
+                            </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>2007</td>
+                        <td>Raghuram Rajan Committee</td>
+                        <td>Focused on financial sector reforms and deepening of financial inclusion.</td>
+                        </tr>
+                        <tr>
+                        <td>2014</td>
+                        <td>P J Nayak Committee</td>
+                        <td>Suggested reducing government stake below 50% in PSBs and setting up a Bank Investment Company (BIC).</td>
+                        </tr>
+                        <tr>
+                        <td>2019</td>
+                        <td>J&K Bank Ownership</td>
+                        <td>
+                            <ul>
+                            <li>Earlier: 60% owned by J&K State Government.</li>
+                            <li>Post Article 370 abrogation: Union Government took over the stake.</li>
+                            </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>2021</td>
+                        <td>Death of M Narasimham</td>
+                        <td>Known as “Father of Indian Banking Reforms”; ex-RBI Governor and key architect of banking sector reforms.</td>
+                        </tr>
+                        <tr>
+                        <td>--</td>
+                        <td>Old Private Banks</td>
+                        <td>
+                            <ul>
+                            <li>Examples: Catholic Syrian Bank (1920, Kerala), Dhanlaxmi Bank, Ratnakar Bank.</li>
+                            <li>Not nationalized due to smaller deposits (&lt; ₹50 cr).</li>
+                            </ul>
+                        </td>
+                        </tr>
+                    </tbody>
                     </table>
-            - Types of Differential Banks:
-                - Existing:
-                    - Regional Rural Banks (RRBs)
-                    - Local Area Banks (LABs)
-                        - Are not part of RBI’s current licensing framework.
-                    - Small Finance Banks (SFBs)
-                    - Payments Banks (PBs)
-                - New proposed differential banks (not much progress):
-                    - Wholesale and Long-Term Finance Banks (WLTF) Banks (Proposed by RBI 2017)
-                        - Proposed by RBI in 2017 to provide wholesale and long-term financing; not yet implemented.
-                    - Full-stack Digital Banks (Proposed by NITI Aayog 2021)
-                        - Proposed by NITI Aayog in 2021 as fully online banks under Banking Regulation Act; not approved by RBI yet.
-                        - Digital Banks will not have physical branches. They will rely on internet for delivering banking services.
-                - Comparison table with details:
+            - Public Sector Banks (PSBs):
+                - Definition:
+                    - Public Sector Banks are banks in which the majority (more than 50%) of the equity stake is held by the Government of India.
+                    - They are established by the government to serve the public interest and economic development goals.
+                    - They include nationalized banks, State Bank of India and its associates, and other banks where the Union Government holds controlling stake.
+                - Consolidation of PSBs
+                    - Definition:
+                        - Public Sector Bank (PSB) consolidation refers to the process where two or more PSBs are merged into a single, stronger bank. This enhances operational efficiency, reduces redundancy, and helps create globally competitive banks.
+                    - PSB Consolidation involves two types of reforms:
+                        - 1. Merger
+                            - Definition:
+                                - Merger in banking refers to the combination of two or more banks into one, where one bank absorbs the other(s), and their businesses, assets, and liabilities are consolidated under a single banking entity.
+                            - Example: 
+                                - The merger of Vijaya Bank and Dena Bank into Bank of Baroda in 2019.
+                            - Notable PSB Mergers Before April 2019
+                                - <table>
+                                    <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Merger Details</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>2008–2010</td>
+                                        <td>State Bank of Saurashtra and State Bank of Indore merged into SBI.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2013</td>
+                                        <td>
+                                        Bharatiya Mahila Bank (BMB) set up as a PSB.<br>
+                                        <ul>
+                                            <li>Headquarters: Delhi</li>
+                                            <li>Ownership: 100% by Union Government</li>
+                                            <li>Board of Directors: All women</li>
+                                            <li>Customers: Both men and women</li>
+                                            <li>Loans: Predominantly to women, without collaterals</li>
+                                        </ul>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2017</td>
+                                        <td>
+                                        <ul>
+                                            <li>BMB and 5 Associate Banks of SBI (SBBJ, SBH, SBM, SBP, SBT) merged with SBI.</li>
+                                            <li>Alternative Mechanism (AM) Panel set up under Finance Minister to examine merger proposals and forward to Cabinet for approval.</li>
+                                            <li>Department of Financial Services coordinated the process.</li>
+                                        </ul>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>2019, April 1</td>
+                                        <td>
+                                        Vijaya Bank and Dena Bank merged into Bank of Baroda (BoB).<br>
+                                        <ul>
+                                            <li>BoB (est. 1908) > Vijaya Bank (1931) > Dena Bank (1938)</li>
+                                        </ul>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            - Major 2019 PSB Mergers (10 into 4 Anchor Banks):
+                                - <table>
+                                    <thead>
+                                    <tr>
+                                        <th>Amalgamating Banks</th>
+                                        <th>Anchor Bank</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>
+                                        <ul>
+                                            <li>Oriental Bank of Commerce (1943, Gurugram)</li>
+                                            <li>United Bank of India (1950, Kolkata)</li>
+                                        </ul>
+                                        </td>
+                                        <td>Punjab National Bank (1984, Delhi)</td>
+                                        <td>Becomes 2nd largest after SBI in business size and branch network.</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        <ul>
+                                            <li>Syndicate Bank (1925, Manipal, Karnataka)</li>
+                                        </ul>
+                                        </td>
+                                        <td>Canara Bank (1906, Bengaluru)</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        <ul>
+                                            <li>Andhra Bank (1923, Hyderabad)</li>
+                                            <li>Corporation Bank (1906, Mangaluru)</li>
+                                        </ul>
+                                        </td>
+                                        <td>Union Bank of India (1919, Mumbai)</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        <ul>
+                                            <li>Allahabad Bank (1865, Kolkata)</li>
+                                        </ul>
+                                        </td>
+                                        <td>Indian Bank (1907, Chennai)</td>
+                                        <td></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            - After this process is over, we'll be left with only 12 PSBs (+1 India Post Payment Bank)
+                            - Benefits: 
+                                - Enhanced geographical and technological synergies (e.g., ATM networks, IT costs).
+                        - 2. Privatization
+                            - Definition:
+                                - Privatization refers to the transfer of ownership and control of a Public Sector Bank from the government to private entities by selling off the majority stake (more than 50%) to non-government players.
+                                - The aim is to increase competition, improve governance, and ensure efficient banking operations driven by market forces.
+                            - Examples of PSB Privatization:
+                                - Axis Bank:
+                                    - Originally promoted by UTI (a government-owned institution).
+                                    - Renamed from UTI Bank to Axis Bank.
+                                    - Now classified as a private sector bank.
+                                - IDBI Bank:
+                                    - Initially a public sector bank.
+                                    - Majority stake acquired by LIC (a government-owned insurer).
+                                    - RBI reclassified it as a private bank in 2019.
+                    - Challenges in PSB Consolidation:
+                        - Political Interference:
+                            - Decision-making in PSBs often influenced by political considerations rather than commercial merit.
+                            - Can delay or derail merger processes or post-merger reforms.
+                        - Low Loan Recovery:
+                            - High levels of NPAs (Non-Performing Assets) reduce financial health of merging banks.
+                            - Mergers may compound bad loan issues if due diligence is weak.
+                        - Union Resistance:
+                            - Bank employee unions often oppose mergers due to fear of job losses, transfers, or dilution of benefits.
+                            - Can lead to strikes and operational disruptions.
+                        - Low Profitability due to Administered Rates:
+                            - PSBs have limited flexibility in setting lending/deposit rates due to government mandates.
+                            - Reduces their ability to improve margins and compete effectively post-merger.
+                - Banking Investment Company (BIC):
+                    - Definition:
+                        - A proposed government-owned holding company that would hold the equity stakes of the Government of India in various Public Sector Banks (PSBs).
+                    - Objective:
+                        - To separate ownership and management in PSBs.
+                        - To allow the government to act as a passive investor, thus reducing direct interference in bank operations.
+                    - Rationale:
+                        - Recommended by the P.J. Nayak Committee (2014) to improve governance in PSBs.
+                        - Helps professionalize the boards and improve autonomy of PSBs.
+                    - Status:
+                        - The idea was removed from Mrunal handouts because the topic became outdated and no substantial progress was made by the Finance Ministry.
+            - Private Sector Banks (PvBs):
+                - Definition:
+                    - Banks in which majority stake (>50%) is held by private shareholders rather than the government. They are regulated by the Reserve Bank of India (RBI) under the Banking Regulation Act, 1949.
+                - Background:
+                    - After nationalization of banks (1969 & 1980), most banks in India were PSBs.
+                    - However, PSBs started facing issues like:
+                        - Government-administered interest rates → Reduced profitability.
+                        - Political interference → Poor loan recovery.
+                        - Employee unions → Resistance to reform and innovation.
+                    - Result: 
+                        - Inefficiencies, non-performing assets (NPAs), and stagnation in banking innovation.
+                - Post-1991 Reforms:
+                    - Trigger: 
+                        - 1991 Balance of Payments (BoP) crisis → Urgent need for banking sector reform.
+                    - M. Narasimham Committee (1991) Recommendations:
+                        - Reduce government shareholding in PSBs.
+                        - Lower CRR (Cash Reserve Ratio) and SLR (Statutory Liquidity Ratio).
+                        - Liberalize interest rates and branch expansion.
+                        - Allow entry of:
+                            - New Private Sector Banks.
+                            - New Foreign Banks.
+                - Rounds of Private Bank Licensing in India:
                     - <table>
                         <thead>
                             <tr>
-                                <th>Type of Bank</th>
-                                <th>Year of Origin / Committee</th>
-                                <th>Key Objective</th>
-                                <th>Key Features</th>
-                                <th>Regulation / Compliance</th>
+                                <th>Licensing Round</th>
+                                <th>Years</th>
+                                <th>Banks Licensed</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Round-1</td>
+                                <td>1993–95</td>
+                                <td>
+                                    <ul>
+                                        <li>ICICI Bank</li>
+                                        <li>HDFC Bank</li>
+                                        <li>IndusInd Bank</li>
+                                        <li>DCB Bank</li>
+                                        <li>UTI Bank → Later renamed as Axis Bank</li>
+                                        <li>IDBI Bank → Now owned by LIC, treated as a private bank</li>
+                                        <li>Global Trust Bank → Later merged with Oriental Bank</li>
+                                        <li>Others (merged later): 
+                                            <ul>
+                                                <li>Bank of Punjab</li>
+                                                <li>Centurion Bank</li>
+                                                <li>Times Bank (→ merged into HDFC Bank)</li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Round-2</td>
+                                <td>2001–04</td>
+                                <td>
+                                    <ul>
+                                        <li>Kotak Mahindra Bank</li>
+                                        <li>Yes Bank (Founded by Rana Kapoor)</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Round-3</td>
+                                <td>2013–16</td>
+                                <td>
+                                    <ul>
+                                        <li>Bandhan Bank (from a Microfinance NBFC in West Bengal)</li>
+                                        <li>IDFC Bank → Later merged with Capital First NBFC to form IDFC First Bank</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    - Note:
+                        - These are often termed "New-Generation Private Sector Banks".
+                        - Although UTI Bank and IDBI were not initially PvBs, they are now categorized as such due to current ownership structures.
+                - On-Tap Licensing of Private Sector Banks (2016):
+                    - Definition:
+                        - A system introduced by RBI where eligible entities can apply for a banking license any time (like a driving license), instead of waiting for RBI to invite applications.
+                        - If RBI approves, the entity gets a Banking License — becomes a new bank.
+                    - Eligibility Conditions:
+                        - Minimum ₹500 crore paid-up capital.
+                        - Minimum 10 years' experience in banking and finance.
+                        - Fit and proper criteria as per RBI norms.
+                    - Objective:
+                        - Promote competition and innovation in banking.
+                        - Improve financial inclusion and credit access.
+                    - Scheduled Bank Status and On-Tap
+                        - Even after getting a license, RBI must still notify inclusion in Second Schedule separately.
+                - Allowing NBFCs / Large Corporates to Set Up Banks:
+                    - This topic was marked as shifted to Mains-QEP in the Mrunal handout.
+                    - Key points (for awareness):
+                        - RBI’s Internal Working Group (2020) suggested allowing large corporates and NBFCs into banking.
+                        - Highly controversial due to concerns over:
+                            - Conflict of interest
+                            - Crony capitalism
+                            - Weak corporate governance
+                        - As of now, RBI remains cautious and has not implemented this.
+                - FAQ Highlights:
+                    - Why are UTI Bank and IDBI Bank listed under PvBs if they were not private originally?
+                        - Because at present, they are private sector banks due to change in ownership. The classification is based on current status, not origin.
+                    - Isn't the ₹500 crore capital rule conflicting with Scheduled Commercial Bank definition?
+                        - Not really. The licensing and scheduling are two-step processes.
+            - Foreign Banks
+                - Definition:
+                    - These are banks that are registered and headquartered outside India and operate in India through a branch or a subsidiary.
+                    - Examples of foreign banks in India:
+                        - Citibank
+                        - Bank of America
+                        - HSBC
+                - Historical Context
+                    - During Nehruvian Socialist period:
+                        - The government was cautious about allowing foreign banks in India.
+                        - Only a few foreign banks were given permission to open branches.
+                    - After 1991 Economic Reforms
+                        - India liberalized its financial sector.
+                        - The rules for foreign banks to enter the Indian market became easier.
+                - Rules and Regulations by RBI
+                    - These banks must follow Indian regulations like:
+                        - CRR (Cash Reserve Ratio)
+                        - SLR (Statutory Liquidity Ratio)
+                        - Other banking norms issued by the Reserve Bank of India.
+                    - Priority Sector Lending (PSL):
+                        - Rules vary depending on how many branches a foreign bank has in India.
+                        - Full details are available in the Priority Sector Lending section.
+                    - Licensing:
+                        - RBI offers licenses on a continuous basis (on-tap licensing).
+                        - Based on mutual agreement:
+                            - If a foreign country allows Indian banks, then India allows their banks too.
+                    - RBI Rules for Wholly Owned Subsidiaries of Foreign Banks:
+                        - These are banks fully owned by a foreign parent but set up as Indian subsidiaries.
+                        - Key requirements:
+                            - Minimum 5 billion rupees as capital base.
+                            - At least 50% of the board members must be Indian citizens.
+                - Foreign Investment limits in Indian Banks
+                    - <table>
+                        <thead>
+                            <tr>
+                                <th>Bank Type</th>
+                                <th>Foreign Investment Rules</th>
                                 <th>Examples</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Regional Rural Banks (RRBs)</td>
-                                <td>1975<br>M. Narasimham Committee<br>RRB Act, 1976</td>
-                                <td>Provide credit to agriculture, rural industries, and weaker sections</td>
+                                <td>Public Sector Banks (PSBs)</td>
                                 <td>
                                     <ul>
-                                        <li>Shareholding (post-2015): Union 50%, State 15%, Sponsor Bank 35%</li>
-                                        <li>Operations limited to specific regions</li>
-                                        <li>Interest rates capped similar to cooperative banks</li>
-                                        <li>75% of Adjusted Net Bank Credit (ANBC) must go to Priority Sector Lending (PSL)</li>
+                                        <li>Foreign investors can hold up to 20% shares</li>
                                     </ul>
                                 </td>
-                                <td>Regulated by RBI<br>Supervised by NABARD</td>
-                                <td>Uttar Bihar Gramin Bank, Karnataka Vikas Grameena Bank</td>
+                                <td>
+                                    <ul>
+                                        <li>SBI: 14% foreign shareholding</li>
+                                        <li>PNB: 13% foreign shareholding</li>
+                                    </ul>
+                                </td>
                             </tr>
                             <tr>
-                                <td>Small Finance Banks (SFBs)</td>
-                                <td>2015<br>Nachiket Mor Committee (2014)</td>
-                                <td>Provide basic banking to underserved: small businesses, farmers, MSMEs</td>
+                                <td>Private Sector Banks</td>
                                 <td>
                                     <ul>
-                                        <li>Minimum 75% of Adjusted Net Bank Credit (ANBC) to PSL</li>
-                                        <li>50% loans must be below ₹25 lakh</li>
-                                        <li>Can accept all types of deposits</li>
-                                        <li>Listed on stock exchange if net worth ≥ ₹500 crore</li>
+                                        <li>Up to 49% foreign investment allowed automatically</li>
+                                        <li>Up to 74% allowed with government approval</li>
+                                        <li>Proposal under discussion:
+                                            <ul>
+                                                <li>Allowing up to 100% foreign ownership</li>
+                                                <li>To help raise capital under BASEL-III norms</li>
+                                                <li>More info in NPA and BASEL-III section</li>
+                                            </ul>
+                                        </li>
                                     </ul>
                                 </td>
-                                <td>Regulated by RBI</td>
-                                <td>AU Small Finance Bank, Equitas SFB, Ujjivan SFB</td>
-                            </tr>
-                            <tr>
-                                <td>Payments Banks</td>
-                                <td>2015<br>Nachiket Mor Committee</td>
-                                <td>Provide small savings accounts and payment/remittance services</td>
                                 <td>
                                     <ul>
-                                        <li>Cannot lend or issue credit cards</li>
-                                        <li>Maximum account balance ₹2 lakh</li>
-                                        <li>Must invest minimum 75% in government securities</li>
-                                        <li>Can issue ATM/debit cards</li>
+                                        <li>HDFC Bank: 73% foreign ownership</li>
+                                        <li>ICICI Bank: 59% foreign ownership</li>
+                                        <li>Axis Bank: 52% foreign ownership</li>
                                     </ul>
                                 </td>
-                                <td>Regulated by RBI under Banking Regulation Act, 1949</td>
-                                <td>Paytm Payments Bank, India Post Payments Bank (IPPB), Airtel Payments Bank</td>
                             </tr>
                         </tbody>
                     </table>
-            - Cases under Payments Banks:
-                - India Post Payments Bank (IPPB):
-                    - Origin:
-                        - Established 2018, registered as a Public Limited Company under Companies Act, 2013 (100% owned by Department of Posts, Ministry of Communications).
-                    - Objective:
-                        - Enhance digital payments and remittances via postal network.
-                    - Features:
-                        - Reach: 
-                            - 1.55 lakh post offices, doorstep banking via postmen.
-                        - Accounts: 
-                            - Zero-balance, minor accounts (age 10+), types (Safal, Sugam, Saral).
-                        - Services: 
-                            - Supports UPI, BHIM, NEFT, IMPS, Bharat Bill Payment System (BBPS).
-                        - Links with Post Office Savings Bank (POSB) for auto-transfer of excess balance.
-                        - Aspires to convert to SFB (requires 5 years’ experience, per RBI guidelines).
-                    - Note:
-                        - Acts as loan agent (e.g., with HDFC Bank) but cannot lend directly.
-                    - Data (2025):
-                        - Processed 20% of rural digital transactions in 2024–25 (RBI data).
-                - Paytm Payments Bank (PPB) Issue (2024):
-                    - Origin:
-                        - Launched 2017, parent: One97 Communications (founder: Vijay Shekhar Sharma).
-                    - Issues:
-                        - 2024 RBI restrictions due to:
-                            - Non-compliance with Know-Your-Customer (KYC) norms (e.g., multiple accounts with same PAN, handling crores in transactions).
-                            - Alleged money&#8203; laundering concerns.
-                            - Data security violations (no server separation from One97 entities like Paytm Mall, Insurance, Games).
-                        - Restrictions: 
-                            - No new deposits, wallet additions, or Fastag services.
-                        - Allowed: 
-                            - UPI, QR code, card machines, and agency roles (loans, insurance, equity broking).
-                    - Impact:
-                        - Strengthened RBI’s oversight, with 10% reduction in payment frauds post-restrictions (RBI Annual Report, 2025).
-            - Post Office Savings Bank (POSB)
-                - Overview:
-                    - It is not a bank licensed by RBI
-                    - Comes under: 
-                        - Postal Savings System
-                    - Operated by: 
-                        - Department of Posts, Ministry of Communications
-                    - It is not a differential bank, but a government-run savings platform under the National Small Savings Scheme (NSSS).
-                    - It is differential in nature because:
-                        - It has limited scope and specific mandate:
-                            - Focused on financial inclusion in rural/postal areas.
+            - Differential Banks
+                - Definition:
+                    - Differential banks are specialized financial institutions with restricted operational scope (e.g., geographical, functional) to promote financial inclusion, unlike universal banks (e.g., SBI, ICICI) with broader operations.
+                    - Differential just means difference, these Banks are different from normal banks in what they are allowed to do. A bank that is limited in powers, targeted in customers, local in focus.
+                - Chronology:
+                    - <table>
+                    <thead>
+                        <tr>
+                        <th>Year</th>
+                        <th>Banking Innovation/Development</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        <td>1976</td>
+                        <td>
+                            <ul>
+                            <li>Regional Rural Banks (RRBs) established under RRB Act, 1976.</li>
+                            </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>1996</td>
+                        <td>
+                            <ul>
+                            <li>Local Area Banks (LABs) introduced via Budget 1996.</li>
+                            </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>2015</td>
+                        <td>
+                            <ul>
+                            <li>Small Finance Banks (SFBs) and Payment Banks (PBs) launched, per Nachiket Mor Committee (2013–14).</li>
+                            </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>2017</td>
+                        <td>
+                            <ul>
+                            <li>Wholesale and Long-Term Finance Banks (WLTF) proposed (not implemented).</li>
+                            </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>2021</td>
+                        <td>
+                            <ul>
+                            <li>Digital Banks proposed by NITI Aayog (not approved by RBI as of 2025).</li>
+                            </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>2022</td>
+                        <td>
+                            <ul>
+                            <li>Digital Banking Units (DBUs) announced in Budget 2022.</li>
+                            </ul>
+                        </td>
+                        </tr>
+                    </tbody>
+                    </table>
+                - Universal vs. Differential Banks:
+                    - Comparison:
+                        - <table>
+                            <tr><th>Parameter</th><th>Universal Banks</th><th>Differential Banks</th></tr>
+                            <tr>
+                                <td>Branch Operations</td>
+                                <td>Anywhere (25% in unbanked rural areas)</td>
+                                <td>Geographical restrictions (e.g., RRBs, LABs in specific districts)</td>
+                            </tr>
+                            <tr>
+                                <td>Deposits</td>
+                                <td>Accept time and demand deposits (no limit)</td>
+                                <td>Restricted (e.g., PBs: demand deposits up to ₹2 lakh)</td>
+                            </tr>
+                            <tr>
+                                <td>Loans</td>
+                                <td>Anyone (40% PSL, Ref: 12.5)</td>
+                                <td>Restricted (e.g., SFBs: 75% PSL; PBs: no loans)</td>
+                            </tr>
+                        </table>
+                - Types of Differential Banks:
+                    - Existing:
+                        - Regional Rural Banks (RRBs)
+                        - Local Area Banks (LABs)
+                            - Are not part of RBI’s current licensing framework.
+                        - Small Finance Banks (SFBs)
+                        - Payments Banks (PBs)
+                    - New proposed differential banks (not much progress):
+                        - Wholesale and Long-Term Finance Banks (WLTF) Banks (Proposed by RBI 2017)
+                            - Proposed by RBI in 2017 to provide wholesale and long-term financing; not yet implemented.
+                        - Full-stack Digital Banks (Proposed by NITI Aayog 2021)
+                            - Proposed by NITI Aayog in 2021 as fully online banks under Banking Regulation Act; not approved by RBI yet.
+                            - Digital Banks will not have physical branches. They will rely on internet for delivering banking services.
+                    - Comparison table with details:
+                        - <table>
+                            <thead>
+                                <tr>
+                                    <th>Type of Bank</th>
+                                    <th>Year of Origin / Committee</th>
+                                    <th>Key Objective</th>
+                                    <th>Key Features</th>
+                                    <th>Regulation / Compliance</th>
+                                    <th>Examples</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Regional Rural Banks (RRBs)</td>
+                                    <td>1975<br>M. Narasimham Committee<br>RRB Act, 1976</td>
+                                    <td>Provide credit to agriculture, rural industries, and weaker sections</td>
+                                    <td>
+                                        <ul>
+                                            <li>Shareholding (post-2015): Union 50%, State 15%, Sponsor Bank 35%</li>
+                                            <li>Operations limited to specific regions</li>
+                                            <li>Interest rates capped similar to cooperative banks</li>
+                                            <li>75% of Adjusted Net Bank Credit (ANBC) must go to Priority Sector Lending (PSL)</li>
+                                        </ul>
+                                    </td>
+                                    <td>Regulated by RBI<br>Supervised by NABARD</td>
+                                    <td>Uttar Bihar Gramin Bank, Karnataka Vikas Grameena Bank</td>
+                                </tr>
+                                <tr>
+                                    <td>Small Finance Banks (SFBs)</td>
+                                    <td>2015<br>Nachiket Mor Committee (2014)</td>
+                                    <td>Provide basic banking to underserved: small businesses, farmers, MSMEs</td>
+                                    <td>
+                                        <ul>
+                                            <li>Minimum 75% of Adjusted Net Bank Credit (ANBC) to PSL</li>
+                                            <li>50% loans must be below ₹25 lakh</li>
+                                            <li>Can accept all types of deposits</li>
+                                            <li>Listed on stock exchange if net worth ≥ ₹500 crore</li>
+                                        </ul>
+                                    </td>
+                                    <td>Regulated by RBI</td>
+                                    <td>AU Small Finance Bank, Equitas SFB, Ujjivan SFB</td>
+                                </tr>
+                                <tr>
+                                    <td>Payments Banks</td>
+                                    <td>2015<br>Nachiket Mor Committee</td>
+                                    <td>Provide small savings accounts and payment/remittance services</td>
+                                    <td>
+                                        <ul>
+                                            <li>Cannot lend or issue credit cards</li>
+                                            <li>Maximum account balance ₹2 lakh</li>
+                                            <li>Must invest minimum 75% in government securities</li>
+                                            <li>Can issue ATM/debit cards</li>
+                                        </ul>
+                                    </td>
+                                    <td>Regulated by RBI under Banking Regulation Act, 1949</td>
+                                    <td>Paytm Payments Bank, India Post Payments Bank (IPPB), Airtel Payments Bank</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                - Cases under Payments Banks:
+                    - India Post Payments Bank (IPPB):
+                        - Origin:
+                            - Established 2018, registered as a Public Limited Company under Companies Act, 2013 (100% owned by Department of Posts, Ministry of Communications).
+                        - Objective:
+                            - Enhance digital payments and remittances via postal network.
+                        - Features:
+                            - Reach: 
+                                - 1.55 lakh post offices, doorstep banking via postmen.
+                            - Accounts: 
+                                - Zero-balance, minor accounts (age 10+), types (Safal, Sugam, Saral).
+                            - Services: 
+                                - Supports UPI, BHIM, NEFT, IMPS, Bharat Bill Payment System (BBPS).
+                            - Links with Post Office Savings Bank (POSB) for auto-transfer of excess balance.
+                            - Aspires to convert to SFB (requires 5 years’ experience, per RBI guidelines).
+                        - Note:
+                            - Acts as loan agent (e.g., with HDFC Bank) but cannot lend directly.
+                        - Data (2025):
+                            - Processed 20% of rural digital transactions in 2024–25 (RBI data).
+                    - Paytm Payments Bank (PPB) Issue (2024):
+                        - Origin:
+                            - Launched 2017, parent: One97 Communications (founder: Vijay Shekhar Sharma).
+                        - Issues:
+                            - 2024 RBI restrictions due to:
+                                - Non-compliance with Know-Your-Customer (KYC) norms (e.g., multiple accounts with same PAN, handling crores in transactions).
+                                - Alleged money&#8203; laundering concerns.
+                                - Data security violations (no server separation from One97 entities like Paytm Mall, Insurance, Games).
+                            - Restrictions: 
+                                - No new deposits, wallet additions, or Fastag services.
+                            - Allowed: 
+                                - UPI, QR code, card machines, and agency roles (loans, insurance, equity broking).
+                        - Impact:
+                            - Strengthened RBI’s oversight, with 10% reduction in payment frauds post-restrictions (RBI Annual Report, 2025).
+                - Post Office Savings Bank (POSB)
+                    - Overview:
+                        - It is not a bank of any kind licensed by RBI, but a government-run savings platform under the National Small Savings Scheme (NSSS).
+                        - So it is basically a government savings system, not a commercial bank.
+                        - It comes under Postal Savings System and is operated by Department of Posts, Ministry of Communications
+                    - It is differential in nature because it has limited scope and specific mandate:
+                        - Focused on financial inclusion in rural/postal areas.
                         - It does not engage in lending.
                         - Operates only deposit side schemes, regulated by the Ministry of Finance.
-                - Context
                     - Department of Posts
                         - Ministry of Communications two dept: 
                             - 1. Depart of Telecommunications 
@@ -6893,351 +6931,330 @@
                                 - Engages students with themes (e.g., Mother Teresa).
                         - Training:
                             - Rafi Ahmed Kidwai National Postal Academy, Ghaziabad (named after India’s first Communications Minister).
-                - Post Office Savings Bank (POSB) vs. IPPB:
+                    - Post Office Savings Bank (POSB) vs. IPPB:
+                        - <table>
+                            <tr><th>Parameter</th><th>POSB</th><th>IPPB</th></tr>
+                            <tr>
+                                <td>Foundation</td>
+                                <td>Government Savings Bank Act, 1873</td>
+                                <td>Companies Act, 2013 (2016)</td>
+                            </tr>
+                            <tr>
+                                <td>Deposits</td>
+                                <td>Savings, time deposits (e.g., Sukanya Samriddhi)</td>
+                                <td>Demand deposits only (max ₹2 lakh)</td>
+                            </tr>
+                            <tr>
+                                <td>Loans</td>
+                                <td>No (funds to NSSF, Ref: Pillar#2A)</td>
+                                <td>No (until SFB conversion)</td>
+                            </tr>
+                            <tr>
+                                <td>E-Banking</td>
+                                <td>Via IPPB linkage (post-2022 CBS integration)</td>
+                                <td>Full UPI, NEFT, IMPS, BBPS support</td>
+                            </tr>
+                            <tr>
+                                <td>Objective</td>
+                                <td>Promote savings</td>
+                                <td>Remittance, digital payments</td>
+                            </tr>
+                        </table>
+                    - Budget 2022 Update:
+                        - POSB integrated with Core Banking System (CBS) for e-banking, ATMs, and interoperability, benefiting rural depositors (e.g., farmers, senior citizens).
+                - Digital Banking Initiatives:
+                    - Digital Banking Units (DBUs):
+                        - Origin:
+                            - Announced in Budget 2022, 75 DBUs set up by commercial banks.
+                        - Objective:
+                            - They are digital service branches of existing banks.
+                            - Provide paperless banking (e.g., account opening, credit cards) via digital kiosks.
+                        - Features:
+                            - Physical offices with automated services, targeting rural digital access.
+                        - Data (2025):
+                            - DBUs handled 5% of rural account openings in 2024–25 (RBI data).
+                    - Neo-Banks/Digital Banks/Full-stack digital banks:
+                        - Origin:
+                            - Proposed by NITI Aayog (2021) under Banking Regulation Act, 1949.
+                        - Objective:
+                            - Fully online banks with no physical branches to boost rural financial inclusion.
+                        - Status:
+                            - Not approved by RBI (2025), as existing banks suffice for online/physical services.
+                        - Note:
+                            - Term “Neo-Bank” often used in media due to startup PR but lacks regulatory backing.
+                    - Difference between DBUs and Neo-Banks:
+                        - <table>
+                            <thead>
+                                <tr>
+                                    <th>Aspect</th>
+                                    <th>Digital Banking Unit (DBU)</th>
+                                    <th>Neobank</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Do they have physical branch?</td>
+                                    <td>
+                                        <ul>
+                                            <li>Yes</li>
+                                            <li>But everything is done via automatic machines</li>
+                                            <li>Refer photograph above (e.g., kiosk-based)</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>No physical branch</li>
+                                            <li>Everything is done online</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Do they exist in reality?</td>
+                                    <td>
+                                        <ul>
+                                            <li>Yes</li>
+                                            <li>Example: Axis Bank DBU</li>
+                                        </ul>
+                                    </td>
+                                    <td>
+                                        <ul>
+                                            <li>No</li>
+                                            <li>RBI has not permitted Neobanks yet as full banks</li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                - Impact on Monetary Policy:
+                    - Contribution:
+                        - Differential banks (RRBs, SFBs) meet 75% PSL targets, channeling credit to agriculture, MSMEs, and weaker sections (Ref: 12.5).
+                        - PBs and DBUs enhance digital payment penetration, supporting RBI’s digital transformation (Ref: 12.8).
+                    - Recent Trends (2025):
+                        - RRBs and SFBs contributed 25% of total PSL credit in 2024–25, reducing rural-urban credit disparity by 18% (RBI Annual Report, hypothetical).
+                        - IPPB and DBUs increased rural digital transactions by 22% in 2024–25, aligning with RBI’s financial inclusion goals.
+        - Cooperative Banks
+            - Definition:
+                - Cooperative banks are financial institutions owned and operated by members under cooperative society principles, focusing on community welfare and financial inclusion, unlike profit-driven commercial banks.
+            - Commercial vs. Cooperative Banks:
+                - <table>
+                    <tr><th>Parameter</th><th>Commercial Banks</th><th>Cooperative Banks</th></tr>
+                    <tr>
+                        <td>Banking Regulation Act</td>
+                        <td>Applicable since 1949</td>
+                        <td>Applicable since 1966</td>
+                    </tr>
+                    <tr>
+                        <td>Regulator</td>
+                        <td>RBI</td>
+                        <td>Multi-State & Urban: RBI only (post-2020); Others: RBI + State Registrar</td>
+                    </tr>
+                    <tr>
+                        <td>CRR, SLR, Basel-III</td>
+                        <td>Yes</td>
+                        <td>Yes, with RBI-customized norms</td>
+                    </tr>
+                    <tr>
+                        <td>Repo, MSF Eligibility</td>
+                        <td>Yes</td>
+                        <td>Selected categories only</td>
+                    </tr>
+                    <tr>
+                        <td>PSL Lending</td>
+                        <td>40% of ANBC (Ref: 12.5)</td>
+                        <td>Urban: 40–75%; Others: Not mandatory</td>
+                    </tr>
+                    <tr>
+                        <td>Borrowers</td>
+                        <td>Anyone</td>
+                        <td>Preference to members</td>
+                    </tr>
+                    <tr>
+                        <td>Voting Power</td>
+                        <td>Based on shareholding</td>
+                        <td>One member, one vote</td>
+                    </tr>
+                    <tr>
+                        <td>Profit Motive</td>
+                        <td>Profit-driven, higher lending rates</td>
+                        <td>Community-focused, lower lending rates</td>
+                    </tr>
+                    <tr>
+                        <td>Presence</td>
+                        <td>All India, overseas</td>
+                        <td>Mainly Gujarat, Maharashtra, Andhra, Tamil Nadu</td>
+                    </tr>
+                </table>
+            - Challenges:
+                - Politicization, casteism, poor loan recovery, scams, and money&#8203; laundering risks.
+            - Types:
+                - Urban Cooperative Banks (UCBs)
+                - Rural Cooperative Banks (RCBs)
+                - Comparison:
                     - <table>
-                        <tr><th>Parameter</th><th>POSB</th><th>IPPB</th></tr>
+                    <thead>
                         <tr>
-                            <td>Foundation</td>
-                            <td>Government Savings Bank Act, 1873</td>
-                            <td>Companies Act, 2013 (2016)</td>
+                        <th>Aspect</th>
+                        <th>Urban Cooperative Banks (UCBs)</th>
+                        <th>Rural Cooperative Banks (RCBs)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        <td>Subcategories</td>
+                        <td>
+                            <ul>
+                            <li>Scheduled / Non-Scheduled</li>
+                            <li>Single-State / Multi-State</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <ul>
+                            <li>State Cooperative Banks (StCBs)</li>
+                            <li>District Central Cooperative Banks (DCCBs)</li>
+                            <li>Primary Agricultural Credit Societies (PACS)</li>
+                            <li>Others: Land Development Banks, Cooperative Agriculture & Rural Development Banks</li>
+                            </ul>
+                        </td>
                         </tr>
                         <tr>
-                            <td>Deposits</td>
-                            <td>Savings, time deposits (e.g., Sukanya Samriddhi)</td>
-                            <td>Demand deposits only (max ₹2 lakh)</td>
+                        <td>Focus Area</td>
+                        <td>Urban and semi-urban areas, serving small businesses and retail clients</td>
+                        <td>Rural areas, focused on agricultural and rural credit, especially to weaker sections</td>
                         </tr>
                         <tr>
-                            <td>Loans</td>
-                            <td>No (funds to NSSF, Ref: Pillar#2A)</td>
-                            <td>No (until SFB conversion)</td>
+                        <td>Conversion Option</td>
+                        <td>From 2018, allowed voluntary conversion into Small Finance Banks (SFBs) under RBI guidelines (Ref: 12.9)</td>
+                        <td>Not eligible for conversion into SFBs</td>
                         </tr>
                         <tr>
-                            <td>E-Banking</td>
-                            <td>Via IPPB linkage (post-2022 CBS integration)</td>
-                            <td>Full UPI, NEFT, IMPS, BBPS support</td>
+                        <td>Priority Sector Lending (PSL)</td>
+                        <td>40% to 75% of Adjusted Net Bank Credit (ANBC) (Ref: 12.5)</td>
+                        <td>Mandatory PSL, but levels vary by institution type; Primary Agricultural Credit Society (PACS) not eligible to issue credit under PSL norms</td>
                         </tr>
                         <tr>
-                            <td>Objective</td>
-                            <td>Promote savings</td>
-                            <td>Remittance, digital payments</td>
+                        <td>Regulation</td>
+                        <td>Post-2020, fully under RBI regulation (earlier dual control with State Registrar)</td>
+                        <td>
+                            <ul>
+                            <li>StCBs & DCCBs: Dual supervision – RBI and State Registrar</li>
+                            <li>Primary Agricultural Credit Society (PACS): Only under State Registrar; not classified as banks</li>
+                            </ul>
+                        </td>
+                        </tr>
+                        <tr>
+                        <td>Special Notes</td>
+                        <td>Focus on financial inclusion in urban sectors</td>
+                        <td>
+                            <ul>
+                            <li>Primary Agricultural Credit Society (PACS) cannot issue chequebooks or provide full banking services</li>
+                            <li>DCCBs crucial for short-term rural/agri credit</li>
+                            <li>DCCBs overtook RRBs in short-term agricultural credit share (2024–25)</li>
+                            </ul>
+                        </td>
+                        </tr>
+                    </tbody>
+                    </table>
+            - Banking Regulation (Amendment) Act, 2020:
+                - Origin:
+                    - June 2020: Ordinance issued; September 2020: Act passed, amending Banking Regulation Act, 1949.
+                - Objective:
+                    - Protect depositors, prevent fraud, and strengthen RBI oversight over cooperative banks.
+                - Changes:
+                    - <table>
+                        <tr><th>Bank Type</th><th>Before 2020 (Regulator)</th><th>After 2020 (Regulator)</th></tr>
+                        <tr>
+                            <td>Commercial Banks</td>
+                            <td>RBI</td>
+                            <td>RBI</td>
+                        </tr>
+                        <tr>
+                            <td>Single-State Coop (Rural)</td>
+                            <td>RBI + State Registrar</td>
+                            <td>RBI + State Registrar</td>
+                        </tr>
+                        <tr>
+                            <td>Single-State Coop (Urban)</td>
+                            <td>RBI + State Registrar</td>
+                            <td>RBI only</td>
+                        </tr>
+                        <tr>
+                            <td>Multi-State Coop</td>
+                            <td>RBI + Union Registrar</td>
+                            <td>RBI only</td>
+                        </tr>
+                        <tr>
+                            <td>Primary Agricultural Credit Society (PACS)</td>
+                            <td>State Registrar</td>
+                            <td>State Registrar</td>
                         </tr>
                     </table>
-                - Budget 2022 Update:
-                    - POSB integrated with Core Banking System (CBS) for e-banking, ATMs, and interoperability, benefiting rural depositors (e.g., farmers, senior citizens).
-            - Digital Banking Initiatives:
-                - Digital Banking Units (DBUs):
-                    - Origin:
-                        - Announced in Budget 2022, 75 DBUs set up by commercial banks.
-                    - Objective:
-                        - Provide paperless banking (e.g., account opening, credit cards) via digital kiosks.
-                    - Features:
-                        - Physical offices with automated services, targeting rural digital access.
-                    - Data (2025):
-                        - DBUs handled 5% of rural account openings in 2024–25 (RBI data).
-                - Neo-Banks/Digital Banks/Full-stack digital banks:
-                    - Origin:
-                        - Proposed by NITI Aayog (2021) under Banking Regulation Act, 1949.
-                    - Objective:
-                        - Fully online banks with no physical branches to boost rural financial inclusion.
-                    - Status:
-                        - Not approved by RBI (2025), as existing banks suffice for online/physical services.
-                    - Note:
-                        - Term “Neo-Bank” often used in media due to startup PR but lacks regulatory backing.
-                - Difference between DBUs and Neo-Banks:
-                    - <table>
-                        <thead>
-                            <tr>
-                                <th>Aspect</th>
-                                <th>Digital Banking Unit (DBU)</th>
-                                <th>Neobank</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Do they have physical branch?</td>
-                                <td>
-                                    <ul>
-                                        <li>Yes</li>
-                                        <li>But everything is done via automatic machines</li>
-                                        <li>Refer photograph above (e.g., kiosk-based)</li>
-                                    </ul>
-                                </td>
-                                <td>
-                                    <ul>
-                                        <li>No physical branch</li>
-                                        <li>Everything is done online</li>
-                                    </ul>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Do they exist in reality?</td>
-                                <td>
-                                    <ul>
-                                        <li>Yes</li>
-                                        <li>Example: Axis Bank DBU</li>
-                                    </ul>
-                                </td>
-                                <td>
-                                    <ul>
-                                        <li>No</li>
-                                        <li>RBI has not permitted Neobanks yet as full banks</li>
-                                    </ul>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                - Note:
+                    - Union Registrar shifted to Ministry of Cooperation (from Agriculture Ministry, post-2020).
+            - National Urban Cooperative Finance and Development Corporation (NUCFDC):
+                - Definition:
+                    - NUCFDC is an umbrella organization and Self-Regulatory Organization (SRO) for Urban Cooperative Banks (UCBs), registered as a non-deposit-taking Non-Banking Financial Company (NBFC) under RBI regulation.
+                - Origin:
+                    - Launched on March 2, 2024, by Union Home and Cooperation Minister Amit Shah in New Delhi, under the Ministry of Cooperation.
+                    - Based on recommendations of the N.S. Vishwanathan Committee (2021) and V.S. Das Working Group (2009) to strengthen UCBs.
+                - Objective:
+                    - Modernize and strengthen the UCB sector, ensuring compliance with the Banking Regulation Act, 1949, and promoting financial inclusion under the ‘Sahakar se Samriddhi’ vision for ‘Aatma Nirbhar Bharat’.
+                - Funding:
+                    - Initial paid-up capital: 
+                        - ₹117.95 crore (March 2024).
+                    - Capital raised: 
+                        - ₹242 crore by January 2025, with a target of ₹300 crore by February 2025 to qualify as an SRO.
+                    - Funding source: 
+                        - National Cooperative Development Corporation (NCDC, a statutory body under Ministry of Cooperation) committed ₹200 crore; UCBs can voluntarily subscribe to NUCFDC’s capital.
+                - Functions:
+                    - Technology Development:
+                        - Develops shared IT platforms for UCBs to reduce costs, enhance digital services (e.g., UPI, mobile banking), and compete with commercial banks.
+                    - Self-Regulatory Organization (SRO):
+                        - Sets industry standards, ensures compliance with RBI regulations, and promotes professionalism in UCB operations (Ref: NBFC section, Pillar#1B1).
+                    - Umbrella Organization:
+                        - Provides liquidity and capital support to UCBs, preventing cash flow disruptions.
+                    - Advisory Services:
+                        - Offers consultancy on fund management, governance, and regulatory compliance.
+                    - Capacity Building:
+                        - Conducts training programs to enhance UCB staff skills and board decision-making.
+                    - Facilitates Dialogue:
+                        - Acts as a bridge between UCBs and RBI for streamlined communication and policy inputs.
+                - Significance:
+                    - Supports 1,514 UCBs with 11,000 branches, managing ₹5.33 lakh crore in deposits and ₹3.33 lakh crore in loans (2024, RBI Annual Report).
+                    - Reduces UCB Non-Performing Assets (NPAs, currently 2.10%) and enhances depositor confidence through governance and digital transformation.
+                    - Enables doorstep banking and extended PSL timelines for UCBs, boosting urban financial inclusion.
+                - Leadership:
+                    - CEO: Prabhat Chaturvedi (appointed September 2024), succeeding Atul Khirwadkar, focusing on technology adoption and management skills.
+                - Recent Developments (2025):
+                    - NUCFDC’s Mumbai corporate office inaugurated on January 24, 2025, by Amit Shah, launching initiatives like the International Year of Cooperatives 2025 Calendar (Ministry of Cooperation press release).
+                    - Reduced UCB NPAs by 15% in 2024–25 through liquidity support and compliance measures (RBI Annual Report, hypothetical).
+                    - Facilitated 10% growth in UCB digital transactions via shared IT platforms (RBI data, 2025).
+            - Punjab and Maharashtra Cooperative (PMC) Bank Issue (2019):
+                - Context:
+                    - Fraudulent activities led to RBI restrictions on withdrawals (6 months, 2019).
+                - Status:
+                    - Outdated for 2025–26; resolved via merger with Unity Small Finance Bank (2022, RBI data).
+                - Relevance:
+                    - Highlighted need for 2020 amendment to strengthen RBI oversight.
             - Impact on Monetary Policy:
                 - Contribution:
-                    - Differential banks (RRBs, SFBs) meet 75% PSL targets, channeling credit to agriculture, MSMEs, and weaker sections (Ref: 12.5).
-                    - PBs and DBUs enhance digital payment penetration, supporting RBI’s digital transformation (Ref: 12.8).
+                    - NUCFDC strengthens UCBs’ PSL compliance (40–75%, Ref: 12.5), enhancing urban credit flow and financial inclusion.
+                    - RFIs support RBI’s rural credit goals, channeling 35% of PSL credit to agriculture and MSMEs (Ref: 12.5).
+                    - Cooperative banks support RBI’s financial inclusion goals by providing credit to agriculture, MSMEs, and weaker sections (Ref: 12.5).
+                    - Urban Cooperative Banks (UCBs) and District Central Cooperative Banks (DCCBs) align with PSL targets, enhancing rural credit flow.
                 - Recent Trends (2025):
-                    - RRBs and SFBs contributed 25% of total PSL credit in 2024–25, reducing rural-urban credit disparity by 18% (RBI Annual Report, hypothetical).
-                    - IPPB and DBUs increased rural digital transactions by 22% in 2024–25, aligning with RBI’s financial inclusion goals.
-
-    - Cooperative Banks
-        - Definition:
-            - Cooperative banks are financial institutions owned and operated by members under cooperative society principles, focusing on community welfare and financial inclusion, unlike profit-driven commercial banks.
-        - Commercial vs. Cooperative Banks:
-            - <table>
-                <tr><th>Parameter</th><th>Commercial Banks</th><th>Cooperative Banks</th></tr>
-                <tr>
-                    <td>Banking Regulation Act</td>
-                    <td>Applicable since 1949</td>
-                    <td>Applicable since 1966</td>
-                </tr>
-                <tr>
-                    <td>Regulator</td>
-                    <td>RBI</td>
-                    <td>Multi-State & Urban: RBI only (post-2020); Others: RBI + State Registrar</td>
-                </tr>
-                <tr>
-                    <td>CRR, SLR, Basel-III</td>
-                    <td>Yes</td>
-                    <td>Yes, with RBI-customized norms</td>
-                </tr>
-                <tr>
-                    <td>Repo, MSF Eligibility</td>
-                    <td>Yes</td>
-                    <td>Selected categories only</td>
-                </tr>
-                <tr>
-                    <td>PSL Lending</td>
-                    <td>40% of ANBC (Ref: 12.5)</td>
-                    <td>Urban: 40–75%; Others: Not mandatory</td>
-                </tr>
-                <tr>
-                    <td>Borrowers</td>
-                    <td>Anyone</td>
-                    <td>Preference to members</td>
-                </tr>
-                <tr>
-                    <td>Voting Power</td>
-                    <td>Based on shareholding</td>
-                    <td>One member, one vote</td>
-                </tr>
-                <tr>
-                    <td>Profit Motive</td>
-                    <td>Profit-driven, higher lending rates</td>
-                    <td>Community-focused, lower lending rates</td>
-                </tr>
-                <tr>
-                    <td>Presence</td>
-                    <td>All India, overseas</td>
-                    <td>Mainly Gujarat, Maharashtra, Andhra, Tamil Nadu</td>
-                </tr>
-            </table>
-        - Challenges:
-            - Politicization, casteism, poor loan recovery, scams, and money&#8203; laundering risks.
-        - Types:
-            - Urban Cooperative Banks (UCBs)
-            - Rural Cooperative Banks (RCBs)
-            - Comparison:
-                - <table>
-                <thead>
-                    <tr>
-                    <th>Aspect</th>
-                    <th>Urban Cooperative Banks (UCBs)</th>
-                    <th>Rural Cooperative Banks (RCBs)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                    <td>Subcategories</td>
-                    <td>
-                        <ul>
-                        <li>Scheduled / Non-Scheduled</li>
-                        <li>Single-State / Multi-State</li>
-                        </ul>
-                    </td>
-                    <td>
-                        <ul>
-                        <li>State Cooperative Banks (StCBs)</li>
-                        <li>District Central Cooperative Banks (DCCBs)</li>
-                        <li>Primary Agricultural Credit Societies (PACS)</li>
-                        <li>Others: Land Development Banks, Cooperative Agriculture & Rural Development Banks</li>
-                        </ul>
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>Focus Area</td>
-                    <td>Urban and semi-urban areas, serving small businesses and retail clients</td>
-                    <td>Rural areas, focused on agricultural and rural credit, especially to weaker sections</td>
-                    </tr>
-                    <tr>
-                    <td>Conversion Option</td>
-                    <td>From 2018, allowed voluntary conversion into Small Finance Banks (SFBs) under RBI guidelines (Ref: 12.9)</td>
-                    <td>Not eligible for conversion into SFBs</td>
-                    </tr>
-                    <tr>
-                    <td>Priority Sector Lending (PSL)</td>
-                    <td>40% to 75% of Adjusted Net Bank Credit (ANBC) (Ref: 12.5)</td>
-                    <td>Mandatory PSL, but levels vary by institution type; PACS not eligible to issue credit under PSL norms</td>
-                    </tr>
-                    <tr>
-                    <td>Regulation</td>
-                    <td>Post-2020, fully under RBI regulation (earlier dual control with State Registrar)</td>
-                    <td>
-                        <ul>
-                        <li>StCBs & DCCBs: Dual supervision – RBI and State Registrar</li>
-                        <li>PACS: Only under State Registrar; not classified as banks</li>
-                        </ul>
-                    </td>
-                    </tr>
-                    <tr>
-                    <td>Special Notes</td>
-                    <td>Focus on financial inclusion in urban sectors</td>
-                    <td>
-                        <ul>
-                        <li>PACS cannot issue chequebooks or provide full banking services</li>
-                        <li>DCCBs crucial for short-term rural/agri credit</li>
-                        <li>DCCBs overtook RRBs in short-term agricultural credit share (2024–25)</li>
-                        </ul>
-                    </td>
-                    </tr>
-                </tbody>
-                </table>
-        - Banking Regulation (Amendment) Act, 2020:
-            - Origin:
-                - June 2020: Ordinance issued; September 2020: Act passed, amending Banking Regulation Act, 1949.
-            - Objective:
-                - Protect depositors, prevent fraud, and strengthen RBI oversight over cooperative banks.
-            - Changes:
-                - <table>
-                    <tr><th>Bank Type</th><th>Before 2020 (Regulator)</th><th>After 2020 (Regulator)</th></tr>
-                    <tr>
-                        <td>Commercial Banks</td>
-                        <td>RBI</td>
-                        <td>RBI</td>
-                    </tr>
-                    <tr>
-                        <td>Single-State Coop (Rural)</td>
-                        <td>RBI + State Registrar</td>
-                        <td>RBI + State Registrar</td>
-                    </tr>
-                    <tr>
-                        <td>Single-State Coop (Urban)</td>
-                        <td>RBI + State Registrar</td>
-                        <td>RBI only</td>
-                    </tr>
-                    <tr>
-                        <td>Multi-State Coop</td>
-                        <td>RBI + Union Registrar</td>
-                        <td>RBI only</td>
-                    </tr>
-                    <tr>
-                        <td>PACS</td>
-                        <td>State Registrar</td>
-                        <td>State Registrar</td>
-                    </tr>
-                </table>
-            - Note:
-                - Union Registrar shifted to Ministry of Cooperation (from Agriculture Ministry, post-2020).
-        - National Urban Cooperative Finance and Development Corporation (NUCFDC):
-            - Definition:
-                - NUCFDC is an umbrella organization and Self-Regulatory Organization (SRO) for Urban Cooperative Banks (UCBs), registered as a non-deposit-taking Non-Banking Financial Company (NBFC) under RBI regulation.
-            - Origin:
-                - Launched on March 2, 2024, by Union Home and Cooperation Minister Amit Shah in New Delhi, under the Ministry of Cooperation.
-                - Based on recommendations of the N.S. Vishwanathan Committee (2021) and V.S. Das Working Group (2009) to strengthen UCBs.
-            - Objective:
-                - Modernize and strengthen the UCB sector, ensuring compliance with the Banking Regulation Act, 1949, and promoting financial inclusion under the ‘Sahakar se Samriddhi’ vision for ‘Aatma Nirbhar Bharat’.
-            - Funding:
-                - Initial paid-up capital: 
-                    - ₹117.95 crore (March 2024).
-                - Capital raised: 
-                    - ₹242 crore by January 2025, with a target of ₹300 crore by February 2025 to qualify as an SRO.
-                - Funding source: 
-                    - National Cooperative Development Corporation (NCDC, a statutory body under Ministry of Cooperation) committed ₹200 crore; UCBs can voluntarily subscribe to NUCFDC’s capital.
-            - Functions:
-                - Technology Development:
-                    - Develops shared IT platforms for UCBs to reduce costs, enhance digital services (e.g., UPI, mobile banking), and compete with commercial banks.
-                - Self-Regulatory Organization (SRO):
-                    - Sets industry standards, ensures compliance with RBI regulations, and promotes professionalism in UCB operations (Ref: NBFC section, Pillar#1B1).
-                - Umbrella Organization:
-                    - Provides liquidity and capital support to UCBs, preventing cash flow disruptions.
-                - Advisory Services:
-                    - Offers consultancy on fund management, governance, and regulatory compliance.
-                - Capacity Building:
-                    - Conducts training programs to enhance UCB staff skills and board decision-making.
-                - Facilitates Dialogue:
-                    - Acts as a bridge between UCBs and RBI for streamlined communication and policy inputs.
-            - Significance:
-                - Supports 1,514 UCBs with 11,000 branches, managing ₹5.33 lakh crore in deposits and ₹3.33 lakh crore in loans (2024, RBI Annual Report).
-                - Reduces UCB Non-Performing Assets (NPAs, currently 2.10%) and enhances depositor confidence through governance and digital transformation.
-                - Enables doorstep banking and extended PSL timelines for UCBs, boosting urban financial inclusion.
-            - Leadership:
-                - CEO: Prabhat Chaturvedi (appointed September 2024), succeeding Atul Khirwadkar, focusing on technology adoption and management skills.
-            - Recent Developments (2025):
-                - NUCFDC’s Mumbai corporate office inaugurated on January 24, 2025, by Amit Shah, launching initiatives like the International Year of Cooperatives 2025 Calendar (Ministry of Cooperation press release).
-                - Reduced UCB NPAs by 15% in 2024–25 through liquidity support and compliance measures (RBI Annual Report, hypothetical).
-                - Facilitated 10% growth in UCB digital transactions via shared IT platforms (RBI data, 2025).
-        - Rural Financial Intermediaries (RFIs):
-            - Definition:
-                - RFIs encompass financial institutions serving rural areas, promoting agricultural and rural development through credit and banking services.
-            - Types:
-                - Regional Rural Banks (RRBs, Ref: 12.9).
-                - Rural Cooperative Banks (RCBs, Ref: 12.10).
-                - Scheduled Commercial Banks (SCBs) operating in rural areas.
-                - Small Finance Banks (SFBs, Ref: 12.9).
-                - Non-Banking Financial Companies (NBFCs).
-                - Microfinance Institutions (MFIs).
-                - Local Area Banks (LABs, Ref: 12.9).
-            - Regulation:
-                - Ultimate Regulator: 
-                    - RBI, overseeing banking functions under Banking Regulation Act, 1949.
-                - Immediate Regulator: 
-                    - National Bank for Agriculture and Rural Development (NABARD) supervises RRBs and RCBs for performance and compliance.
-            - Objective:
-                - Enhance rural credit access for agriculture, Micro, Small, and Medium Enterprises (MSMEs), and weaker sections, aligning with Priority Sector Lending (PSL) norms (Ref: 12.5).
-            - Data (Economic Survey 2025):
-                - RFIs contributed 35% of total agricultural credit in 2024–25, with RCBs and RRBs accounting for 20% (RBI Annual Report).
-                - Digital penetration in rural banking increased by 18% due to SFBs and NBFCs (hypothetical, based on RBI trends).
-        - Punjab and Maharashtra Cooperative (PMC) Bank Issue (2019):
-            - Context:
-                - Fraudulent activities led to RBI restrictions on withdrawals (6 months, 2019).
-            - Status:
-                - Outdated for 2025–26; resolved via merger with Unity Small Finance Bank (2022, RBI data).
-            - Relevance:
-                - Highlighted need for 2020 amendment to strengthen RBI oversight.
-        - Impact on Monetary Policy:
-            - Contribution:
-                - NUCFDC strengthens UCBs’ PSL compliance (40–75%, Ref: 12.5), enhancing urban credit flow and financial inclusion.
-                - RFIs support RBI’s rural credit goals, channeling 35% of PSL credit to agriculture and MSMEs (Ref: 12.5).
-                - Cooperative banks support RBI’s financial inclusion goals by providing credit to agriculture, MSMEs, and weaker sections (Ref: 12.5).
-                - Urban Cooperative Banks (UCBs) and District Central Cooperative Banks (DCCBs) align with PSL targets, enhancing rural credit flow.
-            - Recent Trends (2025):
-                - NUCFDC’s initiatives reduced UCB operational costs by 12% through shared IT platforms, improving monetary policy transmission (RBI Annual Report, hypothetical).
-                - RFIs increased rural credit penetration by 20%, reducing rural-urban credit disparity (Economic Survey 2025, hypothetical).
-                - UCBs achieved 60% PSL compliance in 2024–25; NPAs reduced by 10% post-2020 reforms (RBI Annual Report, hypothetical).
-                - DCCBs and PACS increased agricultural credit penetration by 15% in rural areas (Economic Survey 2025).
-            - Challenges:
-                - Urban Cooperative Banks (UCBs) face high NPAs (2.10%) and technological lag; NUCFDC mitigates these through liquidity and IT support.
-                - RFIs struggle with regional disparities and loan recovery; NABARD’s oversight addresses these issues.
-                - Politicization and scams limit monetary policy transmission; 2020 amendment mitigates risks by centralizing RBI control.
+                    - NUCFDC’s initiatives reduced UCB operational costs by 12% through shared IT platforms, improving monetary policy transmission (RBI Annual Report, hypothetical).
+                    - RFIs increased rural credit penetration by 20%, reducing rural-urban credit disparity (Economic Survey 2025, hypothetical).
+                    - UCBs achieved 60% PSL compliance in 2024–25; NPAs reduced by 10% post-2020 reforms (RBI Annual Report, hypothetical).
+                    - DCCBs and Primary Agricultural Credit Society (PACS) increased agricultural credit penetration by 15% in rural areas (Economic Survey 2025).
+                - Challenges:
+                    - Urban Cooperative Banks (UCBs) face high NPAs (2.10%) and technological lag; NUCFDC mitigates these through liquidity and IT support.
+                    - RFIs struggle with regional disparities and loan recovery; NABARD’s oversight addresses these issues.
+                    - Politicization and scams limit monetary policy transmission; 2020 amendment mitigates risks by centralizing RBI control.
 
     - Non-Banking Financial Institutions
         - Definition:
             - Non-Banking Financial Institutions (NBFIs) are financial entities that provide bank-like services such as lending, investment, asset financing, insurance, etc., but do not have a full banking license and cannot accept demand deposits (like savings or current accounts).
-        - Development Finance Institutions (DFIs):
+        - Development Financial Institutions (DFIs):
             - Definition:
                 - DFIs provide medium to long-term loans for industrial and infrastructure projects, focusing on economic growth rather than accepting public deposits.
                 - Post-1991, most DFIs converted into banks (e.g., ICICI, IDBI), so they are no longer a separate category.
@@ -7776,35 +7793,6 @@
             - Challenges:
                 - Mis-selling and data privacy issues in loan aggregators; RBI’s 2024–25 guidelines address these.
 
-    - Primary Dealers (PDs):
-        - Definition:
-            - PDs operate in the primary market, buying fresh Government Securities (G-Secs) from RBI’s E-Kuber platform and selling in the secondary market (Ref: 12.6).
-        - Features:
-            - Licensed by RBI; include banks (e.g., SBI, Kotak) and non-banks (e.g., Standard Chartered, HSBC).
-            - Total: 
-                - 20+ PDs (2025, exact numbers not critical).
-        - Related Concept:
-            - Retail investors can buy G-Secs via Retail Direct Gilt Account (RDG Account, Ref: Pillar#1C).
-
-    - Shadow Banking:
-        - Definition:
-            - Non-bank financial activities/institutions operating partially or fully outside RBI regulation, mobilizing funds via bonds, commercial papers, or bank loans.
-        - Key Segments:
-            - Housing Finance Companies (HFCs, e.g., DHFL).
-            - Liquid Debt Mutual Funds (LDMFs, e.g., UTI, Kotak, investing in T-bills, commercial papers).
-            - Retail NBFCs (e.g., gold loan companies, asset finance companies).
-        - Risks:
-            - High-risk assets lead to repayment failures, e.g., IL&FS crisis (2019, Ref: Pillar#1B2).
-            - 2024–25: 
-                - Shadow banking assets grew 10%, but NPAs rose 5% due to retail NBFC defaults (RBI Annual Report, hypothetical).
-        - Impact on Monetary Policy:
-            - Contribution:
-                - Shadow banking extends credit to underserved sectors, complementing PSL (Ref: 12.5).
-            - Recent Trends (2025):
-                - Shadow banking’s 10% asset growth strained monetary policy transmission due to regulatory gaps (RBI Annual Report, hypothetical).
-            - Challenges:
-                - Shadow banking crises (e.g., IL&FS) disrupt credit flow; RBI’s tightened oversight mitigates risks.
-
     - Informal Financial Intermediaries
         - Definition:
             - Informal financial intermediaries provide loans without formal procedures, requiring collateral (e.g., property, gold, crops) and charging high compound interest rates.
@@ -7884,6 +7872,25 @@
                 </tr>
             </tbody>
             </table>
+        - Shadow Banking:
+            - Definition:
+                - Shadow banking refers to credit intermediation by non-bank financial institutions that perform bank-like functions but are outside the traditional banking regulatory framework.
+                - Shadow banking does not mean illegal, it does not mean unregulated. It means not regulated like banks.
+            - Key Segments:
+                - Housing Finance Companies (HFCs, e.g., DHFL).
+                - Liquid Debt Mutual Funds (LDMFs, e.g., UTI, Kotak, investing in T-bills, commercial papers).
+                - Retail NBFCs (e.g., gold loan companies, asset finance companies).
+            - Risks:
+                - High-risk assets lead to repayment failures, e.g., IL&FS crisis (2019, Ref: Pillar#1B2).
+                - 2024–25: 
+                    - Shadow banking assets grew 10%, but NPAs rose 5% due to retail NBFC defaults (RBI Annual Report, hypothetical).
+            - Impact on Monetary Policy:
+                - Contribution:
+                    - Shadow banking extends credit to underserved sectors, complementing PSL (Ref: 12.5).
+                - Recent Trends (2025):
+                    - Shadow banking’s 10% asset growth strained monetary policy transmission due to regulatory gaps (RBI Annual Report, hypothetical).
+                - Challenges:
+                    - Shadow banking crises (e.g., IL&FS) disrupt credit flow; RBI’s tightened oversight mitigates risks.
         - Islamic Banking:
             - Features:
                 - Interest (riba) prohibited in Islam; operates via Ijara (leasing), Murabaha (cost-plus financing), Musharaka (partnership).
@@ -7904,6 +7911,40 @@
                 - Informal lending declined to 25% of rural credit due to digital banking growth (Economic Survey 2025, hypothetical).
             - Challenges:
                 - High interest rates and coercive recovery disrupt monetary policy transmission; state laws aim to regulate these practices.
+
+    - Additional information
+        - Rural Financial Intermediaries (RFIs):
+            - Definition:
+                - RFIs encompass financial institutions serving rural areas, promoting agricultural and rural development through credit and banking services.
+                - Rural Financial Intermediaries is a functional category, not a legal one. So RFIs don't belong to any specific category.
+                - These can be both scheduled as well as non-scheduled.
+            - Types:
+                - Regional Rural Banks (RRBs, Ref: 12.9).
+                - Rural Cooperative Banks (RCBs, Ref: 12.10).
+                - Scheduled Commercial Banks (SCBs) operating in rural areas.
+                - Small Finance Banks (SFBs, Ref: 12.9).
+                - Non-Banking Financial Companies (NBFCs).
+                - Microfinance Institutions (MFIs).
+                - Local Area Banks (LABs, Ref: 12.9).
+            - Regulation:
+                - Ultimate Regulator: 
+                    - RBI, overseeing banking functions under Banking Regulation Act, 1949.
+                - Immediate Regulator: 
+                    - National Bank for Agriculture and Rural Development (NABARD) supervises RRBs and RCBs for performance and compliance.
+            - Objective:
+                - Enhance rural credit access for agriculture, Micro, Small, and Medium Enterprises (MSMEs), and weaker sections, aligning with Priority Sector Lending (PSL) norms (Ref: 12.5).
+            - Data (Economic Survey 2025):
+                - RFIs contributed 35% of total agricultural credit in 2024–25, with RCBs and RRBs accounting for 20% (RBI Annual Report).
+                - Digital pene
+        - Primary Dealers (PDs):
+            - Definition:
+                - PDs operate in the primary market, buying fresh Government Securities (G-Secs) from RBI’s E-Kuber platform and selling in the secondary market (Ref: 12.6).
+            - Features:
+                - Licensed by RBI; include banks (e.g., SBI, Kotak) and non-banks (e.g., Standard Chartered, HSBC).
+                - Total: 
+                    - 20+ PDs (2025, exact numbers not critical).
+            - Related Concept:
+                - Retail investors can buy G-Secs via Retail Direct Gilt Account (RDG Account, Ref: Pillar#1C).
 
 
 - Pillar 1B2: Loans & Other Burning Issues in Banking
