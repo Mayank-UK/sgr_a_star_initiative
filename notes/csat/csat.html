@@ -2922,30 +2922,34 @@
             - Time \( \propto \) Work  
                 - More time → more work done.  
                 - Less time → less work done.  
-        - Example:
-            - A man completes a job in 15 days. Find work done per day:
-                - Work rate = \( \frac{1}{15} \).
-                - Answer is: 
-                    - \( \frac{1}{15} \) of the work per day.
 
     - Work Rate Formulae:
         - Individual Work Rate:
-            - Work rate = \( \frac{1}{\text{Time taken}} \).
+            - Definition:
+                - Work rate = \( \frac{1}{\text{Time taken}} \).
+            - Example:
+                - A man completes a job in 15 days. Find work done per day:
+                    - Work rate = \( \frac{1}{15} \).
+                    - Answer is: 
+                        - \( \frac{1}{15} \) of the work per day.
         - Combined Work Rate:
-            - For two workers A and B taking \( a \) and \( b \) days, combined work in one day = \( \frac{1}{a} + \frac{1}{b} \).
-            - Time taken together = \( \frac{a b}{a + b} \).
-        - Example:
-            - A takes 10 days, B takes 15 days to complete a job. Find time taken together:
-                - Combined rate = \( \frac{1}{10} + \frac{1}{15} = \frac{3 + 2}{30} = \frac{1}{6} \).
-                - Time = \( \frac{1}{\frac{1}{6}} = 6 \) days.
-                - Answer is: 
-                    - 6 days.
+            - Definition:
+                - Multiple workers combine their work rates to complete a job.
+                - Total work rate = Sum of individual rates.
+            - Example:
+                - A, B, C take 12, 15, 20 days respectively. Find time taken together:
+                    - Combined rate = \( \frac{1}{12} + \frac{1}{15} + \frac{1}{20} = \frac{5 + 4 + 3}{60} = \frac{12}{60} = \frac{1}{5} \).
+                    - Time = \( \frac{1}{\frac{1}{5}} = 5 \) days.
+                    - Answer is: 
+                        - 5 days.
 
     - Man-Days Concept:
         - Definition:
             - Total work = (Number of men) × (Days) × (Hours per day).
             - If \( M_1 \) men work \( D_1 \) days for \( H_1 \) hours to complete work \( W_1 \), and \( M_2 \) men work \( D_2 \) days for \( H_2 \) hours for work \( W_2 \), then:
-                - \( M_1 D_1 H_1 W_2 = M_2 D_2 H_2 W_1 \).
+                - \( W \propto M \times D \times H \)
+                - \( \frac{W_1}{W_2} = \frac{M_1 D_1 H_1}{M_2 D_2 H_2} \)
+                - \( M_1 D_1 H_1 W_2 = M_2 D_2 H_2 W_1 \)
         - Example:
             - 12 men complete a job in 10 days, working 8 hours/day. Find days for 15 men working 6 hours/day:
                 - Man-days = \( 12 \times 10 \times 8 = 960 \).
@@ -2965,30 +2969,46 @@
                 - Answer is: 
                     - 16 days.
 
-    - Workers Working Together:
-        - Definition:
-            - Multiple workers combine their work rates to complete a job.
-            - Total work rate = Sum of individual rates.
-        - Example:
-            - A, B, C take 12, 15, 20 days respectively. Find time taken together:
-                - Combined rate = \( \frac{1}{12} + \frac{1}{15} + \frac{1}{20} = \frac{5 + 4 + 3}{60} = \frac{12}{60} = \frac{1}{5} \).
-                - Time = \( \frac{1}{\frac{1}{5}} = 5 \) days.
-                - Answer is: 
-                    - 5 days.
-
     - Additional Manpower:
         - Definition:
             - Adjust workforce to meet a deadline, accounting for hours/day or remaining work.
             - Use man-days formula to balance work.
         - Example:
-            - 20 men work 8 hours/day for 10 days, complete 2/5 of a job. Find additional men needed to finish in 5 more days, working 10 hours/day:
-                - Work done = \( 20 \times 10 \times 8 \times \frac{2}{5} = 3200 \) man-hours.
-                - Total work = \( \frac{3200}{\frac{2}{5}} = 8000 \) man-hours.
-                - Remaining work = \( 8000 - 3200 = 4800 \) man-hours.
-                - Men needed = \( \frac{4800}{5 \times 10} = 96 \).
-                - Additional men = \( 96 - 20 = 76 \).
-                - Answer is: 
-                    - 76 men.
+            - 20 men work 8 hours/day for 10 days and complete \( \frac{2}{5} \) of a job. Find the additional men needed to finish the remaining work in 5 more days working 10 hours/day:
+                - Given:
+                    - \( M_1 = 20,\; D_1 = 10,\; H_1 = 8,\; W_1 = \frac{2}{5} \)
+                    - Remaining work \( = \frac{3}{5} \)
+                    - \( D_2 = 5,\; H_2 = 10,\; M_2 = ? \)
+                - Let the additional men required be \( x \):
+                    - Total men in the second phase = \( M_2 = M_1 + x \)
+                    Or
+                    - \( M_2 = 20 + x \)
+                - Since work is proportional to men, days and hours:
+                    - \( W \propto M \times D \times H \)
+                - Form the ratio:
+                    - \(
+                        \frac{\text{Remaining Work}}{\text{Work Done}}
+                        =
+                        \frac{M_2 D_2 H_2}{M_1 D_1 H_1}
+                        \)
+                - Substitute values:
+                    - \(
+                        \frac{\frac{3}{5}}{\frac{2}{5}}
+                        =
+                        \frac{(20+x)\times 5 \times 10}{20 \times 10 \times 8}
+                        \)
+                - Simplify:
+                    - \(
+                        \frac{3}{2}
+                        =
+                        \frac{20 + x}{32}
+                        \)
+                    - \(
+                        48 - 20 = 28
+                        \)
+                - Final answer is:
+                    - \( 28 \) men
+
 
     - Pipes and Cisterns:
         - Definition:
@@ -2996,7 +3016,7 @@
             - If inlet fills in \( a \) hours, rate = \( \frac{1}{a} \).
             - If outlet empties in \( b \) hours, rate = \( -\frac{1}{b} \).
             - Net rate = \( \frac{1}{a} - \frac{1}{b} \).
-            - Time to fill/empty = \( \frac{1}{\text{Net rate}} \).
+            - Net rate = \( \frac{1}{\text{Time to fill/empty}} \).
         - Example:
             - Pipe A fills a tank in 10 hours, Pipe B empties it in 15 hours. Find time to fill an empty tank if both are open:
                 - Net rate = \( \frac{1}{10} - \frac{1}{15} = \frac{3 - 2}{30} = \frac{1}{30} \).
