@@ -3041,8 +3041,6 @@
     - Basic Concepts:
         - Definition:
             - Speed = \( \frac{\text{Distance}}{\text{Time}} \).
-            - Distance = Speed × Time.
-            - Time = \( \frac{\text{Distance}}{\text{Speed}} \).
             - Unit conversions:
                 - km/h to m/s: 
                     - Multiply by \( \frac{5}{18} \).
@@ -3058,6 +3056,8 @@
         - Definition:
             - Average speed = \( \frac{\text{Total distance}}{\text{Total time}} \).
             - Applies to varying speeds or distances.
+        - Formula
+            - \( \text{Average speed} = \frac{d_1 + d_2 + \cdots + d_n}{\frac{d_1}{v_1} + \frac{d_2}{v_2} + \cdots + \frac{d_n}{v_n}} \)
         - Example:
             - A cyclist travels 30 km at 15 km/h and 40 km at 20 km/h. Find average speed:
                 - Time for 30 km = \( \frac{30}{15} = 2 \) hours.
@@ -3117,35 +3117,34 @@
                 - Answer is: 
                     - Boat speed = 12 km/h, Stream speed = 3 km/h.
                 
-    - Special Rules:
-        - Same Distance, Two Speeds:
-            - Average speed = \( \frac{2xy}{x + y} \) km/h (x, y are speeds).
-            - Example:
-                - A person travels 50 km at 25 km/h and returns at 50 km/h. Find average speed:
-                    - Average speed = \( \frac{2 \times 25 \times 50}{25 + 50} = \frac{2500}{75} \approx 33.33 \) km/h.
-                    - Answer is: 
-                        - Approximately 33.33 km/h.
-        - Equal Distances, Multiple Speeds:
-            - Average speed = \( \frac{n}{\frac{1}{x_1} + \frac{1}{x_2} + \cdots + \frac{1}{x_n}} \) km/h (n = number of segments).
-            - Example:
-                - A car travels three 20 km segments at 10, 20, 40 km/h. Find average speed:
-                    - Average speed = \( \frac{3}{\frac{1}{10} + \frac{1}{20} + \frac{1}{40}} = \frac{3}{\frac{4 + 2 + 1}{40}} = \frac{3 \times 40}{7} \approx 17.14 \) km/h.
-                    - Answer is: 
-                        - Approximately 17.14 km/h.
-        - Different Distances and Speeds:
-            - Average speed = \( \frac{d_1 + d_2 + \cdots}{\frac{d_1}{x_1} + \frac{d_2}{x_2} + \cdots} \) km/h.
-            - Example:
-                - A person travels 20 km at 10 km/h, 30 km at 15 km/h. Find average speed:
-                    - Average speed = \( \frac{20 + 30}{\frac{20}{10} + \frac{30}{15}} = \frac{50}{2 + 2} = 12.5 \) km/h.
-                    - Answer is: 
-                        - 12.5 km/h.
-        - Speed Change Affecting Arrival Time:
-            - Usual time = \( \frac{a}{1 - \frac{y}{x}} \) min (a = time saved, x/y = new speed fraction).
-            - Example:
-                - A bus at 3/5 of its usual speed arrives 20 min early. Find usual time:
-                    - Usual time = \( \frac{20}{1 - \frac{3}{5}} = \frac{20}{\frac{2}{5}} = 20 \times \frac{5}{2} = 50 \) min.
-                    - Answer is: 
-                        - 50 minutes.
+    - Speed Change Affecting Arrival Time:
+        - Formula:
+            - Usual time = \( \frac{a}{1 - \frac{y}{x}} \)
+        - Where:
+            - \( a \) = time saved
+            - \( \frac{x}{y} \) = new speed as a fraction of old speed
+                - It inverses in the final formula to \( \frac{y}{x} \)
+        - Derivation:
+            - Let:
+                - \( T = \text{usual time} \)
+                - \( v = \text{usual speed} \)
+                - \( a = \text{time saved} \)
+            - Change in speed:
+                - \( \text{New speed} = v \times \ \frac{x}{y} \)
+            - Change in time:
+                - \( T_{\text{new}} = \frac{D}{\frac{x}{y}v} \)
+                - \( T_{\text{new}} = \frac{y}{x} \cdot \frac{D}{v} \)
+                - \( \text{New time} = \frac{y}{x} \, T \)
+            - Time saved:
+                - \( a = T - \frac{y}{x}T \)
+                - \( a = T \left( 1 - \frac{y}{x} \right) \)
+            - Usual time:
+                - \( T = \frac{a}{1 - \frac{y}{x}} \)
+        - Example:
+            - A bus at 3/5 of its usual speed arrives 20 min early. Find usual time:
+                - Usual time = \( \frac{20}{1 - \frac{3}{5}} = \frac{20}{\frac{2}{5}} = 20 \times \frac{5}{2} = 50 \) min.
+                - Answer is: 
+                    - 50 minutes.
 
 
 - Simple and Compound Interest
