@@ -3105,11 +3105,35 @@
                     - Time = \( \frac{400 + 600}{35} = \frac{1000}{35} ≈ 28.57 \) seconds
                     
     - Boats and Streams:
-        - Definition:
-            - Downstream speed = \( (x + y) \) km/h (x = boat speed in still water, y = stream speed).
-            - Upstream speed = \( (x - y) \) km/h.
-            - Boat speed in still water = \( \frac{\text{Downstream speed} + \text{Upstream speed}}{2} \).
-            - Stream speed = \( \frac{\text{Downstream speed} - \text{Upstream speed}}{2} \).
+        - Where:
+            - B = Boat speed
+            - S = Stream speed
+            - U = Boat's upstream speed (against stream)
+            - D = Boat's downstream speed (along stream)
+        - Downstream speed:
+            - \( (B + S) \) km/h
+        - Upstream speed:
+            - \( (B - S) \) km/h
+        - Boat speed in still water
+            - \( \frac{\text{Boat's Downstream speed} + \text{Boat's Upstream speed}}{2} \)
+            - Derivation:
+                - We know:
+                    - \( D = B + S \)
+                    - \( U = B - S \)
+                - Calculate for B:
+                    - \( D + U = (B+S) + (B-S) \)
+                    - \( D + U = 2B \)
+                    - \( B = \frac{D + U}{2} \)
+        - Stream speed:
+            - \( \frac{\text{Boat's Downstream speed} - \text{Boat's Upstream speed}}{2} \)
+            - Derivation:
+                - We know:
+                    - \( D = B + S \)
+                    - \( U = B - S \)
+                - Calculate for S:
+                    - \( D - U = (B+S) - (B-S) \)
+                    - \( D - U = 2S \)
+                    - \( S = \frac{D - U}{2} \)
         - Example:
             - A boat’s downstream speed is 15 km/h, upstream speed is 9 km/h. Find boat and stream speeds:
                 - Boat speed = \( \frac{15 + 9}{2} = 12 \) km/h.
@@ -3170,12 +3194,41 @@
                     - Principal = ₹5000, Amount depends on interest calculated.
 
     - Simple Interest:
-        - Formulae:
-            - SI = \( \frac{P \times R \times T}{100} \).
-            - Amount = \( P + \text{SI} = P \left(1 + \frac{R \times T}{100}\right) \).
-            - Principal = \( \frac{\text{SI} \times 100}{R \times T} \).
-            - Rate = \( \frac{\text{SI} \times 100}{P \times T} \).
-            - Time = \( \frac{\text{SI} \times 100}{P \times R} \).
+        - Formulae for Amount:
+            - Amount = \( P\left(1 + \frac{R \times T}{100}\right) \)
+            - Derivation:
+                - Given:
+                    - Principal = \( P \)
+                    - Rate = \( R\% \) per year
+                    - Time = \( T \) years
+                - Amount in 1'st year:
+                    - \( P + P \times \frac{R}{100} \)
+                - Total amount on ₹P for 2 year:
+                    - \( P + P \times \frac{R}{100} + P \times \frac{R}{100} \)
+                    - \( P + 2 \times P \times \frac{R}{100} \)
+                - Total amount for T year:
+                    - \( P + T \times P \times \frac{R}{100} \)
+                    or
+                    - \( P\left(1 + \frac{R \times T}{100}\right) \)
+        - Formulae for SI:
+            - SI = \( \frac{P \times R \times T}{100} \)
+            - Derivation:
+                - Given:
+                    - Principal = \( P \)
+                    - Rate of interest per year = \( R\% \)
+                    - Time in years = \( T \)
+                - Interest on ₹P in 1'st year:
+                    - We know that:
+                        - \( \text{given} = \frac{\text{Percentage} \times \text{total}}{100} \)
+                    - So, interest:
+                        - \( P \times \frac{R}{100} \)
+                - Total interest on ₹P for 2 year:
+                    - \( P \times \frac{R}{100} + P \times \frac{R}{100} \)
+                    - \( 2 \times P \times \frac{R}{100} \)
+                - Total interest for T year:
+                    - \( T \times P \times \frac{R}{100} \)
+                    or
+                    - \( \frac{P \times R \times T}{100} \)
         - Example:
             - Find SI and Amount for ₹4000 at 5% per annum for 3 years:
                 - SI = \( \frac{4000 \times 5 \times 3}{100} = 600 \) ₹.
@@ -3184,35 +3237,78 @@
                     - SI = ₹600, Amount = ₹4600.
 
     - Compound Interest:
-        - Formulae:
-            - Amount = \( P \left(1 + \frac{R}{100}\right)^n \).
-            - CI = \( A - P = P \left( \left(1 + \frac{R}{100}\right)^n - 1 \right) \).
-            - For fractional years (e.g., 2 years 4 months), convert to decimal (e.g., \( n = 2 + \frac{4}{12} = \frac{7}{3} \)).
+        - Formulae for amount:
+            - Amount = \( P \left(1 + \frac{R}{100}\right)^T \)
+            - Derivation:
+                - Given:
+                    - Principal = \( P \)
+                    - Rate = \( R\% \) per year
+                    - Number of years = \( T \)
+                - Amount after 1st year:
+                    - \( P + P \times \frac{R}{100} \)
+                    - \( P\left(1 + \frac{R}{100}\right) \)
+                - Amount after 2nd year:
+                    - \( P\left(1 + \frac{R}{100}\right) + P\left(1 + \frac{R}{100}\right) \times \frac{R}{100} \)
+                    - \( P\left(1 + \frac{R}{100}\right)\left(1 + \frac{R}{100}\right) \)
+                    - \( P\left(1 + \frac{R}{100}\right)^2 \)
+                - Amount after 3rd year:
+                    - \( P\left(1 + \frac{R}{100}\right)^2 + P\left(1 + \frac{R}{100}\right)^2 \times \frac{R}{100} \)
+                    - \( P\left(1 + \frac{R}{100}\right)^3 \)
+                - Continuing this pattern, after T years:
+                    - \( P\left(1 + \frac{R}{100}\right)^T \)
+        - Formulae for CI:
+            - CI = \( P \left( \left(1 + \frac{R}{100}\right)^T - 1 \right) \)
+            - Derivation:
+                - Given:
+                    - Principal = \( P \)
+                    - Rate of interest per year = \( R\% \)
+                    - Time in years = \( T \)
+                - Interest in 1st year:
+                    - We know that:
+                        - \( \text{given} = \frac{\text{Percentage} \times \text{total}}{100} \)
+                    - So, interest:
+                        - \( P \times \frac{R}{100} \)
+                - Interest in 2nd year:
+                    - Current base = \( \left(P + P\frac{R}{100}\right) \)
+                    - Interest on current base = \( \left(P + P\frac{R}{100}\right)\frac{R}{100} = P\left(1+\frac{R}{100}\right)\frac{R}{100} \)
+                - Interest in 3rd year:
+                    - Current base = \( P + P\frac{R}{100} + P\left(1+\frac{R}{100}\right)\frac{R}{100} \)
+                    - Interest on current base = \( \left[ P + P\frac{R}{100} + P\left(1+\frac{R}{100}\right)\frac{R}{100} \right] \frac{R}{100} = P\left(1+\frac{R}{100}\right)^2 \frac{R}{100} \)
+                - Total interest after T years:
+                    - \( P\frac{R}{100}\left[1 + \left(1+\frac{R}{100}\right) + \left(1+\frac{R}{100}\right)^2 + \cdots + \left(1+\frac{R}{100}\right)^{T-1}\right] \)
+                - This is a geometric series, whose sum is:
+                    - \( P\left[\left(1 + \frac{R}{100}\right)^T - 1\right] \)
+        - Note:
+            - For fractional years (e.g., 2 years 4 months), convert to decimal (e.g., \( n = 2 + \frac{4}{12} = \frac{7}{3} \))
         - Example:
             - Find CI on ₹5000 at 10% per annum for 2 years, compounded annually:
-                - Amount = \( 5000 \left(1 + \frac{10}{100}\right)^2 = 5000 \times 1.1^2 = 5000 \times 1.21 = 6050 \) ₹.
-                - CI = \( 6050 - 5000 = 1050 \) ₹.
+                - Amount = \( 5000 \left(1 + \frac{10}{100}\right)^2 = 5000 \times 1.1^2 = 5000 \times 1.21 = 6050 \) ₹
+                - CI = \( 6050 - 5000 = 1050 \) ₹
                 - Answer is: 
-                    - CI = ₹1050.
+                    - CI = ₹1050
 
     - Difference between SI and CI:
         - Formula:
-            - For 2 years: 
-                - Difference = \( \frac{P \times R^2}{100^2} \).
-            - For 3 years: 
-                - Difference = \( \frac{P \times R^2 \times (300 + R)}{100^3} \).
+            - CI - SI = \( P\left[\left(1+\frac{R}{100}\right)^T - 1 - \frac{TR}{100}\right] \)
         - Example:
             - Find difference between CI and SI on ₹10000 at 10% per annum for 2 years:
-                - SI = \( \frac{10000 \times 10 \times 2}{100} = 2000 \) ₹.
-                - CI = \( 10000 \left( \left(1 + \frac{10}{100}\right)^2 - 1 \right) = 10000 \times (1.21 - 1) = 2100 \) ₹.
-                - Difference = \( 2100 - 2000 = 100 \) ₹.
-                - Or, Difference = \( \frac{10000 \times 10^2}{100^2} = 100 \) ₹.
-                - Answer is: 
-                    - Difference = ₹100.
+                - SI:
+                    - \( \frac{10000 \times 10 \times 2}{100} = 2000 \)
+                - CI:
+                    - \( 10000 \left(\left(1 + \frac{10}{100}\right)^2 - 1\right) \)
+                    - \( 10000 \times (1.21 - 1) = 2100 \)
+                - Difference:
+                    - \( 2100 - 2000 = 100 \)
+                - Using shortcut formula:
+                    - \( 10000\left[\left(1+\frac{10}{100}\right)^2 - 1 - \frac{2 \times 10}{100}\right] \)
+                    - \( 10000(1.21 - 1 - 0.20) \)
+                    - \( 10000 \times 0.01 = 100 \)
 
-    - Annual Payment for Debt:
+    - Simple interest annual payment for debt:
+        - Definition:
+            - How much you must pay every year (same amount each year) to fully repay a loan when interest is charged at simple interest on the unpaid balance.
         - Formula:
-            - Annual payment = \( \frac{P \times 100}{T \times \left(100 + \frac{R \times (T - 1)}{2}\right)} \).
+            - Annual payment = \( \frac{P \times 100}{T \times \left(100 + \frac{R \times (T - 1)}{2}\right)} \)
         - Example:
             - Find annual payment to discharge ₹500 debt in 5 years at 5% per annum SI:
                 - Annual payment = \( \frac{500 \times 100}{5 \times \left(100 + \frac{5 \times (5 - 1)}{2}\right)} = \frac{50000}{5 \times (100 + 10)} = \frac{50000}{550} \approx 90.91 \) ₹.
