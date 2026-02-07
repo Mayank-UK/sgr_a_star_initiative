@@ -3176,6 +3176,8 @@
         - Definitions:
             - Principal (P): 
                 - Sum of money lent or borrowed (e.g., capital).
+            - Amount (A): 
+                - Sum of principal and interest (A = P + SI or A = P + CI).
             - Time (T or n): 
                 - Duration for which money is lent or borrowed (in years).
             - Rate of Interest (R or r): 
@@ -3184,8 +3186,6 @@
                 - Interest calculated only on original principal.
             - Compound Interest (CI): 
                 - Interest added to principal periodically, becoming new principal.
-            - Amount (A): 
-                - Sum of principal and interest (A = P + SI or A = P + CI).
         - Example:
             - A loan of ₹5000 is taken. Identify principal and define amount:
                 - Principal (P) = ₹5000.
@@ -3257,7 +3257,7 @@
                 - Continuing this pattern, after T years:
                     - \( P\left(1 + \frac{R}{100}\right)^T \)
         - Formulae for CI:
-            - CI = \( P \left( \left(1 + \frac{R}{100}\right)^T - 1 \right) \)
+            - CI = \( P \left[ \left(1 + \frac{R}{100}\right)^T - 1 \right] \)
             - Derivation:
                 - Given:
                     - Principal = \( P \)
@@ -3290,6 +3290,8 @@
     - Difference between SI and CI:
         - Formula:
             - CI - SI = \( P\left[\left(1+\frac{R}{100}\right)^T - 1 - \frac{TR}{100}\right] \)
+        - Derivation:
+            - Just put the actual formulas of CI and SI in "CI - SI"
         - Example:
             - Find difference between CI and SI on ₹10000 at 10% per annum for 2 years:
                 - SI:
@@ -3307,8 +3309,48 @@
     - Simple interest annual payment for debt:
         - Definition:
             - How much you must pay every year (same amount each year) to fully repay a loan when interest is charged at simple interest on the unpaid balance.
+        - Background
+            - All the formulas until now were just calculating the amount and interest and there was no concept of returning the amount with interest or loan payment.
         - Formula:
             - Annual payment = \( \frac{P \times 100}{T \times \left(100 + \frac{R \times (T - 1)}{2}\right)} \)
+        - Derivation:
+            - Given:
+                - Annual payment = \( A \)
+                - Rate per year = \( R\% \)
+                - Time = \( T \) years
+                - Final accumulated amount = \( P \)
+            - Value of each payment at the end:
+                - 1st payment:
+                    - Earns SI for \( (T-1) \) years
+                    - Amount = \( A\left(1 + \frac{R(T-1)}{100}\right) \)
+                - 2nd payment:
+                    - Earns SI for \( (T-2) \) years
+                    - Amount = \( A\left(1 + \frac{R(T-2)}{100}\right) \)
+                - 3rd payment:
+                    - Earns SI for \( (T-3) \) years
+                    - Amount = \( A\left(1 + \frac{R(T-3)}{100}\right) \)
+                - ...
+                - Last payment:
+                    - Earns SI for \( 0 \) years
+                    - Amount = \( A \)
+            - Total amount at end:
+                - \( P = A\Big[ 1 + \frac{R(T-1)}{100}
+                    + 1 + \frac{R(T-2)}{100}
+                    + \cdots
+                    + 1 \Big] \)
+            - Group terms:
+                - Number of 1’s = \( T \)
+                - Sum of time terms = \( (T-1)+(T-2)+\cdots+1+0 \)
+                - \( P = A \left[ T + \frac{R}{100}\{(T-1)+(T-2)+\cdots+1+0\} \right] \)
+            - Use series sum:
+                - \( (T-1)+(T-2)+\cdots+1+0 = \frac{T(T-1)}{2} \)
+            - Substitute:
+                - \( P = A \left[ T + \frac{R}{100} \cdot \frac{T(T-1)}{2} \right] \)
+                - \( P = AT \left( 1 + \frac{R(T-1)}{200} \right) \)
+            - Solve for A:
+                - \( A = \frac{P}{T\left(1 + \frac{R(T-1)}{200}\right)} \)
+                - \( A = \frac{P \times 200}{T\left(200 + R(T-1)\right)} \)
+                - \( A = \frac{P \times 100}{T\left(100 + \frac{R(T-1)}{2}\right)} \)
         - Example:
             - Find annual payment to discharge ₹500 debt in 5 years at 5% per annum SI:
                 - Annual payment = \( \frac{500 \times 100}{5 \times \left(100 + \frac{5 \times (5 - 1)}{2}\right)} = \frac{50000}{5 \times (100 + 10)} = \frac{50000}{550} \approx 90.91 \) ₹.
