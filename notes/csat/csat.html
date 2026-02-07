@@ -3353,9 +3353,41 @@
                 - \( A = \frac{P \times 100}{T\left(100 + \frac{R(T-1)}{2}\right)} \)
         - Example:
             - Find annual payment to discharge ₹500 debt in 5 years at 5% per annum SI:
+            - Solution:
                 - Annual payment = \( \frac{500 \times 100}{5 \times \left(100 + \frac{5 \times (5 - 1)}{2}\right)} = \frac{50000}{5 \times (100 + 10)} = \frac{50000}{550} \approx 90.91 \) ₹.
                 - Answer is: 
                     - Approximately ₹90.91 per year.
+
+    - Compound interest annual payment for debt:
+        - Definition:
+            - How much you must pay every year (same amount each year) to fully repay a loan when interest is charged at compound interest on the unpaid balance.
+        - Helpful hint:
+            - Leave this type of questions in main exam, solving this will take a lot of time
+        - Context:
+            - Interest is compounded each year on the outstanding principal.
+            - Each year interest is added first, then the fixed annual payment is made.
+            - Unlike simple interest repayment, this follows a geometric progression.
+        - Formula: 
+            - \( = P \cdot \frac{\left(\frac{R}{100}\right)\left(1+\frac{R}{100}\right)^T}{\left(1+\frac{R}{100}\right)^T - 1} \)
+            - Where:
+                - \( P \) = principal
+                - \( R \) = rate % per year
+                - \( T \) = number of years
+        - Example:
+            - Find annual payment to discharge ₹500 debt in 5 years at 5% per annum compound interest (yearly compounding):
+            - Solution:
+                - Given:
+                    - \( P = 500 \)
+                    - \( R = 5 \)
+                    - \( T = 5 \)
+                - Substitute:
+                    - \( = 500 \cdot \frac{\left(\frac{5}{100}\right)\left(1+\frac{5}{100}\right)^5}{\left(1+\frac{5}{100}\right)^5 - 1} \)
+                    - \( = 500 \cdot \frac{0.05 \cdot (1.05)^5}{(1.05)^5 - 1} \)
+                - Compute:
+                    - \( = 500 \cdot \frac{0.05 \cdot 1.27628}{1.27628 - 1} \)
+                    - \( = 500 \cdot \frac{0.063814}{0.27628} \)
+                    - \( \approx 500 \cdot 0.2309 \)
+                    - \( \approx 115.45 \)
 
 
 - Permutation and Combination
