@@ -3392,11 +3392,10 @@
 
 - Permutation and Combination
     - Basic Concepts:
-        - Definitions:
-            - Permutation: 
-                - Arrangement of objects where order matters.
-            - Combination: 
-                - Selection of objects where order does not matter.
+        - Permutation: 
+            - Arrangement of objects where order matters.
+        - Combination: 
+            - Selection of objects where order does not matter.
         - Example:
             - For letters A, B, C, find permutations and combinations of 2 letters:
                 - Permutations: 
@@ -3407,8 +3406,44 @@
                     - 6 permutations, 3 combinations.
 
     - Linear Permutation:
+        - Definition:
+            - Number of ways to arrange n dissimilar things taken r at a time
         - Formula:
-            - Number of ways to arrange \( n \) dissimilar things taken \( r \) at a time: \( ^nP_r = \frac{n!}{(n-r)!} \).
+            - \( ^nP_r = \frac{n!}{(n-r)!} \)
+        - Derivation:
+            - Given:
+                - Total distinct objects = \( n \)
+                - Objects to be arranged = \( r \)
+                - Order matters
+            - Choices for first position:
+                - Any of the \( n \) objects can be chosen
+                - Ways = \( n \)
+            - Choices for second position:
+                - One object already used
+                - Remaining ways = \( n - 1 \)
+            - Choices for third position:
+                - Two objects already used
+                - Remaining ways = \( n - 2 \)
+            - ...
+            - Choice for the last position:
+                - Objects already used = \( r-1 \)
+                - Remaining ways = \( n-(r-1) \) = \( n-r+1 \)
+                    - Don't get confused with +1, it is obtained mathematically, what matters is that at this point only (r-1) choices were left that led to this expression
+            - Total arrangements:
+                - \( n (n-1) (n-2) \cdots (n-r+1) \)
+            - Write product using factorial form:
+                - We know that full factorial of n will be:
+                    - \( n! = n (n-1) (n-2) \cdots (n-r+1)(n-r)(n-r-1)\cdots 1 \)
+            - Grouping into two parts:
+                - \( n! = [n (n-1) (n-2) \cdots (n-r+1)] \times [(n-r)(n-r-1)\cdots 1] \)
+                    - Where first r terms:
+                        - \( n (n-1) (n-2) \cdots (n-r+1) = ^nP_r \)
+                    - And second terms:
+                        - \( (n-r)(n-r-1)\cdots 1 = (n-r)! \)
+                - So it becomes:
+                    - \( n! = ^nP_r \times (n-r)! \)
+            - Final rearrangement:
+                - \( ^nP_r = \frac{n!}{(n-r)!} \)
         - Example:
             - In how many ways can 3 books be arranged on a shelf from 5 different books?
                 - \( ^5P_3 = \frac{5!}{(5-3)!} = \frac{5 \times 4 \times 3!}{2!} = 5 \times 4 \times 3 = 60 \).
