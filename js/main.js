@@ -66,181 +66,110 @@ async function loadHighlights() {
   }
 }
 
-function applyPendingHighlights() {
-  if (pendingHighlights.length === 0) return;
+// Global variable to keep track of the index
+let lineTextMap = []; 
 
-  console.log(`Attempting to apply ${pendingHighlights.length} pending highlights...`);
-
-  const applied = [];
-  const stillPending = [];
-  const notFound = [];
-
-  const normalize = (str) => {
-  // Ensure str is a string
-  const s = String(str || '');
-  return s
-    .replace(/[\u201C\u201D]/g, '"')
-    .replace(/[\u2018\u2019]/g, "'")
-    .replace(/\s+/g, ' ')
-    .trim();
-};
-
-  for (const h of pendingHighlights) {
-    if (!h.text?.trim()) { 
-      applied.push(h); 
-      continue; 
-    }
-
-    const pre  = normalize(h.pre);
-    const text = normalize(h.text);
-    const post = normalize(h.post);
-
-    let foundElement = null;
-    let bestMatch = null;
-    let bestScore = 0;
-
-    // Search ONLY in main-content section
+function indexMainContent() {
     const mainContentSection = document.getElementById('section-base-content');
-    if (!mainContentSection) {
-      console.warn('main-content section not found');
-      stillPending.push(h);
-      continue;
-    }
-    const allLineContents = Array.from(mainContentSection.querySelectorAll('.line-content'));
+    if (!mainContentSection) return [];
     
-    for (const el of allLineContents) {
-      const lineText = normalize(el.textContent);
+    // We only map the elements once per run
+    return Array.from(mainContentSection.querySelectorAll('.line-content')).map(el => ({
+        element: el,
+        text: String(el.textContent || '')
+            .replace(/[\u201C\u201D]/g, '"')
+            .replace(/[\u2018\u2019]/g, "'")
+            .replace(/\s+/g, ' ')
+            .trim()
+    }));
+}
 
-      // Try full context match (pre + text + post)
-      if (pre && post) {
-        const fullContext = `${pre} ${text} ${post}`;
-        const contextIndex = lineText.indexOf(fullContext);
-        if (contextIndex !== -1) {
-          foundElement = el;
-          bestScore = 100;
-          bestMatch = { 
-            element: el, 
-            startIndex: contextIndex + pre.length + 1, // +1 for space after pre
-            matchType: 'full-context'
-          };
-          break;
-        }
-      }
+let isProcessingHighlights = false;
+const VIEWPORT_BUFFER = 1000; // 1000px above and below
 
-      // Try pre + text match
-      if (pre && bestScore < 90) {
-        const preTextCombo = `${pre} ${text}`;
-        const preTextIndex = lineText.indexOf(preTextCombo);
-        if (preTextIndex !== -1) {
-          foundElement = el;
-          bestScore = 90;
-          bestMatch = { 
-            element: el, 
-            startIndex: preTextIndex + pre.length + 1,
-            matchType: 'pre-text'
-          };
-        }
-      }
-
-      // Try text + post match
-      if (post && bestScore < 85) {
-        const textPostCombo = `${text} ${post}`;
-        const textPostIndex = lineText.indexOf(textPostCombo);
-        if (textPostIndex !== -1) {
-          foundElement = el;
-          bestScore = 85;
-          bestMatch = { 
-            element: el, 
-            startIndex: textPostIndex,
-            matchType: 'text-post'
-          };
-        }
-      }
-
-      // Try text-only match (lowest priority)
-      if (bestScore < 50) {
-        const textIndex = lineText.indexOf(text);
-        if (textIndex !== -1) {
-          // Verify this is a good match by checking context if available
-          let contextMatchScore = 50;
-          
-          if (pre) {
-            const beforeText = lineText.substring(Math.max(0, textIndex - pre.length - 5), textIndex).trim();
-            if (beforeText.includes(pre)) contextMatchScore += 10;
-          }
-          
-          if (post) {
-            const afterText = lineText.substring(textIndex + text.length, textIndex + text.length + post.length + 5).trim();
-            if (afterText.includes(post)) contextMatchScore += 10;
-          }
-          
-          if (contextMatchScore > bestScore) {
-            foundElement = el;
-            bestScore = contextMatchScore;
-            bestMatch = { 
-              element: el, 
-              startIndex: textIndex,
-              matchType: 'text-only'
-            };
-          }
-        }
-      }
-    }
-
-    if (!foundElement) {
-      console.warn(`❌ Could not find highlight: "${text.substring(0, 50)}..."`);
-      console.log(`   Context: "${pre}" | "${text}" | "${post}"`);
-      notFound.push({ 
-        id: h.id, 
-        text: h.text, 
-        pre: h.pre, 
-        post: h.post 
-      });
-      stillPending.push(h);
-      continue;
-    }
-
-    console.log(`✓ Found match (${bestMatch.matchType}): "${text.substring(0, 40)}..."`);
+function applyPendingHighlights() {
+    if (!pendingHighlights || pendingHighlights.length === 0 || isProcessingHighlights) return;
     
-    const ok = highlightTextInElementNormalized(
-      foundElement,
-      text,
-      h.id,
-      h.color,
-      bestMatch.startIndex
-    );
+    const lineTextMap = indexMainContent();
+    if (lineTextMap.length === 0) {
+        setTimeout(applyPendingHighlights, 500);
+        return;
+    }
 
-    if (ok) applied.push(h);
-    else stillPending.push(h);
-  }
+    isProcessingHighlights = true;
 
-  pendingHighlights = stillPending;
+    const normalize = (val) => {
+        const s = (val === null || val === undefined) ? "" : String(val);
+        return s.replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'").replace(/\s+/g, ' ').trim();
+    };
 
-  if (stillPending.length) {
-    console.log(`${stillPending.length} still pending → retry in 2s`);
-    setTimeout(applyPendingHighlights, 2000);
-  }
+    const processChunk = () => {
+        const startTime = performance.now();
+        const scrollY = window.scrollY;
+        const viewTop = scrollY - VIEWPORT_BUFFER;
+        const viewBottom = scrollY + window.innerHeight + VIEWPORT_BUFFER;
 
-  const REPORT_GROUP_ID = `MISSING_HIGHLIGHTS_${PAGE_ID}`;
-  if (window[REPORT_GROUP_ID]) console.groupEnd();
-  window[REPORT_GROUP_ID] = true;
-  const groupFn = notFound.length ? console.groupCollapsed : console.group;
-  groupFn.call(console,
-    `%c Highlights: ${applied.length} applied | ${stillPending.length} pending | ${notFound.length} NOT FOUND`,
-    `background:${notFound.length ? '#ffebee' : '#e8f5e9'};color:${notFound.length ? '#c62828' : '#2e7d32'};padding:4px 8px;border-radius:4px;font-weight:bold;`
-  );
-  if (notFound.length) {
-    notFound.forEach(i => {
-      console.log(`%cID: %c${i.id}`, 'font-weight:bold;', 'color:#666;');
-      console.log(`   %cText: %c"${i.text}"`, 'color:#1976d2;', 'font-style:italic;');
-      console.log(`   %cPre:  %c"${i.pre}"`, 'color:#7b1fa2;', '');
-      console.log(`   %cPost: %c"${i.post}"`, 'color:#7b1fa2;', '');
-      console.log('---');
-    });
-  } else {
-    console.log('%cAll highlights applied!', 'color:#2e7d32;font-weight:bold;');
-  }
-  console.groupEnd();
+        // Separate highlights into High and Low priority based on current scroll
+        const highPriority = [];
+        const lowPriority = [];
+
+        // We only do this sorting once per animation frame to keep it efficient
+        while (pendingHighlights.length > 0) {
+            const h = pendingHighlights.shift();
+            if (!h) continue;
+
+            try {
+                const text = normalize(h.text);
+                const pre = normalize(h.pre || h.pre_text);
+                const post = normalize(h.post || h.post_text);
+                
+                let match = null;
+                for (const item of lineTextMap) {
+                    const lineText = item.text;
+                    const fullMatch = (pre && post) ? lineText.indexOf(`${pre} ${text} ${post}`) : -1;
+                    const textIdx = lineText.indexOf(text);
+                    
+                    if (fullMatch !== -1 || textIdx !== -1) {
+                        const startIdx = fullMatch !== -1 ? fullMatch + pre.length + 1 : textIdx;
+                        const rect = item.element.getBoundingClientRect();
+                        const elementTop = rect.top + scrollY;
+
+                        match = { 
+                            h, 
+                            element: item.element, 
+                            text, 
+                            startIdx,
+                            isNearViewport: (elementTop > viewTop && elementTop < viewBottom)
+                        };
+                        break; 
+                    }
+                }
+
+                if (match) {
+                    if (match.isNearViewport) highPriority.push(match);
+                    else lowPriority.push(match);
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        // Execute High Priority immediately
+        highPriority.forEach(m => {
+            highlightTextInElementNormalized(m.element, m.text, m.h.id, m.h.color, m.startIdx);
+        });
+
+        // Put Low Priority back into the main queue for the next frame
+        pendingHighlights = lowPriority.map(m => m.h);
+
+        if (pendingHighlights.length > 0) {
+            // Background process the rest, but prioritize them if user scrolls to them
+            requestAnimationFrame(processChunk);
+        } else {
+            isProcessingHighlights = false;
+            console.log("%c✓ Viewport Highlights Applied", "color: #4CAF50; font-weight: bold;");
+        }
+    };
+
+    requestAnimationFrame(processChunk);
 }
 
 function highlightTextInElementNormalized(element, searchText, id, color, startFromIndex = 0) {
@@ -2215,45 +2144,46 @@ function setupOutlineFeature() {
 }
 
 function setupCacheBuster() {
-  const cacheBusterButton = document.createElement('button');
-  cacheBusterButton.textContent = "Bust cache";
-  cacheBusterButton.id = "bust-cache-button";
-  cacheBusterButton.className = "bust-cache-button";
-  
-  cacheBusterButton.addEventListener('click', async function() {
-    // Clear in-memory caches
-    DOM_CACHE.clear();
-    COMPUTATION_CACHE.clear();
-    parentLinesCache.clear();
-    estimator.reset();
+    const cacheBusterButton = document.createElement('button');
+    cacheBusterButton.textContent = "Bust cache";
+    cacheBusterButton.id = "bust-cache-button";
+    cacheBusterButton.className = "bust-cache-button";
     
-    // Clear Service Worker caches if available
-    if ('caches' in window) {
-      try {
-        const cacheNames = await caches.keys();
-        await Promise.all(cacheNames.map(name => caches.delete(name)));
-        console.log('Service Worker caches cleared');
-      } catch (err) {
-        console.warn('Failed to clear Service Worker caches:', err);
-      }
-    }
-    
-    // Clear localStorage for this page
-    try {
-      const storageKey = `section_prefs_${PAGE_ID}`;
-      localStorage.removeItem(storageKey);
-      console.log('LocalStorage cleared');
-    } catch (err) {
-      console.warn('Failed to clear localStorage:', err);
-    }
-    
-    // Perform a hard reload to bypass browser cache
-    // This clears the browser's HTTP cache for all resources
-    window.location.reload(true);
-  });
+    cacheBusterButton.addEventListener('click', async function() {
+        // 1. Clear In-Memory Logic
+        DOM_CACHE.clear();
+        COMPUTATION_CACHE.clear();
+        parentLinesCache.clear();
+        if (typeof estimator !== 'undefined') estimator.reset();
+        
+        // 2. Clear All Storage
+        try {
+            localStorage.clear(); // Clears section prefs
+            sessionStorage.clear(); // Clears any temporary session data
+            console.log('Storage wiped');
+        } catch (err) {
+            console.warn('Storage clear failed:', err);
+        }
+        
+        // 3. Service Worker / Cache API
+        if ('caches' in window) {
+            try {
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames.map(name => caches.delete(name)));
+            } catch (err) {
+                console.warn('Cache API clear failed:', err);
+            }
+        }
+        
+        // 4. THE MASTER STROKE: Force reload with a cache-busting query param
+        // This tricks the server/browser into thinking it's a brand new page
+        const url = new URL(window.location.href);
+        url.searchParams.set('t', Date.now()); // Adds ?t=1707...
+        window.location.href = url.toString();
+    });
 
-  const controls = getCachedElement("#controls") || document.getElementById("controls");
-  controls.appendChild(cacheBusterButton);
+    const controls = getCachedElement("#controls") || document.getElementById("controls");
+    if (controls) controls.appendChild(cacheBusterButton);
 }
 
 window.addEventListener('beforeunload', () => {
@@ -2483,3 +2413,13 @@ function setupNavigationWarning() {
     document.addEventListener('keydown', handleEscape);
   }
 }
+
+// Re-trigger highlighting when user scrolls significantly
+const debouncedReprioritize = debounce(() => {
+    if (pendingHighlights.length > 0) {
+        console.log("Scrolling detected: Re-prioritizing highlights for viewport...");
+        applyPendingHighlights();
+    }
+}, 200);
+
+window.addEventListener('scroll', debouncedReprioritize, { passive: true });
