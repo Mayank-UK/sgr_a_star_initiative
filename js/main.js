@@ -43,8 +43,27 @@ console.log('PAGE_ID:', PAGE_ID);
 
 let pendingHighlights = [];
 
+
+function toggleIndicator(show) {
+    let indicator = document.getElementById('highlight-indicator');
+    if (!indicator) {
+        indicator = document.createElement('div');
+        indicator.id = 'highlight-indicator';
+        document.body.appendChild(indicator);
+    }
+    
+    if (show) {
+        indicator.classList.add('active');
+    } else {
+        // A 500ms delay ensures the user actually sees the work completed
+        setTimeout(() => indicator.classList.remove('active'), 500);
+    }
+}
+
 async function loadHighlights() {
   try {
+    toggleIndicator(true);
+
     const res = await fetch(`${SCRIPT_URL}?page_id=${encodeURIComponent(PAGE_ID)}`);
     if (!res.ok) throw new Error('Failed to fetch highlights');
     
@@ -85,9 +104,9 @@ function indexMainContent() {
 }
 
 let isProcessingHighlights = false;
-const VIEWPORT_BUFFER = 1000; // 1000px above and below
 
 function applyPendingHighlights() {
+    // 1. Guard clauses
     if (!pendingHighlights || pendingHighlights.length === 0 || isProcessingHighlights) return;
     
     const lineTextMap = indexMainContent();
@@ -97,79 +116,48 @@ function applyPendingHighlights() {
     }
 
     isProcessingHighlights = true;
+    console.time("Highlighting-Batch");
+    toggleIndicator(true);
 
+    // 2. Simple normalization helper
     const normalize = (val) => {
         const s = (val === null || val === undefined) ? "" : String(val);
         return s.replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'").replace(/\s+/g, ' ').trim();
     };
 
-    const processChunk = () => {
-        const startTime = performance.now();
-        const scrollY = window.scrollY;
-        const viewTop = scrollY - VIEWPORT_BUFFER;
-        const viewBottom = scrollY + window.innerHeight + VIEWPORT_BUFFER;
-
-        // Separate highlights into High and Low priority based on current scroll
-        const highPriority = [];
-        const lowPriority = [];
-
-        // We only do this sorting once per animation frame to keep it efficient
-        while (pendingHighlights.length > 0) {
-            const h = pendingHighlights.shift();
-            if (!h) continue;
-
-            try {
-                const text = normalize(h.text);
-                const pre = normalize(h.pre || h.pre_text);
-                const post = normalize(h.post || h.post_text);
+    // 3. Process every highlight in a single loop
+    // No more checking if it is "near viewport"
+    pendingHighlights.forEach(h => {
+        try {
+            const text = normalize(h.text);
+            const pre = normalize(h.pre || h.pre_text);
+            const post = normalize(h.post || h.post_text);
+            
+            for (const item of lineTextMap) {
+                const lineText = item.text;
+                // Check for full match or simple text match
+                const fullMatch = (pre && post) ? lineText.indexOf(`${pre} ${text} ${post}`) : -1;
+                const textIdx = lineText.indexOf(text);
                 
-                let match = null;
-                for (const item of lineTextMap) {
-                    const lineText = item.text;
-                    const fullMatch = (pre && post) ? lineText.indexOf(`${pre} ${text} ${post}`) : -1;
-                    const textIdx = lineText.indexOf(text);
+                if (fullMatch !== -1 || textIdx !== -1) {
+                    const startIdx = fullMatch !== -1 ? fullMatch + pre.length + 1 : textIdx;
                     
-                    if (fullMatch !== -1 || textIdx !== -1) {
-                        const startIdx = fullMatch !== -1 ? fullMatch + pre.length + 1 : textIdx;
-                        const rect = item.element.getBoundingClientRect();
-                        const elementTop = rect.top + scrollY;
-
-                        match = { 
-                            h, 
-                            element: item.element, 
-                            text, 
-                            startIdx,
-                            isNearViewport: (elementTop > viewTop && elementTop < viewBottom)
-                        };
-                        break; 
-                    }
+                    // Apply immediately to the DOM
+                    highlightTextInElementNormalized(item.element, text, h.id, h.color, startIdx);
+                    break; 
                 }
-
-                if (match) {
-                    if (match.isNearViewport) highPriority.push(match);
-                    else lowPriority.push(match);
-                }
-            } catch (e) { console.error(e); }
+            }
+        } catch (e) { 
+            console.error("Error applying batch highlight:", e); 
         }
+    });
 
-        // Execute High Priority immediately
-        highPriority.forEach(m => {
-            highlightTextInElementNormalized(m.element, m.text, m.h.id, m.h.color, m.startIdx);
-        });
-
-        // Put Low Priority back into the main queue for the next frame
-        pendingHighlights = lowPriority.map(m => m.h);
-
-        if (pendingHighlights.length > 0) {
-            // Background process the rest, but prioritize them if user scrolls to them
-            requestAnimationFrame(processChunk);
-        } else {
-            isProcessingHighlights = false;
-            console.log("%c✓ Viewport Highlights Applied", "color: #4CAF50; font-weight: bold;");
-        }
-    };
-
-    requestAnimationFrame(processChunk);
+    // 4. Clean up
+    pendingHighlights = []; // Clear the queue so it doesn't re-run
+    isProcessingHighlights = false;
+    console.timeEnd("Highlighting-Batch");
+    console.log("%c✓ All Highlights Applied in Batch", "color: #4CAF50; font-weight: bold;");
+    toggleIndicator(false);
 }
 
 function highlightTextInElementNormalized(element, searchText, id, color, startFromIndex = 0) {
@@ -1805,8 +1793,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.log('Loading highlights after DOM ready...');
                 loadHighlights();
             }, 600);
-
-            setTimeout(applyPendingHighlights, 2500);
         });
     });
 });
@@ -2413,13 +2399,3 @@ function setupNavigationWarning() {
     document.addEventListener('keydown', handleEscape);
   }
 }
-
-// Re-trigger highlighting when user scrolls significantly
-const debouncedReprioritize = debounce(() => {
-    if (pendingHighlights.length > 0) {
-        console.log("Scrolling detected: Re-prioritizing highlights for viewport...");
-        applyPendingHighlights();
-    }
-}, 200);
-
-window.addEventListener('scroll', debouncedReprioritize, { passive: true });
