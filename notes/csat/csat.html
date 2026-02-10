@@ -3602,14 +3602,29 @@
                 - Adding all subset counts:
                     - Total subsets = sum of all combinations = \( 2^n \)
             - Practical application:
+                - Total selection:
+                    - A box contains 10 distinct balls. Each ball can be selected or not selected. Find total number of possible selections.
+                        - Combination view:
+                            - Select 0 balls:
+                                - \( ^{10}C_0 \)
+                            - Select 1 ball:
+                                - \( ^{10}C_1 \)
+                            - …
+                            - Select 10 balls:
+                                - \( ^{10}C_{10} \)
+                        - Using property:
+                            - \( ^{10}C_0 + ^{10}C_1 + \cdots + ^{10}C_{10} = 2^{10} \)
+                        - Value:
+                            - \( 2^{10} = 1024 \)
                 - Instant subset / yes-no choice counts:
                     - An organization is reviewing 7 policies. For each policy, it can either be accepted or rejected. In how many different decision patterns can the final choices be made?
+                        - Same logic as previous question, either a policy is included or it's not
                         - Each policy has 2 independent choices:
                             - accept / reject
                         - Total patterns:
-                            - \( = 2^7 \)
+                            - \( 2^7 \)
                         - Value:
-                            - \( = 128 \)
+                            - \( 128 \)
         - Property 5:
             - Sum of even-indexed combinations = Sum of odd-indexed combinations = \( 2^{n-1} \)
             - What it means in practice:
