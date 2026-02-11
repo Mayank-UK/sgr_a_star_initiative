@@ -3522,7 +3522,7 @@
                 - Therefore:
                     - Number of ways to choose r = Number of ways to choose n−r
             - Practical application:
-                - Quick solution:
+                - For quick solution:
                     - Find \( ^{20}C_{17} \)
                         - Using property:
                             - \( ^{20}C_{17} = ^{20}C_3 \)
@@ -3683,42 +3683,141 @@
 
 
 - Probability
-    - Basic Concepts:
+    - Definitions:
+        - Probability: 
+            - Measure of the likelihood an event occurs, expressed as a number between 0 (impossible) and 1 (certain). It quantifies uncertainty in random experiments.
+        - Experiment: 
+            - A repeatable process with well-defined outcomes (e.g., rolling a die, drawing a card).
+        - Random Experiment: 
+            - An experiment where the outcome cannot be predicted with certainty, though all possible outcomes are known (e.g., tossing a coin).
+        - Sample Space (S): 
+            - The set of all possible outcomes of a random experiment, denoted by \( S \) (e.g., for a die, \( S = \{1, 2, 3, 4, 5, 6\} \)).
+        - Event: 
+            - A specific outcome or set of outcomes from an experiment (e.g., getting a 3 on a die roll).
+    - Example:
+        - A die is thrown. Define sample space, mutually exclusive events, and complement of getting an even number:
+            - Sample space: 
+                - \( S = \{1, 2, 3, 4, 5, 6\} \).
+            - Mutually exclusive events: 
+                - Getting 1, 2, ..., 6 (only one face appears per roll).
+            - Event (even number): 
+                - \( E = \{2, 4, 6\} \), \( P(E) = \frac{3}{6} = \frac{1}{2} \).
+            - Complement: 
+                - \( E' = \{1, 3, 5\} \), \( P(E') = 1 - \frac{1}{2} = \frac{1}{2} \).
+            - Answer is: 
+                - Sample space = \( 1, 2, 3, 4, 5, 6 \), events 1-6 are mutually exclusive, complement probability = \( \frac{1}{2} \).
+
+    - Different events:
         - Definitions:
-            - Probability: 
-                - Measure of the likelihood an event occurs, expressed as a number between 0 (impossible) and 1 (certain). It quantifies uncertainty in random experiments.
-            - Experiment: 
-                - A repeatable process with well-defined outcomes (e.g., rolling a die, drawing a card).
-            - Random Experiment: 
-                - An experiment where the outcome cannot be predicted with certainty, though all possible outcomes are known (e.g., tossing a coin).
-            - Sample Space (S): 
-                - The set of all possible outcomes of a random experiment, denoted by \( S \) (e.g., for a die, \( S = \{1, 2, 3, 4, 5, 6\} \)).
-            - Event: 
-                - A specific outcome or set of outcomes from an experiment (e.g., getting a 3 on a die roll).
+            - Simple Event: 
+                - A single outcome in the sample space (e.g., drawing a specific card).
+            - Complement of an Event: 
+                - The event that includes all outcomes not in the given event \( E \), denoted \( E' \), with \( P(E') = 1 - P(E) \).
+            - Compound Event: 
+                - An event involving multiple outcomes, often using union or intersection (e.g., drawing a red card or a king).
             - Equally Likely Events: 
                 - Events with the same probability of occurrence (e.g., each face of a fair die has a \( \frac{1}{6} \) chance).
             - Exhaustive Events: 
                 - A set of events that covers all possible outcomes of an experiment (e.g., getting 1, 2, 3, 4, 5, or 6 on a die roll).
             - Mutually Exclusive Events: 
                 - Events that cannot occur simultaneously (e.g., getting a 1 and a 2 on a single die roll).
-            - Complement of an Event: 
-                - The event that includes all outcomes not in the given event \( E \), denoted \( E' \), with \( P(E') = 1 - P(E) \).
-        - Example:
-            - A die is thrown. Define sample space, mutually exclusive events, and complement of getting an even number:
-                - Sample space: 
-                    - \( S = \{1, 2, 3, 4, 5, 6\} \).
-                - Mutually exclusive events: 
-                    - Getting 1, 2, ..., 6 (only one face appears per roll).
-                - Event (even number): 
-                    - \( E = \{2, 4, 6\} \), \( P(E) = \frac{3}{6} = \frac{1}{2} \).
-                - Complement: 
-                    - \( E' = \{1, 3, 5\} \), \( P(E') = 1 - \frac{1}{2} = \frac{1}{2} \).
-                - Answer is: 
-                    - Sample space = \{1, 2, 3, 4, 5, 6\}, events 1-6 are mutually exclusive, complement probability = \( \frac{1}{2} \).
+            - Independent Events: 
+                - Events where the occurrence of one does not affect the probability of the other, \( P(E_1 \cap E_2) = P(E_1) \times P(E_2) \).
+            - Dependent Events: 
+                - Events where the occurrence of one affects the probability of the other.
+            - Conditional Event: 
+                - An event whose probability depends on the occurrence of another event, denoted \( P(E_2 | E_1) \), the probability of \( E_2 \) given \( E_1 \).
+        - Examples:
+            - Example 1:
+                - In a single coin toss, identify a simple, compound, and conditional event:
+                    - Simple event: 
+                        - Getting heads, \( P(\text{heads}) = \frac{1}{2} \).
+                    - Compound event: 
+                        - Getting heads or tails, \( P(\text{heads or tails}) = \frac{2}{2} = 1 \).
+                    - Conditional event: 
+                        - In two tosses, probability of second toss being heads given first is heads = \( \frac{1}{2} \) (independent events).
+                    - Answer is: 
+                        - Simple = heads, Compound = heads or tails, Conditional = \( \frac{1}{2} \).
+            - Example 2:
+                - Find probability of at least one tail in three coin tosses:
+                    - Total outcomes: 
+                        - \( 2^3 = 8 \) (HHH, HHT, HTH, HTT, THH, THT, TTH, TTT).
+                    - Using complement (no tails = all heads): 
+                        - \( P(\text{HHH}) = \frac{1}{8} \).
+                    - \( P(\text{at least one tail}) = 1 - \frac{1}{8} = \frac{7}{8} \).
+                    - Answer is: 
+                        - \( \frac{7}{8} \).
+
+    - Fundamentals:
+        - Total ways
+            - Context:
+                - If a process is completed in stages, and:
+                    - Stage 1 can be done in \( m \) ways
+                    - For each choice of stage 1, stage 2 can be done in \( n \) ways
+                - Then total ways to complete the full process is \( m \times n \)
+            - Formula:
+                - Total ways = \( m \times n \)
+            - Example:
+                - Two cards are drawn from a deck with replacement. Find probability both are kings:
+                    - \( P(\text{king}) = \frac{4}{52} = \frac{1}{13} \)
+                    - \( P(\text{both kings}) = \frac{1}{13} \times \frac{1}{13} \)
+                    - Answer is: 
+                        - \( \frac{1}{169} \)
+        - Union (OR):
+            - Formula:
+                - \( P(E_1 \cup E_2) = P(E_1) + P(E_2) - P(E_1 \cap E_2) \)
+            - Meaning:
+                - Outcomes where E1 happens OR E2 happens OR both
+            - Example:
+                - A die is rolled once, what is the probability that the number is even or a multiple of 3?
+                    - Let:
+                        - \( E_1 \) = even
+                        - \( E_2 \) = multiple of 3
+                    - Compute:
+                        - \( E_1 \) = {2,4,6} → \( P(E_1)=\frac{3}{6} \)
+                        - \( E_2 \) = {3,6} → \( P(E_2)=\frac{2}{6} \)
+                        - \( E_1 \cap E_2 = \{6\} \) → \( \frac{1}{6} \)
+                        - \( P(E_1 \cup E_2) = P(E_1)+P(E_2)-P(E_1 \cap E_2) \)
+                        - \( \frac{3}{6}+\frac{2}{6}-\frac{1}{6}=\frac{4}{6}=\frac{2}{3} \)
+        - Intersection (AND):
+            - Formula: 
+                - \( P(E_1 \cap E_2) = P(E_1) + P(E_2) - P(E_1 \cup E_2) \)
+                Or
+                - \( P(E_1 \cap E_2) = P(E_1)\ \times P(E_2 \mid E_1) = P(E_2)\ \times P(E_1 \mid E_2) \)
+            - Derivation:
+                - First one is derived from union and second formula is derived from the definition of conditional probability
+                - \( P(E_2 \mid E_1)=\dfrac{P(E_1 \cap E_2)}{P(E_1)} \)
+            - Meaning:
+                - Outcomes where both E1 and E2 happen together
+            - Used in:
+                - Joint probability
+                - Conditional probability formulas
+        - Complement (NOT):
+            - Formula:
+                - \( P(E_1') = 1 - P(E_1) \)
+            - Meaning:
+                - Event E1 does not happen
+        - Difference:
+            - Formula:
+                - \( P(E_1 - E_2) = P(E_1) - P(E_1 \cap E_2) \)
+            - Derivation:
+                - Event \( E_1 \) can be divided into two non-overlapping parts:
+                    - Part A: 
+                        - Outcomes in \( E_1 \cap E_2 \)  (both happen)
+                    - Part B: 
+                        - Outcomes in \( E_1 - E_2 \)  (only E1 happens)
+                - This can be represented as:
+                    - \( E_1 = (E_1 - E_2) \cup (E_1 \cap E_2) \)
+                - In terms of probability:
+                    - \( P(E_1) = P(E_1 - E_2) + P(E_1 \cap E_2) \)
+                    Or
+                    - \( P(E_1 - E_2) = P(E_1) - P(E_1 \cap E_2) \)
+            - Meaning:
+                - E1 happens but E2 does not
 
     - Classical Probability:
         - Formula:
-            - \( P(E) = \frac{\text{Number of favorable outcomes}}{\text{Total number of outcomes}} = \frac{m}{n} \), where \( m \) is the number of outcomes favorable to event \( E \), and \( n \) is the total number of equally likely outcomes in the sample space.
+            - \( P(E) = \frac{\text{Number of favorable outcomes}}{\text{Total number of outcomes}} \)
         - Explanation:
             - Assumes all outcomes are equally likely and mutually exclusive.
             - Used for simple experiments like coin tosses or card draws.
@@ -3732,72 +3831,56 @@
                 - Answer is: 
                     - \( \frac{1}{4} \).
 
-    - Simple, Compound, and Conditional Events:
-        - Definitions:
-            - Simple Event: 
-                - A single outcome in the sample space (e.g., drawing a specific card).
-            - Compound Event: 
-                - An event involving multiple outcomes, often using union or intersection (e.g., drawing a red card or a king).
-            - Conditional Event: 
-                - An event whose probability depends on the occurrence of another event, denoted \( P(E_2 | E_1) \), the probability of \( E_2 \) given \( E_1 \).
-        - Example:
-            - In a single coin toss, identify a simple, compound, and conditional event:
-                - Simple event: 
-                    - Getting heads, \( P(\text{heads}) = \frac{1}{2} \).
-                - Compound event: 
-                    - Getting heads or tails, \( P(\text{heads or tails}) = \frac{2}{2} = 1 \).
-                - Conditional event: 
-                    - In two tosses, probability of second toss being heads given first is heads = \( \frac{1}{2} \) (independent events).
-                - Answer is: 
-                    - Simple = heads, Compound = heads or tails, Conditional = \( \frac{1}{2} \).
-
-    - Independent and Dependent Events:
-        - Definitions:
-            - Independent Events: 
-                - Events where the occurrence of one does not affect the probability of the other, \( P(E_1 \cap E_2) = P(E_1) \times P(E_2) \).
-            - Dependent Events: 
-                - Events where the occurrence of one affects the probability of the other.
-        - Example:
-            - Two cards are drawn from a deck with replacement. Find probability both are kings:
-                - \( P(\text{king}) = \frac{4}{52} = \frac{1}{13} \).
-                - Since replacement occurs, events are independent.
-                - \( P(\text{both kings}) = \frac{1}{13} \times \frac{1}{13} = \frac{1}{169} \).
-                - Answer is: 
-                    - \( \frac{1}{169} \).
-
     - Conditional Probability:
         - Formula:
-            - \( P\left(\frac{E_2}{E_1}\right) = \frac{P(E_1 \cap E_2)}{P(E_1)} \), where \( P(E_1) \neq 0 \), representing the probability of \( E_2 \) occurring given \( E_1 \) has occurred.
+            - \( P\left(\frac{E_2}{E_1}\right) = \frac{P(E_1 \cap E_2)}{P(E_1)} \), where \( P(E_1) \neq 0 \)
+        - Derivation:
+            - Step 1: Define the Sample Space
+                - Let \( S \) be the total sample space with \( n(S) \) equally likely outcomes.
+                - Example: 
+                    - A standard deck of 52 cards, where \( n(S) = 52 \).
+            - Step 2: Restrict the Sample Space
+                - Since we are given that \( E_1 \) has occurred, the outcomes outside of \( E_1 \) are no longer possible. Our "new" sample space is \( E_1 \).
+                - Example: 
+                    - We are told the card is "Red" (\( E_1 \)). Our possible outcomes are now only the 26 red cards. \( n(E_1) = 26 \).
+            - Step 3: Identify Favorable Outcomes
+                - Within this restricted space \( E_1 \), event \( E_2 \) can only occur where it overlaps with \( E_1 \). This is the intersection \( E_1 \cap E_2 \).
+                - Example: 
+                    - How many "Kings" (\( E_2 \)) are in our "Red" (\( E_1 \)) set? There are 2 red kings. \( n(E_1 \cap E_2) = 2 \).
+            - Step 4: Apply the Classical Probability Definition
+                - \( P\left(\frac{E_2}{E_1}\right) = \frac{\text{Number of outcomes in } (E_1 \cap E_2)}{\text{Number of outcomes in } E_1} = \frac{n(E_1 \cap E_2)}{n(E_1)} \)
+                - Example: 
+                    - The probability is \( \frac{2}{26} \).
+            - Step 5: Normalize by the Original Sample Space
+                - Divide both numerator and denominator by \( n(S) \) to transition to probability notation:
+                - \( P\left(\frac{E_2}{E_1}\right) = \frac{\frac{n(E_1 \cap E_2)}{n(S)}}{\frac{n(E_1)}{n(S)}} \)
+            - Step 6: Final Formula
+                - Using the definition \( P(A) = \frac{n(A)}{n(S)} \) to convert the above terms into probability
+                - \( P\left(\frac{E_2}{E_1}\right) = \frac{P(E_1 \cap E_2)}{P(E_1)} \), where \( P(E_1) \neq 0 \)
         - Explanation:
+            - Representing the probability of \( E_2 \) occurring given \( E_1 \) has occurred.
             - Used for dependent events where the sample space is reduced by the condition.
         - Example:
             - Two cards are drawn without replacement. Find probability the second is a king given the first is a king:
-                - \( P(\text{first king}) = \frac{4}{52} \).
-                - After drawing one king, 51 cards remain, 3 kings.
-                - \( P(\text{second king} | \text{first king}) = \frac{3}{51} = \frac{1}{17} \).
-                - Answer is: 
-                    - \( \frac{1}{17} \).
-
-    - Addition Rule for Probability:
-        - Formulas:
-            - For mutually exclusive events: 
-                - \( P(A \cup B) = P(A) + P(B) \).
-            - For general events: 
-                - \( P(A \cup B) = P(A) + P(B) - P(A \cap B) \).
-        - Explanation:
-            - Mutually exclusive events cannot occur together, so no overlap is subtracted.
-            - General case accounts for overlapping outcomes to avoid double-counting.
-        - Example:
-            - In a die roll, find probability of getting a 2 or a 5:
-                - \( P(\text{2}) = \frac{1}{6} \), \( P(\text{5}) = \frac{1}{6} \).
-                - Events are mutually exclusive (cannot get 2 and 5 simultaneously).
-                - \( P(\text{2 or 5}) = \frac{1}{6} + \frac{1}{6} = \frac{2}{6} = \frac{1}{3} \).
-                - Answer is: 
-                    - \( \frac{1}{3} \).
+                - Define events:
+                    - \( E_1 \) = first card is king
+                    - \( E_2 \) = second card is king
+                - Step 1: Compute \( P(E_1) \)
+                    - \( P(E_1) = \dfrac{4}{52} = \dfrac{1}{13} \)
+                - Step 2: Compute \( P(E_1 \cap E_2) \)
+                    - Probability both cards are kings:
+                    - \( = \dfrac{4}{52} \times \dfrac{3}{51} \)
+                - Step 3: Apply formula
+                    - \( P(E_2 \mid E_1) =
+                    \dfrac{\frac{4}{52}\times\frac{3}{51}}{\frac{4}{52}} \)
+                - Step 4: Simplify
+                    - \( P(E_2 \mid E_1) = \dfrac{3}{51} = \dfrac{1}{17} \)
 
     - Odds of an Event:
         - Definition:
-            - Odds of an event \( E \): Ratio of favorable outcomes to unfavorable outcomes, \( \text{Odds}(E) = \frac{P(E)}{P(E')} = \frac{P(E)}{1 - P(E)} \).
+            - It is the ratio of favorable outcomes to unfavorable outcomes
+        - Formula:
+            - \( \text{Odds}(E) = \frac{P(E)}{P(E')} = \frac{P(E)}{1 - P(E)} \).
         - Explanation:
             - Expresses likelihood as a ratio rather than a probability fraction.
         - Example:
@@ -3807,26 +3890,6 @@
                 - Odds = \( \frac{\frac{1}{13}}{\frac{12}{13}} = \frac{1}{12} \).
                 - Answer is: 
                     - 1:12.
-
-    - Key Formulas:
-        - Properties:
-            - Mutually exclusive and exhaustive events: 
-                - \( P(A) + P(B) = 1 \).
-            - Event difference: 
-                - \( P(E - F) = P(E) - P(E \cap F) \).
-            - Total outcomes for \( n \) coins: 
-                - \( 2^n \).
-            - Total outcomes for \( n \) dice: 
-                - \( 6^n \).
-        - Example:
-            - Find probability of at least one tail in three coin tosses:
-                - Total outcomes: 
-                    - \( 2^3 = 8 \) (HHH, HHT, HTH, HTT, THH, THT, TTH, TTT).
-                - Complement (no tails = all heads): 
-                    - \( P(\text{HHH}) = \frac{1}{8} \).
-                - \( P(\text{at least one tail}) = 1 - \frac{1}{8} = \frac{7}{8} \).
-                - Answer is: 
-                    - \( \frac{7}{8} \).
 
 
 - Sets and Functions
