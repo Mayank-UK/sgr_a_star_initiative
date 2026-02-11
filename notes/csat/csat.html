@@ -4860,142 +4860,6 @@
                         - The edge of the cube is approximately \( 10.39 \, \text{cm} \).
 
 
-- Sequences and Series:
-    - Basic Concepts:
-        - Sequence:
-            - A sequence is an ordered list of numbers (terms) following a specific pattern, denoted as \( T_1, T_2, T_3, \ldots, T_n \). For example, 1, 4, 7, 10 is a sequence where terms increase by a constant difference.
-        - Series:
-            - A series is the sum of the terms of a sequence. For example, the series for the sequence 1, 4, 7, 10 is \( 1 + 4 + 7 + 10 \).
-        - Progression:
-            - A progression is a sequence with a defined mathematical relationship between consecutive terms, such as Arithmetic Progression (AP), Geometric Progression (GP), or Harmonic Progression (HP).
-        - Example:
-            - Question: 
-                - Identify whether the sequence 5, 8, 11, 14 is a progression and find its next term.
-            - Solution:
-                - Check for AP: 
-                    - Common difference = \( 8 - 5 = 3 \), \( 11 - 8 = 3 \), \( 14 - 11 = 3 \). Since the difference is constant, it’s an AP with first term \( a = 5 \) and common difference \( d = 3 \).
-                - Next term (\( n = 5 \)): \( T_5 = a + (n-1)d = 5 + (5-1) \times 3 = 5 + 12 = 17 \).
-                - Answer is: 
-                    - The sequence is an AP, and the next term is 17.
-
-    - Arithmetic Progression (AP):
-        - Definition:
-            - An AP is a sequence where each term increases or decreases by a constant difference, called the common difference (\( d \)).
-        - General form: 
-            - \( a, a+d, a+2d, \ldots, a+(n-1)d \).
-        - \( n \)-th term: 
-            - \( T_n = a + (n-1)d \).
-        - Sum of \( n \) terms: 
-            - \( S_n = \frac{n}{2} [2a + (n-1)d] = \frac{n}{2} (a + l) \), where \( l = a + (n-1)d \) is the last term.
-        - Arithmetic Mean (AM): 
-            - For a series, \( AM = \frac{\text{first term} + \text{last term}}{2} \).
-        - Properties:
-            - Adding or multiplying each term by a constant preserves the AP.
-            - Three terms: 
-                - \( a-d, a, a+d \).
-            - Four terms: 
-                - \( a-3d, a-d, a+d, a+3d \).
-            - Five terms: 
-                - \( a-2d, a-d, a, a+d, a+2d \).
-        - Example:
-            - Question: 
-                - Find the 10th term and sum of the first 10 terms of the AP: 4, 7, 10, 13, ...
-            - Solution:
-                - First term \( a = 4 \), common difference \( d = 7 - 4 = 3 \).
-                - 10th term: 
-                    - \( T_{10} = a + (n-1)d = 4 + (10-1) \times 3 = 4 + 27 = 31 \).
-                - Sum of 10 terms: 
-                    - \( S_{10} = \frac{n}{2} [2a + (n-1)d] = \frac{10}{2} [2 \times 4 + (10-1) \times 3] = 5 \times (8 + 27) = 5 \times 35 = 175 \).
-                - Answer is: 
-                    - The 10th term is 31, and the sum of the first 10 terms is 175.
-
-    - Geometric Progression (GP):
-        - Definition:
-            - A GP is a sequence where each term is obtained by multiplying the previous term by a constant ratio, called the common ratio (\( r \)).
-        - General form: 
-            - \( a, ar, ar^2, \ldots, ar^{n-1} \).
-        - \( n \)-th term: 
-            - \( T_n = ar^{n-1} \).
-        - Sum of \( n \) terms:
-            - If \( r \neq 1, r &lt; 1 \): 
-                - \( S_n = \frac{a(1-r^n)}{1-r} \).
-            - If \( r > 1 \): 
-                - \( S_n = \frac{a(r^n-1)}{r-1} \).
-        - Sum of infinite GP (\( |r| &lt; 1 \)): 
-            - \( S_\infty = \frac{a}{1-r} \).
-        - Geometric Mean (GM): 
-            - For \( n \) terms, \( GM = \sqrt[n]{a_1 \cdot a_2 \cdot \ldots \cdot a_n} \).
-        - Properties:
-            - Multiplying terms by a constant or raising to a power preserves the GP.
-            - Reciprocals of a GP form a GP.
-            - Three terms: 
-                - \( \frac{a}{r}, a, ar \).
-            - Four terms: 
-                - \( \frac{a}{r^3}, \frac{a}{r}, ar, ar^3 \).
-            - Five terms: 
-                - \( \frac{a}{r^2}, \frac{a}{r}, a, ar, ar^2 \).
-        - Example:
-            - Question: 
-                - Find the 7th term and sum of the first 7 terms of the GP: 2, 6, 18, 54, ...
-            - Solution:
-                - First term \( a = 2 \), common ratio \( r = \frac{6}{2} = 3 \).
-                - 7th term: 
-                    - \( T_7 = ar^{7-1} = 2 \times 3^6 = 2 \times 729 = 1458 \).
-                - Sum of 7 terms (\( r > 1 \)): 
-                    - \( S_7 = \frac{a(r^7-1)}{r-1} = \frac{2(3^7-1)}{3-1} = \frac{2(2187-1)}{2} = 2186 \).
-                - Answer is: 
-                    - The 7th term is 1458, and the sum of the first 7 terms is 2186.
-
-    - Harmonic Progression (HP):
-        - Definition:
-            - An HP is a sequence where the reciprocals of the terms form an AP.
-        - General form: 
-            - \( \frac{1}{a}, \frac{1}{a+d}, \frac{1}{a+2d}, \ldots \).
-        - \( n \)-th term: 
-            - \( T_n = \frac{1}{a + (n-1)d} \).
-        - Harmonic Mean (HM): 
-            - For \( n \) numbers, \( HM = \frac{n}{\frac{1}{a_1} + \frac{1}{a_2} + \ldots + \frac{1}{a_n}} \); for two numbers \( a, c \): \( HM = \frac{2ac}{a+c} \).
-        - Example:
-            - Question: 
-                - The 4th term of an HP is \( \frac{1}{8} \), and the 7th term is \( \frac{1}{14} \). Find the 10th term.
-            - Solution:
-                - For the HP, the reciprocals form an AP. So, 4th term \( \frac{1}{8} \) means the 4th term of the AP is 8; 7th term \( \frac{1}{14} \) means the 7th term of the AP is 14.
-                - AP terms: 
-                    - \( a + 3d = 8 \), \( a + 6d = 14 \).
-                - Subtract: 
-                    - \( (a + 6d) - (a + 3d) = 14 - 8 \Rightarrow 3d = 6 \Rightarrow d = 2 \).
-                - Substitute: 
-                    - \( a + 3 \times 2 = 8 \Rightarrow a + 6 = 8 \Rightarrow a = 2 \).
-                - 10th term of AP: 
-                    - \( a + (10-1)d = 2 + 9 \times 2 = 2 + 18 = 20 \).
-                - 10th term of HP: 
-                    - \( \frac{1}{20} \).
-                - Answer is: 
-                    - The 10th term is \( \frac{1}{20} \).
-
-    - Series of Natural Numbers:
-        - Sum of first \( n \) natural numbers: 
-            - \( \frac{n(n+1)}{2} \).
-        - Sum of squares of first \( n \) natural numbers: 
-            - \( \frac{n(n+1)(2n+1)}{6} \).
-        - Sum of cubes of first \( n \) natural numbers: 
-            - \( \left( \frac{n(n+1)}{2} \right)^2 \).
-        - Sum of first \( n \) even numbers: 
-            - \( n(n+1) \).
-        - Sum of first \( n \) odd numbers: 
-            - \( n^2 \).
-        - Example:
-            - Question: 
-                - Find the sum of the squares of the first 10 natural numbers.
-            - Solution:
-                - Use the formula: 
-                    - \( S_n = \frac{n(n+1)(2n+1)}{6} \).
-                - For \( n = 10 \): 
-                    - \( S_{10} = \frac{10 \times 11 \times (2 \times 10 + 1)}{6} = \frac{10 \times 11 \times 21}{6} = \frac{2310}{6} = 385 \).
-                - Answer is: 
-                    - The sum of the squares is 385.
-
-
 - Plane Geometry:
     - Basic Concepts:
         - Geometry:
@@ -5304,6 +5168,142 @@
                 - Sum of interior angles = \( (2n-4) \times 90^\circ = (2 \times 9 - 4) \times 90^\circ = 14 \times 90^\circ = 1260^\circ \).
                 - Answer is: 
                     - The polygon has 9 sides, and the sum of its interior angles is \( 1260^\circ \).
+
+
+- Sequences and Series:
+    - Basic Concepts:
+        - Sequence:
+            - A sequence is an ordered list of numbers (terms) following a specific pattern, denoted as \( T_1, T_2, T_3, \ldots, T_n \). For example, 1, 4, 7, 10 is a sequence where terms increase by a constant difference.
+        - Series:
+            - A series is the sum of the terms of a sequence. For example, the series for the sequence 1, 4, 7, 10 is \( 1 + 4 + 7 + 10 \).
+        - Progression:
+            - A progression is a sequence with a defined mathematical relationship between consecutive terms, such as Arithmetic Progression (AP), Geometric Progression (GP), or Harmonic Progression (HP).
+        - Example:
+            - Question: 
+                - Identify whether the sequence 5, 8, 11, 14 is a progression and find its next term.
+            - Solution:
+                - Check for AP: 
+                    - Common difference = \( 8 - 5 = 3 \), \( 11 - 8 = 3 \), \( 14 - 11 = 3 \). Since the difference is constant, it’s an AP with first term \( a = 5 \) and common difference \( d = 3 \).
+                - Next term (\( n = 5 \)): \( T_5 = a + (n-1)d = 5 + (5-1) \times 3 = 5 + 12 = 17 \).
+                - Answer is: 
+                    - The sequence is an AP, and the next term is 17.
+
+    - Arithmetic Progression (AP):
+        - Definition:
+            - An AP is a sequence where each term increases or decreases by a constant difference, called the common difference (\( d \)).
+        - General form: 
+            - \( a, a+d, a+2d, \ldots, a+(n-1)d \).
+        - \( n \)-th term: 
+            - \( T_n = a + (n-1)d \).
+        - Sum of \( n \) terms: 
+            - \( S_n = \frac{n}{2} [2a + (n-1)d] = \frac{n}{2} (a + l) \), where \( l = a + (n-1)d \) is the last term.
+        - Arithmetic Mean (AM): 
+            - For a series, \( AM = \frac{\text{first term} + \text{last term}}{2} \).
+        - Properties:
+            - Adding or multiplying each term by a constant preserves the AP.
+            - Three terms: 
+                - \( a-d, a, a+d \).
+            - Four terms: 
+                - \( a-3d, a-d, a+d, a+3d \).
+            - Five terms: 
+                - \( a-2d, a-d, a, a+d, a+2d \).
+        - Example:
+            - Question: 
+                - Find the 10th term and sum of the first 10 terms of the AP: 4, 7, 10, 13, ...
+            - Solution:
+                - First term \( a = 4 \), common difference \( d = 7 - 4 = 3 \).
+                - 10th term: 
+                    - \( T_{10} = a + (n-1)d = 4 + (10-1) \times 3 = 4 + 27 = 31 \).
+                - Sum of 10 terms: 
+                    - \( S_{10} = \frac{n}{2} [2a + (n-1)d] = \frac{10}{2} [2 \times 4 + (10-1) \times 3] = 5 \times (8 + 27) = 5 \times 35 = 175 \).
+                - Answer is: 
+                    - The 10th term is 31, and the sum of the first 10 terms is 175.
+
+    - Geometric Progression (GP):
+        - Definition:
+            - A GP is a sequence where each term is obtained by multiplying the previous term by a constant ratio, called the common ratio (\( r \)).
+        - General form: 
+            - \( a, ar, ar^2, \ldots, ar^{n-1} \).
+        - \( n \)-th term: 
+            - \( T_n = ar^{n-1} \).
+        - Sum of \( n \) terms:
+            - If \( r \neq 1, r &lt; 1 \): 
+                - \( S_n = \frac{a(1-r^n)}{1-r} \).
+            - If \( r > 1 \): 
+                - \( S_n = \frac{a(r^n-1)}{r-1} \).
+        - Sum of infinite GP (\( |r| &lt; 1 \)): 
+            - \( S_\infty = \frac{a}{1-r} \).
+        - Geometric Mean (GM): 
+            - For \( n \) terms, \( GM = \sqrt[n]{a_1 \cdot a_2 \cdot \ldots \cdot a_n} \).
+        - Properties:
+            - Multiplying terms by a constant or raising to a power preserves the GP.
+            - Reciprocals of a GP form a GP.
+            - Three terms: 
+                - \( \frac{a}{r}, a, ar \).
+            - Four terms: 
+                - \( \frac{a}{r^3}, \frac{a}{r}, ar, ar^3 \).
+            - Five terms: 
+                - \( \frac{a}{r^2}, \frac{a}{r}, a, ar, ar^2 \).
+        - Example:
+            - Question: 
+                - Find the 7th term and sum of the first 7 terms of the GP: 2, 6, 18, 54, ...
+            - Solution:
+                - First term \( a = 2 \), common ratio \( r = \frac{6}{2} = 3 \).
+                - 7th term: 
+                    - \( T_7 = ar^{7-1} = 2 \times 3^6 = 2 \times 729 = 1458 \).
+                - Sum of 7 terms (\( r > 1 \)): 
+                    - \( S_7 = \frac{a(r^7-1)}{r-1} = \frac{2(3^7-1)}{3-1} = \frac{2(2187-1)}{2} = 2186 \).
+                - Answer is: 
+                    - The 7th term is 1458, and the sum of the first 7 terms is 2186.
+
+    - Harmonic Progression (HP):
+        - Definition:
+            - An HP is a sequence where the reciprocals of the terms form an AP.
+        - General form: 
+            - \( \frac{1}{a}, \frac{1}{a+d}, \frac{1}{a+2d}, \ldots \).
+        - \( n \)-th term: 
+            - \( T_n = \frac{1}{a + (n-1)d} \).
+        - Harmonic Mean (HM): 
+            - For \( n \) numbers, \( HM = \frac{n}{\frac{1}{a_1} + \frac{1}{a_2} + \ldots + \frac{1}{a_n}} \); for two numbers \( a, c \): \( HM = \frac{2ac}{a+c} \).
+        - Example:
+            - Question: 
+                - The 4th term of an HP is \( \frac{1}{8} \), and the 7th term is \( \frac{1}{14} \). Find the 10th term.
+            - Solution:
+                - For the HP, the reciprocals form an AP. So, 4th term \( \frac{1}{8} \) means the 4th term of the AP is 8; 7th term \( \frac{1}{14} \) means the 7th term of the AP is 14.
+                - AP terms: 
+                    - \( a + 3d = 8 \), \( a + 6d = 14 \).
+                - Subtract: 
+                    - \( (a + 6d) - (a + 3d) = 14 - 8 \Rightarrow 3d = 6 \Rightarrow d = 2 \).
+                - Substitute: 
+                    - \( a + 3 \times 2 = 8 \Rightarrow a + 6 = 8 \Rightarrow a = 2 \).
+                - 10th term of AP: 
+                    - \( a + (10-1)d = 2 + 9 \times 2 = 2 + 18 = 20 \).
+                - 10th term of HP: 
+                    - \( \frac{1}{20} \).
+                - Answer is: 
+                    - The 10th term is \( \frac{1}{20} \).
+
+    - Series of Natural Numbers:
+        - Sum of first \( n \) natural numbers: 
+            - \( \frac{n(n+1)}{2} \).
+        - Sum of squares of first \( n \) natural numbers: 
+            - \( \frac{n(n+1)(2n+1)}{6} \).
+        - Sum of cubes of first \( n \) natural numbers: 
+            - \( \left( \frac{n(n+1)}{2} \right)^2 \).
+        - Sum of first \( n \) even numbers: 
+            - \( n(n+1) \).
+        - Sum of first \( n \) odd numbers: 
+            - \( n^2 \).
+        - Example:
+            - Question: 
+                - Find the sum of the squares of the first 10 natural numbers.
+            - Solution:
+                - Use the formula: 
+                    - \( S_n = \frac{n(n+1)(2n+1)}{6} \).
+                - For \( n = 10 \): 
+                    - \( S_{10} = \frac{10 \times 11 \times (2 \times 10 + 1)}{6} = \frac{10 \times 11 \times 21}{6} = \frac{2310}{6} = 385 \).
+                - Answer is: 
+                    - The sum of the squares is 385.
 
 
 - Statistics:
