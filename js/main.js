@@ -80,6 +80,13 @@ async function loadHighlights() {
     }));
 
     console.log(`Loaded ${pendingHighlights.length} highlights from server`);
+
+    // If no highlights exist for this page, turn off spinner immediately
+    if (pendingHighlights.length === 0) {
+      toggleIndicator(false);
+      return;
+    }
+
     setTimeout(applyPendingHighlights, 400);
   } catch (err) {
     console.error('Failed to load highlights:', err);
