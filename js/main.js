@@ -1,3 +1,5 @@
+// New code
+
 // window.alert("version 2");
 
 (function setTitleFromFilename() {
@@ -55,7 +57,6 @@ function toggleIndicator(show) {
     if (show) {
         indicator.classList.add('active');
     } else {
-        // A 500ms delay ensures the user actually sees the work completed
         setTimeout(() => indicator.classList.remove('active'), 500);
     }
 }
@@ -86,13 +87,12 @@ async function loadHighlights() {
 }
 
 // Global variable to keep track of the index
-let lineTextMap = []; 
+let lineTextMap = [];
 
 function indexMainContent() {
     const mainContentSection = document.getElementById('section-base-content');
     if (!mainContentSection) return [];
-    
-    // We only map the elements once per run
+
     return Array.from(mainContentSection.querySelectorAll('.line-content')).map(el => ({
         element: el,
         text: String(el.textContent || '')
@@ -108,9 +108,10 @@ let isProcessingHighlights = false;
 function applyPendingHighlights() {
     // 1. Guard clauses
     if (!pendingHighlights || pendingHighlights.length === 0 || isProcessingHighlights) return;
-    
+
     const lineTextMap = indexMainContent();
     if (lineTextMap.length === 0) {
+        // Content not rendered yet — single retry
         setTimeout(applyPendingHighlights, 500);
         return;
     }
@@ -119,45 +120,140 @@ function applyPendingHighlights() {
     console.time("Highlighting-Batch");
     toggleIndicator(true);
 
-    // 2. Simple normalization helper
+    // 2. Normalization helper
     const normalize = (val) => {
         const s = (val === null || val === undefined) ? "" : String(val);
         return s.replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'").replace(/\s+/g, ' ').trim();
     };
 
-    // 3. Process every highlight in a single loop
-    // No more checking if it is "near viewport"
+    const notFound = [];
+
+    // 3. Process every highlight in a single loop over the pre-built index
     pendingHighlights.forEach(h => {
         try {
             const text = normalize(h.text);
-            const pre = normalize(h.pre || h.pre_text);
+            const pre  = normalize(h.pre || h.pre_text);
             const post = normalize(h.post || h.post_text);
-            
+
+            if (!text) return;
+
+            let bestMatch = null;
+            let bestScore = 0;
+
             for (const item of lineTextMap) {
                 const lineText = item.text;
-                // Check for full match or simple text match
-                const fullMatch = (pre && post) ? lineText.indexOf(`${pre} ${text} ${post}`) : -1;
-                const textIdx = lineText.indexOf(text);
-                
-                if (fullMatch !== -1 || textIdx !== -1) {
-                    const startIdx = fullMatch !== -1 ? fullMatch + pre.length + 1 : textIdx;
-                    
-                    // Apply immediately to the DOM
-                    highlightTextInElementNormalized(item.element, text, h.id, h.color, startIdx);
-                    break; 
+
+                // Level 1: full context (pre + text + post) — score 100
+                if (pre && post && bestScore < 100) {
+                    const idx = lineText.indexOf(`${pre} ${text} ${post}`);
+                    if (idx !== -1) {
+                        bestMatch = { element: item.element, startIndex: idx + pre.length + 1, matchType: 'full-context' };
+                        bestScore = 100;
+                        break; // can't do better, stop searching
+                    }
+                }
+
+                // Level 2: pre + text — score 90
+                if (pre && bestScore < 90) {
+                    const idx = lineText.indexOf(`${pre} ${text}`);
+                    if (idx !== -1) {
+                        bestMatch = { element: item.element, startIndex: idx + pre.length + 1, matchType: 'pre-text' };
+                        bestScore = 90;
+                    }
+                }
+
+                // Level 3: text + post — score 85
+                if (post && bestScore < 85) {
+                    const idx = lineText.indexOf(`${text} ${post}`);
+                    if (idx !== -1) {
+                        bestMatch = { element: item.element, startIndex: idx, matchType: 'text-post' };
+                        bestScore = 85;
+                    }
+                }
+
+                // Level 4: text-only with context-bonus scoring — score 50+
+                // Uses < 80 so we keep scanning even after a partial match,
+                // allowing an exact full-element match (score 80) to win
+                if (bestScore < 80) {
+                    const idx = lineText.indexOf(text);
+                    if (idx !== -1) {
+                        let score = 50;
+                        // Exact full-element match — prevents "Narmada" matching inside
+                        // "The rift valleys of the Narmada..." when a standalone element exists
+                        if (lineText === text) {
+                            score = 80;
+                        } else {
+                            if (pre) {
+                                const before = lineText.substring(Math.max(0, idx - pre.length - 5), idx).trim();
+                                if (before.includes(pre)) score += 10;
+                            }
+                            if (post) {
+                                const after = lineText.substring(idx + text.length, idx + text.length + post.length + 5).trim();
+                                if (after.includes(post)) score += 10;
+                            }
+                        }
+                        if (score > bestScore) {
+                            // startIndex: 0 intentionally — text-only index comes from a differently
+                            // normalized string so it's not safe to use as a DOM offset anchor.
+                            // highlightTextInElementNormalized will search from 0 and find the text fine.
+                            bestMatch = { element: item.element, startIndex: 0, matchType: 'text-only' };
+                            bestScore = score;
+                        }
+                        // Found an exact match — no point searching further
+                        if (bestScore === 80) break;
+                    }
                 }
             }
-        } catch (e) { 
-            console.error("Error applying batch highlight:", e); 
+
+            if (!bestMatch) {
+                console.warn(`❌ No match: "${text.substring(0, 50)}..."`);
+                notFound.push({ id: h.id, text: h.text, pre: h.pre, post: h.post });
+                return;
+            }
+
+            console.log(`✓ Match (${bestMatch.matchType}, score=${bestScore}): "${text.substring(0, 40)}..."`);
+
+            highlightTextInElementNormalized(
+                bestMatch.element,
+                text,
+                h.id,
+                h.color,
+                bestMatch.startIndex
+            );
+
+        } catch (e) {
+            console.error("Error applying highlight:", e);
         }
     });
 
-    // 4. Clean up
-    pendingHighlights = []; // Clear the queue so it doesn't re-run
+    // 4. Clean up — no retry since highlights only live in base-content which is always loaded
+    pendingHighlights = [];
     isProcessingHighlights = false;
     console.timeEnd("Highlighting-Batch");
     console.log("%c✓ All Highlights Applied in Batch", "color: #4CAF50; font-weight: bold;");
     toggleIndicator(false);
+
+    // 5. Diagnostic logging
+    const REPORT_KEY = `MISSING_HIGHLIGHTS_${PAGE_ID}`;
+    if (window[REPORT_KEY]) console.groupEnd();
+    window[REPORT_KEY] = true;
+    const groupFn = notFound.length ? console.groupCollapsed : console.group;
+    groupFn.call(console,
+        `%c Highlights: ${notFound.length === 0 ? 'all applied' : (pendingHighlights.length - notFound.length) + ' applied'} | ${notFound.length} NOT FOUND`,
+        `background:${notFound.length ? '#ffebee' : '#e8f5e9'};color:${notFound.length ? '#c62828' : '#2e7d32'};padding:4px 8px;border-radius:4px;font-weight:bold;`
+    );
+    if (notFound.length) {
+        notFound.forEach(i => {
+            console.log(`%cID: %c${i.id}`,        'font-weight:bold;', 'color:#666;');
+            console.log(`   %cText: %c"${i.text}"`, 'color:#1976d2;',   'font-style:italic;');
+            console.log(`   %cPre:  %c"${i.pre}"`,  'color:#7b1fa2;',   '');
+            console.log(`   %cPost: %c"${i.post}"`, 'color:#7b1fa2;',   '');
+            console.log('---');
+        });
+    } else {
+        console.log('%cAll highlights applied!', 'color:#2e7d32;font-weight:bold;');
+    }
+    console.groupEnd();
 }
 
 function highlightTextInElementNormalized(element, searchText, id, color, startFromIndex = 0) {
@@ -190,7 +286,8 @@ function highlightTextInElementNormalized(element, searchText, id, color, startF
       const normalized = normalizeChar(char);
       
       if (/\s/.test(char)) {
-        if (elementNormalized.length === 0 || elementNormalized[elementNormalized.length - 1] !== ' ') {
+        // Skip leading whitespace entirely, collapse internal whitespace to single space
+        if (elementNormalized.length > 0 && elementNormalized[elementNormalized.length - 1] !== ' ') {
           elementNormalized += ' ';
           positionMap.push({ node, offset: i });
         }
@@ -201,20 +298,17 @@ function highlightTextInElementNormalized(element, searchText, id, color, startF
     }
   }
   
-  // Try to find the text at the given startFromIndex first
   let startIdx = -1;
   if (startFromIndex >= 0 && startFromIndex < elementNormalized.length) {
     startIdx = elementNormalized.indexOf(normalizedSearch, startFromIndex);
   }
   
-  // If not found at startFromIndex, search from beginning
   if (startIdx === -1) {
     startIdx = elementNormalized.indexOf(normalizedSearch);
   }
   
   if (startIdx === -1) {
     console.warn('Could not find text in element:', normalizedSearch.substring(0, 50) + '...');
-    console.log('Element normalized text:', elementNormalized.substring(0, 200) + '...');
     return false;
   }
   
@@ -228,7 +322,6 @@ function highlightTextInElementNormalized(element, searchText, id, color, startF
     return false;
   }
   
-  // Remove any existing highlight with this ID
   const existing = document.querySelector(`[data-id="${id}"]`);
   if (existing) {
     const parent = existing.parentNode;
@@ -247,7 +340,6 @@ function highlightTextInElementNormalized(element, searchText, id, color, startF
     span.dataset.id = id;
     span.style.background = color || '#ffff88';
     
-    // Try surroundContents, fall back to manual wrapping if it fails
     try {
       range.surroundContents(span);
     } catch (e) {
@@ -427,8 +519,12 @@ function getTextContext(range) {
   const before = fullText.substring(0, startIdx);
   const after  = fullText.substring(startIdx + selectedText.length);
 
-  const preWords  = before.trim().split(/\s+/).slice(-4);
-  const postWords = after.trim().split(/\s+/).slice(0, 4);
+  const beforeTrimmed = before.trim();
+  const afterTrimmed  = after.trim();
+
+  // Guard: "".split(/\s+/) returns [""] not [] — so check before splitting
+  const preWords  = beforeTrimmed ? beforeTrimmed.split(/\s+/).slice(-4) : [];
+  const postWords = afterTrimmed  ? afterTrimmed.split(/\s+/).slice(0, 4) : [];
 
   const pre  = preWords.length  ? preWords.join(' ')  : '';
   const post = postWords.length ? postWords.join(' ') : '';
@@ -452,7 +548,6 @@ async function createHighlight() {
   
   const { text, pre, post, startContainer, startOffset, endContainer, endOffset } = currentSelectionData;
 
-  // Ensure text is a string
   const textStr = String(text || '').trim();
   if (!textStr) {
     console.error('Invalid text selection');
@@ -530,7 +625,6 @@ function handleSelectionEnd(e) {
     return;
   }
 
-  // Check if selection is within main-content section
   const range = sel.getRangeAt(0);
   const container = range.commonAncestorContainer.nodeType === Node.TEXT_NODE
     ? range.commonAncestorContainer.parentElement
@@ -606,8 +700,6 @@ contextMenu.addEventListener('click', async (e) => {
   
   hideContextMenu();
 });
-
-// Add this new listener right after your existing contextMenu.addEventListener('click', ...);
 
 contextMenu.addEventListener('touchend', async (e) => {
   e.preventDefault();
@@ -1715,7 +1807,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
             setupEventDelegation();
 
-            // --- LOAD SAVED PREFERENCES ---
             const savedPrefs = localStorage.getItem(`section_prefs_${PAGE_ID}`);
             const hasSavedData = savedPrefs !== null;
             const prefs = hasSavedData ? JSON.parse(savedPrefs) : {};
@@ -1734,9 +1825,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     const sectionId = section.id;
                     const labelText = sectionId.replace("section-", "");
 
-                    // Determine if section should be on: 
-                    // 1. Check LocalStorage first. 
-                    // 2. If no LocalStorage, use the "Consolidated" default logic.
                     let shouldBeChecked;
                     if (hasSavedData && prefs.hasOwnProperty(sectionId)) {
                         shouldBeChecked = prefs[sectionId];
@@ -1746,11 +1834,9 @@ document.addEventListener("DOMContentLoaded", () => {
                         shouldBeChecked = isConsolidated || (!consolidatedSection && isBase);
                     }
 
-                    // Create the toggle UI
                     const wrapper = createSectionToggle(section, sectionId, labelText, shouldBeChecked);
                     controlsFragment.appendChild(wrapper);
 
-                    // Apply Visibility State
                     if (shouldBeChecked) {
                         processSection(section);
                         section.style.setProperty('display', 'block', 'important');
@@ -1765,7 +1851,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 controls.appendChild(controlsFragment);
             }
 
-            // --- FINAL PAGE SETUP ---
             setTimeout(() => {
                 loading.style.opacity = "0";
                 loading.style.transition = "opacity 0.3s ease-out";
@@ -1797,7 +1882,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// Helper to save current states of all checkboxes
 function saveSectionPreference(sectionId, isChecked) {
     const storageKey = `section_prefs_${PAGE_ID}`;
     const currentPrefs = JSON.parse(localStorage.getItem(storageKey) || "{}");
@@ -1822,7 +1906,6 @@ function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
       return;
     }
     
-    // --- NEW: Save preference immediately on change ---
     saveSectionPreference(sectionId, checkbox.checked);
     
     isProcessingSection = true;
@@ -1868,7 +1951,6 @@ function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
 function setupScrollControls() {
   scrollControls = getCachedElement("#scroll-controls") || document.getElementById("scroll-controls");
 
-  // Hide controls if page is not scrollable
   function checkScrollability() {
     const isScrollable = document.documentElement.scrollHeight > window.innerHeight;
     if (scrollControls) {
@@ -1880,11 +1962,8 @@ function setupScrollControls() {
     }
   }
 
-  // Check after a delay to allow content to render, and on resize
   setTimeout(checkScrollability, 1500);
   window.addEventListener('resize', checkScrollability);
-  
-  // Also check when sections are toggled (call this in your section toggle handler)
   window.checkScrollability = checkScrollability;
 
   const speedRange = getCachedElement("#speedRange") || document.getElementById("speedRange");
@@ -2136,22 +2215,19 @@ function setupCacheBuster() {
     cacheBusterButton.className = "bust-cache-button";
     
     cacheBusterButton.addEventListener('click', async function() {
-        // 1. Clear In-Memory Logic
         DOM_CACHE.clear();
         COMPUTATION_CACHE.clear();
         parentLinesCache.clear();
         if (typeof estimator !== 'undefined') estimator.reset();
         
-        // 2. Clear All Storage
         try {
-            localStorage.clear(); // Clears section prefs
-            sessionStorage.clear(); // Clears any temporary session data
+            localStorage.clear();
+            sessionStorage.clear();
             console.log('Storage wiped');
         } catch (err) {
             console.warn('Storage clear failed:', err);
         }
         
-        // 3. Service Worker / Cache API
         if ('caches' in window) {
             try {
                 const cacheNames = await caches.keys();
@@ -2161,10 +2237,8 @@ function setupCacheBuster() {
             }
         }
         
-        // 4. THE MASTER STROKE: Force reload with a cache-busting query param
-        // This tricks the server/browser into thinking it's a brand new page
         const url = new URL(window.location.href);
-        url.searchParams.set('t', Date.now()); // Adds ?t=1707...
+        url.searchParams.set('t', Date.now());
         window.location.href = url.toString();
     });
 
