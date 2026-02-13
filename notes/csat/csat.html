@@ -69,13 +69,15 @@
         - Place Value (Local Value):
             - The value of a digit based on its position in a number, calculated by multiplying the digit’s face value by the corresponding power of 10.
                 - Indian Number System:
-                    - The places are organized as follows: Ten Crore (\(10^8\)), Crore (\(10^7\)), Ten Lakh (\(10^6\)), Lakh (\(10^5\)), Ten Thousand (\(10^4\)), Thousand (\(10^3\)), Hundred (\(10^2\)), Ten (\(10^1\)), One (\(10^0\)).
+                    - The places are organized as follows: 
+                        - Ten Crore (\(10^8\)), Crore (\(10^7\)), Ten Lakh (\(10^6\)), Lakh (\(10^5\)), Ten Thousand (\(10^4\)), Thousand (\(10^3\)), Hundred (\(10^2\)), Ten (\(10^1\)), One (\(10^0\)).
                     - Example: 
-                        - In 12345678, the place value of 2 is \(2 \times 10^6 = 2,000,000\) (20 Lakh in Indian system).
+                        - In 1,23,45,678 (first comma after 3 digits, then every 2 digits from left)
                 - International Number System:
-                    - The places are organized as: Hundred Million (\(10^8\)), Ten Million (\(10^7\)), Million (\(10^6\)), Hundred Thousand (\(10^5\)), Ten Thousand (\(10^4\)), Thousand (\(10^3\)), Hundred (\(10^2\)), Ten (\(10^1\)), One (\(10^0\)).
+                    - The places are organized as: 
+                        - Hundred Million (\(10^8\)), Ten Million (\(10^7\)), Million (\(10^6\)), Hundred Thousand (\(10^5\)), Ten Thousand (\(10^4\)), Thousand (\(10^3\)), Hundred (\(10^2\)), Ten (\(10^1\)), One (\(10^0\)).
                     - Example: 
-                        - In 12345678, the place value of 2 is \(2 \times 10^6 = 2,000,000\) (2 Million in International system).
+                        - In 12,345,678 (comma after every 3 digits from left)
         - Types of Numbers:
             - Natural Numbers (N):
                 - These are the counting numbers starting from 1: \(\{1, 2, 3, \ldots\}\).
@@ -105,7 +107,6 @@
                     - Because some equations cannot be solved using only real numbers.
                     - Example:
                         - x² + 1 = 0 → x² = −1
-                    - No real number squared equals −1.
                     - No real number squared gives −1, so mathematicians defined “i” to handle such cases.
             - Even Numbers:
                 - Numbers divisible by 2, including zero (e.g., 0, 2, 4, 6, …).
@@ -119,16 +120,23 @@
                         - 1 is not a prime number (it has only one factor).
                         - 2 is the only even prime number.
                         - The smallest odd prime number is 3.
-                        - For any prime number \(p \leq 5\), when divided by 6, the remainder is either 1 or 5 (e.g., for 5: \(5 \div 6 = 0\) remainder 5).
                 - Prime Number Test:
                     - To determine if a number \(P\) is prime:
                         - 1. Find a whole number \(x\) such that \(x > \sqrt{P}\).
                         - 2. List all prime numbers less than or equal to \(x\).
                         - 3. If none of these primes divide \(P\) exactly (remainder 0), then \(P\) is prime; otherwise, it is not.
                     - Example: 
-                        - For \(P = 29\), \(\sqrt{29} \approx 5.39\), so \(x = 6\). Primes \(\leq 6\): 2, 3, 5. Check: 29 is not divisible by 2, 3, or 5, so 29 is prime.
+                        - For \(P = 29\), \(\sqrt{29} \approx 5.39\), so \(x = 6\). 
+                        - Primes \(\leq 6\): 
+                            - 2, 3, 5. 
+                        - Check: 
+                            - 29 is not divisible by 2, 3, or 5, so 29 is prime.
             - Twin Primes:
-                    - A pair of prime numbers that differ by 2.
+                - A pair of prime numbers that differ by 2.
+                - Relevance of twin prime:
+                    - They test how primes are distributed (prime distribution)
+                    - There is a major open problem called the Twin Prime Conjecture which states that there are infinitely many twin primes, which is still unproven
+                    - Links to advanced number theory
                 - Examples:
                     - (3, 5), (5, 7), (11, 13), (17, 19), (29, 31)
             - Composite Numbers:
@@ -182,7 +190,45 @@
                 - Mod just means - “What is left over after division?”
             - What is triple-bar sign (≡):
                 - It means congruence or identity
-        - Division Formula (Basic Identity):
+        - Addition rule:
+            - Rule:
+                - \(
+                    (a + b) \bmod n = \left[(a \bmod n) + (b \bmod n)\right] \bmod n
+                \)
+                - Code reference
+                    - We can't use "%" to replace "mod" in real maths, but reference is just to get clarity
+                    - In coding the above expression can be written as:
+                        - (a + b) % n = ((a % n) + (b % n)) % n
+            - CSAT Usage: 
+                - Combine multiple numbers under modulo without full sum.
+                - Find remainder when 12345 + 6789 is divided by 7
+                    - \(
+                        12345 \bmod 7 = 4, \quad 6789 \bmod 7 = 0
+                    \)
+                    - \(
+                        (12345 + 6789) \bmod 7 = (4 + 0) \bmod 7 = 4
+                    \)
+        - Multiplication rule:
+            - Rule:
+                - \(
+                    (a \cdot b) \bmod n = \left[(a \bmod n)(b \bmod n)\right] \bmod n
+                \)
+                - Code reference
+                    - We can't use "%" to replace "mod" in real maths, but reference is just to get clarity
+                    - In coding the above expression can be written as:
+                        - (a.b) % n = ((a % n) . (b % n)) % n
+                - The first three terms are multiples of \(n\), so modulo-\(n\) they vanish.
+                - Only the product of remainders \(r_a r_b\) affects the final remainder.
+            - CSAT usage: 
+                - Simplify multiplication under modulo.
+                - Find remainder when 234 × 567 is divided by 9
+                - \(
+                    234 \bmod 9 = 0, \quad 567 \bmod 9 = 0
+                \)
+                - \(
+                    (234 \cdot 567) \bmod 9 = (0 \cdot 0) \bmod 9 = 0
+                \)
+        - Division rule:
             - Any division statement follows:
                 - \(
                     \text{Dividend} = (\text{Divisor} \times \text{Quotient}) + \text{Remainder}
@@ -211,151 +257,118 @@
                         - 100 + (13 - 9) = 104
                     - Step 4 – Conclude:
                         - Smallest 3-digit number divisible by 13 = 104
-        - Remainder Theorem:
-            - When you divide \(a\) by \(b\), you can always write:
-                - \(
-                    a = bq + r,\quad 0 \le r &lt; b
-                \)
-                - where \(q\) is the quotient and \(r\) is the remainder.
+        - Congruence rule
+            - For integers \(a, b, n\) with \(n > 0\):
+                - \( a \equiv b \pmod{n} \quad \text{iff} \quad n \mid (a - b) \)
+            - Simple meaning of this expression:
+                - On divide both numbers a and b by n, they leave the same remainder
+                - Equivalently, (a − b) is divisible by n
+                - Read it as:
+                    - "a is congruent to b modulo n"
+            - Converting negative remainder to positive (general rule):
+                - In modulo arithmetic, two numbers are congruent if their difference is divisible by the modulus:
+                    - \(a \equiv b \pmod{n} \iff n \mid (a-b)\)
+                - Since:
+                    - \((-1) - (n-1)  = -n\)
+                - Which is divisible by \(n\) and can be represented as:
+                    - \( -1 \equiv n-1 \pmod{n} \)
             - CSAT usage: 
                 - Quickly find remainder of large numbers without full division.
-                - Find remainder when 9876 is divided by 13
-                    - Break down: 
-                        - \(9876 = 9800 + 76\)
-                    - Compute remainders separately:
-                        - \(
-                            9800 \bmod 13 = 11, \quad 76 \bmod 13 = 11
-                        \)
-                    - Combine using addition property: 
-                        - \(
-                            (9800 \bmod 13 + 76 \bmod 13) \bmod 13 = (11 + 11) \bmod 13 = 22 \bmod 13 = 9
-                        \)
-                    - Remainder = 9
-        - Addition:
-            - Rule:
-                - \(
-                    (a + b) \bmod n = \left[(a \bmod n) + (b \bmod n)\right] \bmod n
-                \)
-                - Code reference
-                    - We can't use "%" to replace "mod" in real maths, but reference is just to get clarity
-                    - In coding the above expression can be written as:
-                        - (a + b) % n = ((a % n) + (b % n)) % n
-            - Intuition:
-                - Write both numbers in remainder form:
-                    - \(
-                        a = nA + r_a,\qquad b = nB + r_b
-                    \)
-                - Add:
-                    - \(
-                        a + b = n(A + B) + (r_a + r_b)
-                    \)
-                - The term \(n(A+B)\) is a multiple of \(n\), so it becomes \(0\) in modulo-\(n\).
-                - Only the remainder sum \(r_a + r_b\) matters.
-            - CSAT Usage: 
-                - Combine multiple numbers under modulo without full sum.
-                - Find remainder when 12345 + 6789 is divided by 7
-                    - \(
-                        12345 \bmod 7 = 4, \quad 6789 \bmod 7 = 0
-                    \)
-                    - \(
-                        (12345 + 6789) \bmod 7 = (4 + 0) \bmod 7 = 4
-                    \)
-        - Multiplication:
-            - Rule:
-                - \(
-                    (a \cdot b) \bmod n = \left[(a \bmod n)(b \bmod n)\right] \bmod n
-                \)
-                - Code reference
-                    - We can't use "%" to replace "mod" in real maths, but reference is just to get clarity
-                    - In coding the above expression can be written as:
-                        - (a.b) % n = ((a % n) . (b % n)) % n
-            - Intuition:
-                - Write:
-                    - \(
-                        a = nA + r_a,\qquad b = nB + r_b
-                    \)
-                - Multiply:
-                    - \(
-                        ab = (nA + r_a)(nB + r_b)
-                    \)
-                    - \(
-                        ab = n^2 AB + nAr_b + nB r_a + r_a r_b
-                    \)
-                - The first three terms are multiples of \(n\), so modulo-\(n\) they vanish.
-                - Only the product of remainders \(r_a r_b\) affects the final remainder.
-            - CSAT usage: 
-                - Simplify multiplication under modulo.
-                - Find remainder when 234 × 567 is divided by 9
-                - \(
-                    234 \bmod 9 = 0, \quad 567 \bmod 9 = 0
-                \)
-                - \(
-                    (234 \cdot 567) \bmod 9 = (0 \cdot 0) \bmod 9 = 0
-                \)
+                - Find remainder when \(10^6 + 37\) is divided by \(13\)
+                    - Step 1: Find smallest dividend using division rule:
+                        - We want a dividend that gives same remainder as given when 10 is divided by 13 to replace the original dividend and simplify the computation
+                            - Original equation:
+                                - \( 10 \bmod 13 = 10 \)
+                            - Let the new dividend be x, then:
+                                - \( x \bmod 13 = 10 \)
+                        - Find smallest value of x using division rule
+                            - \(
+                                \text{Dividend} = (\text{Divisor} \times \text{Quotient}) + \text{Remainder}, \text{where } 0 \le r &lt; n
+                            \)
+                            - Here, divisor and remainder are already fixed
+                                - Divisor = 13
+                                - Remainder = 10
+                        - Test different values of Quotient to find dividend smaller than existing dividend (10):
+                            - For \( q = 0 \)
+                                - Dividend becomes 10, which is already the case
+                            - For \( q = -1 \)
+                                - Dividend becomes -3, which is less than 10
+                                - Note:
+                                    - Using a smaller (positive or negative) congruent value often makes powers and products easier to compute.
+                        - Therefore:
+                            - \( (-3) \bmod 13 = 10 \)
+                    - Step 2: Use congruence and replace original dividend:
+                        - \(10 \equiv -3 \pmod{13}\)
+                        - Raise to power:
+                            - \(10^6 \equiv (-3)^6 \pmod{13}\)
+                            - \( (-3)^6 = 729 \)
+                    - Step 3: Reduce modulo:
+                        - Reduce first term:
+                            - \( 729 \equiv 1 \pmod{13} \)
+                        - Reduce second term:
+                            - \(37 \equiv 11 \pmod{13}\)
+                    - Step 4: Combine using addition rule:
+                        - \( 10^6 + 37 \equiv 1 + 11 \pmod{13} \)
+                            - \( (10^6 + 37) \) gives the same remainder as \( (1 + 11) \) when divided by 13
+                        - \( 1 + 11 \pmod{13} = 12 \pmod{13}\)
+                        - Therefore
+                            - Remainder 12
+        - Number decomposition trick:
+            - A number can be decomposed like this:
+                - 9876 = 9800 + 76
+            - Computation can be done separately on each number and then combined
         - Fermat’s Little Theorem:
             - If \(p\) is prime and \(a\) is not divisible by \(p\), then:
                 - \(
                     a^{p-1} \equiv 1 \pmod p
                 \)
-                - Formula explanation
-                    - Compare \(
-                            a^{p-1}
-                        \) and \(
-                            1
-                        \) using the rule “modulo \(p\)”. If they are congruent, it means:
-                        - \(
-                            a^{p-1}
-                        \) and \(
-                            1
-                        \) leave the same remainder when divided by \(p\).
-                    - When you take the number \(a\), raise it to the power \(p-1\), and then look at its remainder when divided by \(p\), the remainder will always be \(1\), as long as \(p\) is prime and \(a\) is not a multiple of \(p\).
-            - Intuition:
-                - The numbers \(1,2,\ldots,p-1\) form a perfect multiplicative cycle under mod \(p\).
-                - Multiplying \(a\) repeatedly cycles through the same set.
-                - After exactly \(p-1\) multiplications, it returns to \(1\).
+                - Formula explanation:
+                    - \( a^{p-1} \) and \( 1 \) leave the same remainder when divided by \(p\)
             - CSAT usage: 
                 - Quickly find remainder of large exponents with prime divisor using Fermat’s Little Theorem.
                 - Find remainder when \(7^{222}\) is divided by 13
-                    - Step 1 – Identify values: 
-                        - \(a = 7\) (base), \(p = 13\) (prime divisor)
-                    - Step 2 – Apply Fermat’s Little Theorem: 
-                        - Since \(p = 13\) is prime and \(7\) is not divisible by 13: 
-                        - \(
-                            7^{12} \equiv 1 \pmod {13}
-                        \)
-                    - Step 3 – Express exponent in multiples of \(p-1\): 
-                        - Basically express by divisor formula by dividing with (p-1)
-                        - \(222 = 12 \times 18 + 6\)
-                        - \(
-                            7^{222} = 7^{12\cdot 18 + 6} = (7^{12})^{18} \cdot 7^6
-                        \)
-                    - Step 4 – Replace \(7^{12} \equiv 1\) using Fermat: 
-                        - \(
-                            (7^{12})^{18} \cdot 7^6 \equiv 1^{18} \cdot 7^6 \equiv 7^6 \pmod {13}
-                        \)
-                    - Step 5 – Compute smaller power modulo 13: 
-                        - \(7^6 = 117649 \equiv 9 \pmod {13}\)
-                    - Step 6 – Conclude: 
-                        - Remainder = 9
+                    - Step 1 – Identify values:
+                        - \(a = 7\), \(p = 13\)
+                    - Step 2 – Apply Fermat’s Little Theorem:
+                        - Since \(p\) is prime and \(7 \not\equiv 0 \pmod{13}\):
+                        - \(7^{12} \equiv 1 \pmod{13}\)
+                    - Step 3 – Express exponent in multiples of \(p-1\):
+                        - \(222 = 12 \cdot 18 + 6\)
+                            - Using division rule
+                        - \(7^{222} = (7^{12})^{18} \cdot 7^6\)
+                    - Step 4 – Replace using Fermat (expanded):
+                        - From Fermat’s Little Theorem:
+                            - \(7^{12} \equiv 1 \pmod{13}\)
+                        - Multiply:
+                            - \(7^{222} \equiv 1^{18} \cdot 7^6 \equiv 7^6 \pmod{13}\)
+                    - Step 5 – Reduce smaller power modulo 13:
+                        - Simplify
+                            - \(7^6 \equiv 7^2 \cdot 7^4 \pmod{13}\)
+                        - First compute square:
+                            - \(7^2 = 49 = 13 \cdot 3 + 10\)
+                                - Using division rule
+                            - \(7^2 \equiv 10 \pmod{13}\)
+                        - Then fourth power:
+                            - \(7^4 = (7^2)^2\)
+                            - \(7^4 \equiv 10^2 = 100\)
+                            - \(100 = 13 \cdot 7 + 9\)
+                                - Using division rule
+                            - \(7^4 \equiv 9 \pmod{13}\)
+                        - Then sixth power:
+                            - \(7^6 = 7^4 \cdot 7^2\)
+                            - \(7^6 \equiv 9 \cdot 10 = 90\)
+                            - \(90 = 13 \cdot 6 + 12\)
+                                - Using division rule
+                            - \(7^6 \equiv 12 \pmod{13}\)
+                    - Step 6 – Conclude:
+                        - Remainder = \(12\)
         - Wilson’s Theorem:
             - For any prime \(p\):
                 - \(
                     (p-1)! \equiv -1 \pmod p
                 \)
                 - Formula explanation
-                    - Compare \((p-1)!\) and \(-1\) using modulo \(p\).
-                    - If they are congruent, it means:
-                        - \((p-1)!\) and \(-1\) leave the same remainder when divided by \(p\).
-            - Intuition:
-                - In mod \(p\), every number \(1\) to \(p-1\) has a unique multiplicative inverse.
-                - Almost all numbers pair up with their inverse and multiply to \(1\).
-                - Only two numbers do not pair:
-                    - \(1\) (self-inverse)
-                    - \(p - 1 \equiv -1 \pmod p\) (also self-inverse)
-                - Thus:
-                    - \(
-                        (p-1)! = 1 \cdot (p-1) \equiv -1 \pmod p
-                    \)
+                    - \((p-1)!\) and \(-1\) leave the same remainder when divided by \(p\).
             - CSAT usage: 
                 - Quickly find remainder of (p-1)! when divided by a prime p using Wilson’s Theorem.
                 - Find remainder of 10! when divided by 11
@@ -365,13 +378,13 @@
                     - Step 2 – Apply Wilson’s Theorem: 
                         - For a prime p: 
                             - \((p-1)! \equiv -1 \pmod p\)
-                        - So: 
-                            - \(
-                                10! \equiv -1 \pmod {11}
-                            \)
+                        - Hence:
+                            - \(10! \equiv -1 \pmod{11}\)
                     - Step 3 – Convert negative remainder to positive: 
-                        - In modulo arithmetic, \(-1 \equiv p-1 \pmod p\)
-                        - \(-1 \equiv 11-1 = 10 \pmod {11}\)
+                        - Converting negative remainder using congruence rule 
+                            - \(-1 \equiv p-1 \pmod p\)
+                        - Therefore
+                            - \(-1 \equiv 10 \pmod{11}\)
                     - Step 4 – Conclude: 
                         - Remainder = 10
 
