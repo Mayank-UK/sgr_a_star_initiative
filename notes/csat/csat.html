@@ -410,6 +410,8 @@
                 - Simplify \(2 + 3 \times (4 - 1)^2\): First, \(4 - 1 = 3\), then \(3^2 = 9\), then \(3 \times 9 = 27\), finally \(2 + 27 = 29\).
 
     - Divisibility Rules:
+        - Note
+            - From below shortcut tricks, few of them save time while half of them  are a waste of time
         - By 2:
             - Last digit is 0, 2, 4, 6, or 8.
             - Example: 
@@ -454,13 +456,13 @@
             - Number is divisible by both 3 and 4.
             - Example: 
                 - 24 is divisible by 3 (\(2 + 4 = 6\)) and 4 (\(24 \div 4 = 6\)), so divisible by 12.
-        - By 13:
-            - Multiply the last digit by 9, add it to the rest of the number.  
-            - If the result is divisible by 13, so is the original number.  
+        - By 13 (Useless):
+            - Multiply the last digit by 4, add it to the rest of the number.
+            - If the result is divisible by 13, so is the original number.
+            - Repeat the process if needed.
             - Example:
-                - 273 → last digit 3 → \(3 × 9 = 27\); add to 27 → \(27 + 27 = 54\); \(54 ÷ 13 = 4.15\) → not divisible.  
-                - 351 → last digit 1 → \(1 × 9 = 9\); add to 35 → \(35 + 9 = 44\); \(44 ÷ 13 = 3.38\) → not divisible.  
-                - 585 → last digit 5 → \(5 × 9 = 45\); add to 58 → \(58 + 45 = 103\); \(103 ÷ 13 = 7.92\) → divisible (13×8=104, so close enough).  
+                - 273 → last digit 3 → (3 × 4 = 12); add to 27 → (27 + 12 = 39); 39 ÷ 13 = 3 → divisible.
+                - 274 → last digit 4 → (4 × 4 = 16); add to 27 → (27 + 16 = 43); 43 ÷ 13 = 3 remainder 4 → not divisible.
         - By 14:
             - Number divisible by both 2 and 7.  
             - Example:
@@ -473,16 +475,16 @@
             - Last 4 digits form a number divisible by 16.  
             - Example:
                 - 8512 → last 4 digits 8512 → \(8512 ÷ 16 = 532\).  
-        - By 17:
+        - By 17 (Useless):
             - Subtract 5 times the last digit from the remaining number.  
             - If result divisible by 17, so is the number.  
             - Example:
                 - 595 → last digit 5 → \(5×5=25\); \(59 - 25 = 34\); \(34 ÷ 17 = 2\).  
         - By 18:
-            - Number is even and divisible by 9.
+            - Number is divisible by 2 and 9.
             - Example: 
-                - 18 is even and divisible by 9 (\(1 + 8 = 9\)), so divisible by 18.
-        - By 19:
+                - 18 is divisible by 2 and divisible by 9 (\(1 + 8 = 9\)), so divisible by 18.
+        - By 19 (Useless):
             - Add twice the last digit to the rest of the number.  
             - If the result is divisible by 19, so is the number.  
             - Example:
@@ -509,46 +511,67 @@
                 - 1125, last three digits 125, divisible by 125.
 
     - Useful Properties of Numbers:
-        - Property 1:
-            - The difference of the squares of any two odd numbers is always divisible by 8.
-            - Example:
-                - \(5^2 - 3^2 = 25 - 9 = 16 = 8 \times 2\)
-                - \(11^2 - 3^2 = 121 - 9 = 112 = 8 \times 14\)
-        - Property 2:
-            - The sum of any two consecutive numbers is equal to the difference of their squares.
-            - Example:
-                - \(3 + 4 = 7 = 4^2 - 3^2\)
-                - \(6 + 7 = 13 = 7^2 - 6^2\)
-        - Property 3:
-            - The sum of the cubes of any three consecutive numbers is divisible by the sum of the numbers themselves.
-            - Example:
-                - \(2^3 + 3^3 + 4^3 = 8 + 27 + 64 = 99\)
-                - Sum = \(2 + 3 + 4 = 9\), and \(99 = 9 \times 11\)
-        - Property 4:
-            - If \(p\) divides both \(q\) and \(r\), then \(p\) also divides their sum or difference.
-            - Example:
-                - 4 divides 12 and 20
-                - \(12 + 20 = 32\), divisible by 4
-                - \(20 - 12 = 8\), also divisible by 4
-        - Property 5:
-            - If a number is divisible by another number, then it must also be divisible by each factor of that number.
-            - Example:
-                - 48 is divisible by 12
-                - Factors of 12: 1, 2, 3, 4, 6, 12
-                - So 48 is divisible by 2, 3, 4, 6
-        - Property 6:
-            - Product of three consecutive numbers is always divisible by 6.
-            - Example:
-                - \(1 \times 2 \times 3 = 6\)
-                - Any such product always divisible by both 2 and 3 → hence divisible by 6
-        - Property 7:
-            - \((x^m - a^m)\) is divisible by \((x - a)\) for all values of \(m\)
-        - Property 8:
-            - \((x^m - a^m)\) is divisible by \((x + a)\) for even values of \(m\)
-        - Property 9:
-            - \((x^m + a^m)\) is divisible by \((x + a)\) for odd values of \(m\)
-        - Property 10:
-            - If a number when divided by \(x\) leaves remainder \(y\), then when the same number is divided by a factor \(a\) of \(x\), the remainder is \(y \mod a\)
+        - Even/Odd properties:
+            - Odd ± Odd = Even
+                - Whenever confused take take example of 3 to deduce
+            - Even ± Even = Even
+                - Whenever confused take take example of 2 to deduce
+            - Odd ± Even = Odd
+                - Whenever confused take take example of 2 and 3 to deduce
+            - Odd × Odd = Odd
+                - Conclusion:
+                    - \( \text{Odd}^n = \text{Odd} \)
+            - Even × Anything = Even
+                - Conclusion:
+                    - \( \text{Even}^n = \text{Even} \)
+            - Factor to identify Even/Odd instantly:
+                - For \( (a^n - b^n) \):
+                    - \( a^n - b^n = (a - b)(a^{n-1} + a^{n-2}b + \dots + ab^{n-2} + b^{n-1}) \)
+                    - \( a^n - b^n \) always contains \( (a - b) \) as a factor to quickly deduce fundamental conclusions like value will be even or odd
+                    - Can also be used to deduce that \( a^n - b^n \) is always divisible \( (a - b) \)
+                    - Can also be used to deduce that \( a^n - b^n \) is always divisible \( (a + b) \) for all even values of n
+                - For \( (a^n + b^n) \):
+                    - If \( n \) is odd:
+                        - \( a^n + b^n = (a + b)\left(a^{n-1} - a^{n-2}b + a^{n-3}b^2 - \dots - ab^{n-2} + b^{n-1}\right) \)
+                        - \( a^n + b^n \) always contains \( (a + b) \) as a factor to quickly deduce fundamental conclusions like value will be even or odd
+                        - Can also be used to deduce that \( a^n + b^n \) is always divisible \( (a + b) \)
+                    - If \( n \) is even:
+                        - No general equation exist when n is even.
+                        - No guaranteed factors \( (a + b) \text{or} (a - b) \) to deduce a conclusion confidently
+        - Some consecutive integer properties:
+            - Product of any 2 consecutive integers divisible by 2
+                - Example:
+                    - \( 4 \times 5 = 20 \)
+                    - One of any two consecutive integers is even, therefore product always divisible by \( 2 \)
+            - Product of any 3 consecutive integers divisible by 2, 3 and 6
+                - Or, in other words \( n^3 - n \text{ is divisible by } 2, 3 \text{ and } 6 \)
+                    - Since \( n^3 - n = n(n-1)(n+1) \), it is another way of representing product of three consecutive integers
+                - Example:
+                    - \(1 \times 2 \times 3 = 6\)
+                    - Any such product always divisible by both 2 and 3 → hence divisible by 6
+            - Sum of any 2 consecutive numbers is equal to the difference of their squares
+                - Example:
+                    - \(3 + 4 = 7 = 4^2 - 3^2\)
+                    - \(6 + 7 = 13 = 7^2 - 6^2\)
+            - Sum of the cubes of any 3 consecutive numbers is divisible by the sum of the numbers themselves
+                - Example:
+                    - \(2^3 + 3^3 + 4^3 = 8 + 27 + 64 = 99\)
+                    - Sum = \(2 + 3 + 4 = 9\), and \(99 = 9 \times 11\)
+        - Some division properties:
+            - If a number is divisible by another number, then it must also be divisible by each factor of that number
+                - Example:
+                    - 48 is divisible by 12
+                    - Factors of 12: 1, 2, 3, 4, 6, 12
+                    - So 48 is divisible by 2, 3, 4, 6
+            - If \(p\) divides both \(q\) and \(r\), then \(p\) also divides their sum or difference
+                - Example:
+                    - 4 divides 12 and 20
+                    - \(12 + 20 = 32\), divisible by 4
+                    - \(20 - 12 = 8\), also divisible by 4
+        - Other properties:
+            - Difference of the squares of any 2 odd numbers is always divisible by 2, 4 and 8
+                - Example:
+                    - \(11^2 - 3^2 = 121 - 9 = 112 = 8 \times 14\)
 
     - Number of Digits and Unit Digits:
         - Number of Digits in \(N = b^k\):
@@ -1942,6 +1965,16 @@
                         - Total maximum marks = \( 50 + 100 = 150 \)
                         - Aggregate percentage
                             - \( = \frac{100}{150} \times 100 = 66.67\% \)
+
+    - Important properties
+        - \( x\% \text{ of } y = y\% \text{ of } x \)
+            - Example:
+                - \( 25\% \text{ of } 48 \)
+                    - \( = \frac{25}{100} \times 48 \)
+                    - \( = 12 \)
+                - \( 48\% \text{ of } 25 \)
+                    - \( = \frac{48}{100} \times 25 \)
+                    - \( = 12 \)
 
 
 - Order of Magnitude
