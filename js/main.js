@@ -45,20 +45,37 @@ console.log('PAGE_ID:', PAGE_ID);
 
 let pendingHighlights = [];
 
+// ----------------------------------------------------------------------------
+// Indicator: ref-counted so rapid show/hide cycles never prematurely dismiss.
+// Rule: every toggleIndicator(true) MUST be paired with toggleIndicator(false).
+// ----------------------------------------------------------------------------
+let _indicatorCount = 0;
+let _indicatorHideTimer = null;
 
 function toggleIndicator(show) {
-    let indicator = document.getElementById('highlight-indicator');
-    if (!indicator) {
-        indicator = document.createElement('div');
-        indicator.id = 'highlight-indicator';
-        document.body.appendChild(indicator);
+  let indicator = document.getElementById('highlight-indicator');
+  if (!indicator) {
+    indicator = document.createElement('div');
+    indicator.id = 'highlight-indicator';
+    document.body.appendChild(indicator);
+  }
+
+  if (show) {
+    _indicatorCount++;
+    if (_indicatorHideTimer) {
+      clearTimeout(_indicatorHideTimer);
+      _indicatorHideTimer = null;
     }
-    
-    if (show) {
-        indicator.classList.add('active');
-    } else {
-        setTimeout(() => indicator.classList.remove('active'), 500);
+    indicator.classList.add('active');
+  } else {
+    _indicatorCount = Math.max(0, _indicatorCount - 1);
+    if (_indicatorCount === 0) {
+      _indicatorHideTimer = setTimeout(() => {
+        indicator.classList.remove('active');
+        _indicatorHideTimer = null;
+      }, 500);
     }
+  }
 }
 
 async function loadHighlights() {
@@ -67,7 +84,7 @@ async function loadHighlights() {
 
     const res = await fetch(`${SCRIPT_URL}?page_id=${encodeURIComponent(PAGE_ID)}`);
     if (!res.ok) throw new Error('Failed to fetch highlights');
-    
+
     const highlights = await res.json();
     if (!Array.isArray(highlights)) throw new Error('Invalid server data');
 
@@ -81,186 +98,190 @@ async function loadHighlights() {
 
     console.log(`Loaded ${pendingHighlights.length} highlights from server`);
 
-    // If no highlights exist for this page, turn off spinner immediately
     if (pendingHighlights.length === 0) {
+      // Nothing to apply — release the indicator opened above
       toggleIndicator(false);
       return;
     }
 
+    // Hand off to applyPendingHighlights.
+    // Release the loadHighlights indicator now; applyPendingHighlights opens its own.
+    toggleIndicator(false);
     setTimeout(applyPendingHighlights, 400);
   } catch (err) {
     console.error('Failed to load highlights:', err);
+    // Always release on error so the indicator doesn't hang
+    toggleIndicator(false);
   }
 }
 
-// Global variable to keep track of the index
-let lineTextMap = [];
-
 function indexMainContent() {
-    const mainContentSection = document.getElementById('section-base-content');
-    if (!mainContentSection) return [];
+  const mainContentSection = document.getElementById('section-base-content');
+  if (!mainContentSection) return [];
 
-    return Array.from(mainContentSection.querySelectorAll('.line-content')).map(el => ({
-        element: el,
-        text: String(el.textContent || '')
-            .replace(/[\u201C\u201D]/g, '"')
-            .replace(/[\u2018\u2019]/g, "'")
-            .replace(/\s+/g, ' ')
-            .trim()
-    }));
+  return Array.from(mainContentSection.querySelectorAll('.line-content')).map(el => ({
+    element: el,
+    text: String(el.textContent || '')
+      .replace(/[\u201C\u201D]/g, '"')
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/\s+/g, ' ')
+      .trim()
+  }));
 }
 
-let isProcessingHighlights = false;
+// Mutex: prevents two concurrent executions of the highlight loop.
+// It has NO relationship to the indicator — the indicator is managed separately.
+let isHighlightLoopRunning = false;
 
 function applyPendingHighlights() {
-    // 1. Guard clauses
-    if (!pendingHighlights || pendingHighlights.length === 0 || isProcessingHighlights) return;
+  // Nothing to do
+  if (!pendingHighlights || pendingHighlights.length === 0) return;
 
-    const lineTextMap = indexMainContent();
-    if (lineTextMap.length === 0) {
-        // Content not rendered yet — single retry
-        setTimeout(applyPendingHighlights, 500);
-        return;
-    }
+  // Loop already running — bail to avoid double-processing
+  if (isHighlightLoopRunning) return;
 
-    isProcessingHighlights = true;
-    console.time("Highlighting-Batch");
-    toggleIndicator(true);
+  const lineTextMap = indexMainContent();
+  if (lineTextMap.length === 0) {
+    // Content not rendered yet — retry after a short wait.
+    // No indicator change needed: we haven't opened one yet.
+    setTimeout(applyPendingHighlights, 500);
+    return;
+  }
 
-    // 2. Normalization helper
-    const normalize = (val) => {
-        const s = (val === null || val === undefined) ? "" : String(val);
-        return s.replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'").replace(/\s+/g, ' ').trim();
-    };
+  // --- From here we own the loop ---
+  isHighlightLoopRunning = true;
+  toggleIndicator(true);
+  console.time("Highlighting-Batch");
 
-    const notFound = [];
+  const normalize = (val) => {
+    const s = (val === null || val === undefined) ? "" : String(val);
+    return s.replace(/[\u201C\u201D]/g, '"').replace(/[\u2018\u2019]/g, "'").replace(/\s+/g, ' ').trim();
+  };
 
-    // 3. Process every highlight in a single loop over the pre-built index
+  const notFound = [];
+
+  try {
     pendingHighlights.forEach(h => {
-        try {
-            const text = normalize(h.text);
-            const pre  = normalize(h.pre || h.pre_text);
-            const post = normalize(h.post || h.post_text);
+      try {
+        const text = normalize(h.text);
+        const pre  = normalize(h.pre || h.pre_text);
+        const post = normalize(h.post || h.post_text);
 
-            if (!text) return;
+        if (!text) return;
 
-            let bestMatch = null;
-            let bestScore = 0;
+        let bestMatch = null;
+        let bestScore = 0;
 
-            for (const item of lineTextMap) {
-                const lineText = item.text;
+        for (const item of lineTextMap) {
+          const lineText = item.text;
 
-                // Level 1: full context (pre + text + post) — score 100
-                if (pre && post && bestScore < 100) {
-                    const idx = lineText.indexOf(`${pre} ${text} ${post}`);
-                    if (idx !== -1) {
-                        bestMatch = { element: item.element, startIndex: idx + pre.length + 1, matchType: 'full-context' };
-                        bestScore = 100;
-                        break; // can't do better, stop searching
-                    }
-                }
-
-                // Level 2: pre + text — score 90
-                if (pre && bestScore < 90) {
-                    const idx = lineText.indexOf(`${pre} ${text}`);
-                    if (idx !== -1) {
-                        bestMatch = { element: item.element, startIndex: idx + pre.length + 1, matchType: 'pre-text' };
-                        bestScore = 90;
-                    }
-                }
-
-                // Level 3: text + post — score 85
-                if (post && bestScore < 85) {
-                    const idx = lineText.indexOf(`${text} ${post}`);
-                    if (idx !== -1) {
-                        bestMatch = { element: item.element, startIndex: idx, matchType: 'text-post' };
-                        bestScore = 85;
-                    }
-                }
-
-                // Level 4: text-only with context-bonus scoring — score 50+
-                // Uses < 80 so we keep scanning even after a partial match,
-                // allowing an exact full-element match (score 80) to win
-                if (bestScore < 80) {
-                    const idx = lineText.indexOf(text);
-                    if (idx !== -1) {
-                        let score = 50;
-                        // Exact full-element match — prevents "Narmada" matching inside
-                        // "The rift valleys of the Narmada..." when a standalone element exists
-                        if (lineText === text) {
-                            score = 80;
-                        } else {
-                            if (pre) {
-                                const before = lineText.substring(Math.max(0, idx - pre.length - 5), idx).trim();
-                                if (before.includes(pre)) score += 10;
-                            }
-                            if (post) {
-                                const after = lineText.substring(idx + text.length, idx + text.length + post.length + 5).trim();
-                                if (after.includes(post)) score += 10;
-                            }
-                        }
-                        if (score > bestScore) {
-                            // startIndex: 0 intentionally — text-only index comes from a differently
-                            // normalized string so it's not safe to use as a DOM offset anchor.
-                            // highlightTextInElementNormalized will search from 0 and find the text fine.
-                            bestMatch = { element: item.element, startIndex: 0, matchType: 'text-only' };
-                            bestScore = score;
-                        }
-                        // Found an exact match — no point searching further
-                        if (bestScore === 80) break;
-                    }
-                }
+          // Level 1: full context (pre + text + post) — score 100
+          if (pre && post && bestScore < 100) {
+            const idx = lineText.indexOf(`${pre} ${text} ${post}`);
+            if (idx !== -1) {
+              bestMatch = { element: item.element, startIndex: idx + pre.length + 1, matchType: 'full-context' };
+              bestScore = 100;
+              break;
             }
+          }
 
-            if (!bestMatch) {
-                console.warn(`❌ No match: "${text.substring(0, 50)}..."`);
-                notFound.push({ id: h.id, text: h.text, pre: h.pre, post: h.post });
-                return;
+          // Level 2: pre + text — score 90
+          if (pre && bestScore < 90) {
+            const idx = lineText.indexOf(`${pre} ${text}`);
+            if (idx !== -1) {
+              bestMatch = { element: item.element, startIndex: idx + pre.length + 1, matchType: 'pre-text' };
+              bestScore = 90;
             }
+          }
 
-            console.log(`✓ Match (${bestMatch.matchType}, score=${bestScore}): "${text.substring(0, 40)}..."`);
+          // Level 3: text + post — score 85
+          if (post && bestScore < 85) {
+            const idx = lineText.indexOf(`${text} ${post}`);
+            if (idx !== -1) {
+              bestMatch = { element: item.element, startIndex: idx, matchType: 'text-post' };
+              bestScore = 85;
+            }
+          }
 
-            highlightTextInElementNormalized(
-                bestMatch.element,
-                text,
-                h.id,
-                h.color,
-                bestMatch.startIndex
-            );
-
-        } catch (e) {
-            console.error("Error applying highlight:", e);
+          // Level 4: text-only with context-bonus scoring — score 50+
+          if (bestScore < 80) {
+            const idx = lineText.indexOf(text);
+            if (idx !== -1) {
+              let score = 50;
+              if (lineText === text) {
+                score = 80;
+              } else {
+                if (pre) {
+                  const before = lineText.substring(Math.max(0, idx - pre.length - 5), idx).trim();
+                  if (before.includes(pre)) score += 10;
+                }
+                if (post) {
+                  const after = lineText.substring(idx + text.length, idx + text.length + post.length + 5).trim();
+                  if (after.includes(post)) score += 10;
+                }
+              }
+              if (score > bestScore) {
+                bestMatch = { element: item.element, startIndex: 0, matchType: 'text-only' };
+                bestScore = score;
+              }
+              if (bestScore === 80) break;
+            }
+          }
         }
-    });
 
-    // 4. Clean up — no retry since highlights only live in base-content which is always loaded
+        if (!bestMatch) {
+          console.warn(`❌ No match: "${text.substring(0, 50)}..."`);
+          notFound.push({ id: h.id, text: h.text, pre: h.pre, post: h.post });
+          return;
+        }
+
+        console.log(`✓ Match (${bestMatch.matchType}, score=${bestScore}): "${text.substring(0, 40)}..."`);
+
+        highlightTextInElementNormalized(
+          bestMatch.element,
+          text,
+          h.id,
+          h.color,
+          bestMatch.startIndex
+        );
+      } catch (e) {
+        console.error("Error applying highlight:", e);
+      }
+    });
+  } finally {
+    // --- Always runs, even if something above throws ---
+    // Capture counts before clearing
+    const totalCount = pendingHighlights.length;
+    const appliedCount = totalCount - notFound.length;
+
     pendingHighlights = [];
-    isProcessingHighlights = false;
+    isHighlightLoopRunning = false;
     console.timeEnd("Highlighting-Batch");
-    console.log("%c✓ All Highlights Applied in Batch", "color: #4CAF50; font-weight: bold;");
+    console.log("%c✓ Highlight batch complete", "color: #4CAF50; font-weight: bold;");
     toggleIndicator(false);
 
-    // 5. Diagnostic logging
+    // Diagnostic logging
     const REPORT_KEY = `MISSING_HIGHLIGHTS_${PAGE_ID}`;
     if (window[REPORT_KEY]) console.groupEnd();
     window[REPORT_KEY] = true;
     const groupFn = notFound.length ? console.groupCollapsed : console.group;
     groupFn.call(console,
-        `%c Highlights: ${notFound.length === 0 ? 'all applied' : (pendingHighlights.length - notFound.length) + ' applied'} | ${notFound.length} NOT FOUND`,
-        `background:${notFound.length ? '#ffebee' : '#e8f5e9'};color:${notFound.length ? '#c62828' : '#2e7d32'};padding:4px 8px;border-radius:4px;font-weight:bold;`
+      `%c Highlights: ${notFound.length === 0 ? 'all applied' : `${appliedCount} applied`} | ${notFound.length} NOT FOUND`,
+      `background:${notFound.length ? '#ffebee' : '#e8f5e9'};color:${notFound.length ? '#c62828' : '#2e7d32'};padding:4px 8px;border-radius:4px;font-weight:bold;`
     );
     if (notFound.length) {
-        notFound.forEach(i => {
-            console.log(`%cID: %c${i.id}`,        'font-weight:bold;', 'color:#666;');
-            console.log(`   %cText: %c"${i.text}"`, 'color:#1976d2;',   'font-style:italic;');
-            console.log(`   %cPre:  %c"${i.pre}"`,  'color:#7b1fa2;',   '');
-            console.log(`   %cPost: %c"${i.post}"`, 'color:#7b1fa2;',   '');
-            console.log('---');
-        });
+      notFound.forEach(i => {
+        console.log(`%cID: %c${i.id}`,         'font-weight:bold;', 'color:#666;');
+        console.log(`   %cText: %c"${i.text}"`, 'color:#1976d2;',   'font-style:italic;');
+        console.log(`   %cPre:  %c"${i.pre}"`,  'color:#7b1fa2;',   '');
+        console.log(`   %cPost: %c"${i.post}"`, 'color:#7b1fa2;',   '');
+        console.log('---');
+      });
     } else {
-        console.log('%cAll highlights applied!', 'color:#2e7d32;font-weight:bold;');
+      console.log('%cAll highlights applied!', 'color:#2e7d32;font-weight:bold;');
     }
     console.groupEnd();
+  }
 }
 
 function highlightTextInElementNormalized(element, searchText, id, color, startFromIndex = 0) {
@@ -269,31 +290,30 @@ function highlightTextInElementNormalized(element, searchText, id, color, startF
     if (c === '\u2018' || c === '\u2019' || c === "'") return "'";
     return c;
   };
-  
+
   const normalizedSearch = searchText.replace(/\s+/g, ' ').trim();
-  
+
   const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
   const textNodes = [];
   while (walker.nextNode()) {
     textNodes.push(walker.currentNode);
   }
-  
+
   if (textNodes.length === 0) {
     console.warn('No text nodes found in element');
     return false;
   }
-  
+
   let elementNormalized = '';
   const positionMap = [];
-  
+
   for (const node of textNodes) {
     const text = node.textContent;
     for (let i = 0; i < text.length; i++) {
       const char = text[i];
       const normalized = normalizeChar(char);
-      
+
       if (/\s/.test(char)) {
-        // Skip leading whitespace entirely, collapse internal whitespace to single space
         if (elementNormalized.length > 0 && elementNormalized[elementNormalized.length - 1] !== ' ') {
           elementNormalized += ' ';
           positionMap.push({ node, offset: i });
@@ -304,31 +324,31 @@ function highlightTextInElementNormalized(element, searchText, id, color, startF
       }
     }
   }
-  
+
   let startIdx = -1;
   if (startFromIndex >= 0 && startFromIndex < elementNormalized.length) {
     startIdx = elementNormalized.indexOf(normalizedSearch, startFromIndex);
   }
-  
+
   if (startIdx === -1) {
     startIdx = elementNormalized.indexOf(normalizedSearch);
   }
-  
+
   if (startIdx === -1) {
     console.warn('Could not find text in element:', normalizedSearch.substring(0, 50) + '...');
     return false;
   }
-  
+
   const endIdx = startIdx + normalizedSearch.length - 1;
-  
+
   const startPos = positionMap[startIdx];
   const endPos = positionMap[endIdx];
-  
+
   if (!startPos || !endPos) {
     console.warn('Could not map positions - startIdx:', startIdx, 'endIdx:', endIdx, 'mapLength:', positionMap.length);
     return false;
   }
-  
+
   const existing = document.querySelector(`[data-id="${id}"]`);
   if (existing) {
     const parent = existing.parentNode;
@@ -336,7 +356,7 @@ function highlightTextInElementNormalized(element, searchText, id, color, startF
     parent.replaceChild(textNode, existing);
     parent.normalize();
   }
-  
+
   const range = document.createRange();
   try {
     range.setStart(startPos.node, startPos.offset);
@@ -346,7 +366,7 @@ function highlightTextInElementNormalized(element, searchText, id, color, startF
     span.className = 'user-highlight';
     span.dataset.id = id;
     span.style.background = color || '#ffff88';
-    
+
     try {
       range.surroundContents(span);
     } catch (e) {
@@ -373,13 +393,13 @@ function highlightTextInElementPrecise(element, searchText, startCharIndex, id, 
   let startNode = null, startOffset = 0;
   let endNode = null, endOffset = 0;
   let charsMatched = 0;
-  
+
   const normalizeChar = (c) => {
     if (c === '\u201C' || c === '\u201D' || c === '"') return '"';
     if (c === '\u2018' || c === '\u2019' || c === "'") return "'";
     return c;
   };
-  
+
   const target = searchText.replace(/\s+/g, ' ').trim();
 
   while (walker.nextNode()) {
@@ -474,19 +494,19 @@ async function saveHighlightToServer(record) {
 
 async function deleteHighlightOnServer(id) {
   try {
-    const params = new URLSearchParams({ 
-      action: 'delete', 
-      id, 
-      page_id: PAGE_ID 
+    const params = new URLSearchParams({
+      action: 'delete',
+      id,
+      page_id: PAGE_ID
     });
     const response = await fetch(`${SCRIPT_URL}?${params.toString()}`);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP ${response.status}`);
     }
 
     console.log('Deleted on server:', id);
-    
+
     const el = document.querySelector(`[data-id="${id}"]`);
     if (el) {
       const parent = el.parentNode;
@@ -529,7 +549,6 @@ function getTextContext(range) {
   const beforeTrimmed = before.trim();
   const afterTrimmed  = after.trim();
 
-  // Guard: "".split(/\s+/) returns [""] not [] — so check before splitting
   const preWords  = beforeTrimmed ? beforeTrimmed.split(/\s+/).slice(-4) : [];
   const postWords = afterTrimmed  ? afterTrimmed.split(/\s+/).slice(0, 4) : [];
 
@@ -552,7 +571,7 @@ let currentSelectionData = null;
 
 async function createHighlight() {
   if (!currentSelectionData) return;
-  
+
   const { text, pre, post, startContainer, startOffset, endContainer, endOffset } = currentSelectionData;
 
   const textStr = String(text || '').trim();
@@ -577,7 +596,7 @@ async function createHighlight() {
   span.className = 'user-highlight';
   span.dataset.id = id;
   span.style.background = color;
-  
+
   try {
     range.surroundContents(span);
   } catch (err) {
@@ -585,12 +604,12 @@ async function createHighlight() {
     return;
   }
 
-  const record = { 
-    id, 
-    page_id: PAGE_ID, 
-    pre_text: String(pre || ''), 
-    text: textStr, 
-    post_text: String(post || ''), 
+  const record = {
+    id,
+    page_id: PAGE_ID,
+    pre_text: String(pre || ''),
+    text: textStr,
+    post_text: String(post || ''),
     color
   };
 
@@ -615,12 +634,12 @@ document.addEventListener('touchend', handleSelectionEnd);
 
 function handleSelectionEnd(e) {
   const sel = window.getSelection();
-  
+
   if (e.target.classList && e.target.classList.contains('user-highlight')) {
     hideContextMenu();
     return;
   }
-  
+
   if (!sel || sel.isCollapsed) {
     hideContextMenu();
     return;
@@ -636,7 +655,7 @@ function handleSelectionEnd(e) {
   const container = range.commonAncestorContainer.nodeType === Node.TEXT_NODE
     ? range.commonAncestorContainer.parentElement
     : range.commonAncestorContainer;
-  
+
   const mainContentSection = container.closest('#section-base-content');
   if (!mainContentSection) {
     hideContextMenu();
@@ -675,13 +694,13 @@ function handleSelectionEnd(e) {
   const menuHeight = 50;
   let left = clientX + window.scrollX;
   let top = clientY + window.scrollY;
-  
+
   const isTouchDevice = 'ontouchstart' in window;
   if (isTouchDevice) {
     top += 60;
     left += 10;
   }
-  
+
   if (left + menuWidth > window.innerWidth + window.scrollX) {
     left = window.innerWidth + window.scrollX - menuWidth - 10;
   }
@@ -704,7 +723,7 @@ contextMenu.addEventListener('click', async (e) => {
   if (menuItem.dataset.action === 'highlight' && currentSelectionData) {
     await createHighlight();
   }
-  
+
   hideContextMenu();
 });
 
@@ -717,7 +736,7 @@ contextMenu.addEventListener('touchend', async (e) => {
   if (menuItem.dataset.action === 'highlight' && currentSelectionData) {
     await createHighlight();
   }
-  
+
   hideContextMenu();
 }, { passive: false });
 
@@ -728,10 +747,10 @@ document.addEventListener('mousedown', (e) => {
 document.addEventListener('click', async (e) => {
   const el = e.target;
   if (!el.classList || !el.classList.contains('user-highlight')) return;
-  
+
   const id = el.dataset.id;
   if (!id) return;
-  
+
   if (!confirm('Remove this highlight?')) return;
 
   try {
@@ -743,12 +762,12 @@ document.addEventListener('click', async (e) => {
 
 const highlightStyles = document.createElement('style');
 highlightStyles.textContent = `
-  .user-highlight { 
-    cursor: pointer; 
-    background: #ffff88; 
+  .user-highlight {
+    cursor: pointer;
+    background: #ffff88;
   }
-  .user-highlight:hover { 
-    filter: brightness(0.95); 
+  .user-highlight:hover {
+    filter: brightness(0.95);
   }
 
   #highlight-context-menu {
@@ -862,7 +881,7 @@ function createSectionChecker() {
   const consolidatedRegex = /consolidated/i;
   const baseRegex = /base|content/i;
   const pyqRegex = /pyq/i;
-  
+
   return {
     isConsolidated: (id) => consolidatedRegex.test(id),
     isBase: (id) => baseRegex.test(id),
@@ -879,7 +898,7 @@ class ImprovedScrollEstimator {
     this.recordInterval = 500;
     this.lastRecordTime = Date.now();
     this.lastScrollPos = 0;
-    
+
     this.minJitterThreshold = 3;
     this.dataWindow = 300000;
     this.minDataPoints = 3;
@@ -888,7 +907,7 @@ class ImprovedScrollEstimator {
 
   recordScroll(currentPos, totalHeight) {
     const now = Date.now();
-    
+
     if (now - this.lastRecordTime < this.recordInterval) {
       return;
     }
@@ -913,7 +932,7 @@ class ImprovedScrollEstimator {
     if (totalHeight <= 0) return null;
 
     const scrollPercent = (currentPos / totalHeight) * 100;
-    
+
     if (scrollPercent >= 99) {
       return 0;
     }
@@ -925,7 +944,7 @@ class ImprovedScrollEstimator {
     const now = Date.now();
     const recentCutoff = now - 30000;
     const recentPoints = this.dataPoints.filter(dp => dp.time > recentCutoff);
-    
+
     const pointsToUse = recentPoints.length >= this.minDataPoints ? recentPoints : this.dataPoints;
 
     if (pointsToUse.length < this.minDataPoints) {
@@ -949,7 +968,7 @@ class ImprovedScrollEstimator {
     }
 
     const remainingDistance = totalHeight - currentPos;
-    
+
     if (remainingDistance <= 0) {
       return 0;
     }
@@ -963,7 +982,7 @@ class ImprovedScrollEstimator {
     const now = Date.now();
     const timeSinceStart = now - this.windowStart;
     const dataPoints = this.dataPoints.length;
-    
+
     const recentCutoff = now - 30000;
     const recentPoints = this.dataPoints.filter(dp => dp.time > recentCutoff);
 
@@ -1153,9 +1172,9 @@ function optimizedSmoothScroll(currentTime) {
     animationId = requestAnimationFrame(optimizedSmoothScroll);
     return;
   }
-  
+
   lastFrameTime = currentTime;
-  
+
   const pixelsPerFrame = scrollSpeed / 60;
   accumulatedPixels += pixelsPerFrame;
 
@@ -1213,7 +1232,7 @@ let lastScrollDirection = null;
 const throttledScrollDirection = throttle(() => {
   const currentY = window.scrollY;
   const goingUp = currentY < lastScrollY;
-  
+
   if (scrollControls) {
     if (goingUp) {
       scrollControls.style.opacity = "1";
@@ -1226,7 +1245,7 @@ const throttledScrollDirection = throttle(() => {
       if ('ontouchstart' in window) {
         scrollControls.style.opacity = "1";
         scrollControls.style.pointerEvents = "auto";
-        
+
         if (scrollTimeout) clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(() => {
           if (lastScrollDirection === 'down' && !isUserTouchScrolling) {
@@ -1240,7 +1259,7 @@ const throttledScrollDirection = throttle(() => {
       }
     }
   }
-  
+
   lastScrollY = currentY;
 }, 16);
 
@@ -1256,7 +1275,7 @@ const debouncedUserScroll = debounce(() => {
       }, 500);
     }
   }
-  
+
   if (!isScrolling) {
     lastAutoScrollY = window.scrollY;
   }
@@ -1264,7 +1283,7 @@ const debouncedUserScroll = debounce(() => {
 
 function formatTime(ms) {
   const seconds = Math.round(ms / 1000);
-  
+
   if (seconds < 60) {
     return `${seconds}s`;
   } else if (seconds < 3600) {
@@ -1281,19 +1300,19 @@ function formatTime(ms) {
 function updateScrollProgress() {
   const scrollTop = window.scrollY;
   const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  
+
   estimator.recordScroll(scrollTop, document.documentElement.scrollHeight);
-  
+
   const scrollPercent = docHeight > 0 ? Math.round((scrollTop / docHeight) * 100) : 0;
-  
+
   const progressFill = document.querySelector('.progress-fill-inline');
   const progressText = document.querySelector('.progress-text-inline');
   const estimatedTimeEl = document.querySelector('.estimated-time');
-  
+
   if (progressFill) {
     progressFill.style.width = scrollPercent + '%';
   }
-  
+
   if (progressText) {
     progressText.textContent = scrollPercent + '%';
   }
@@ -1314,7 +1333,7 @@ function updateScrollProgress() {
       } else {
         const timeStr = formatTime(etaMs);
         estimatedTimeEl.textContent = timeStr;
-        
+
         if (confidence > 0.7) {
           estimatedTimeEl.style.background = '#fff3cd';
           estimatedTimeEl.style.color = '#856404';
@@ -1342,20 +1361,20 @@ document.addEventListener('DOMContentLoaded', () => {
 function extractTablesAndContentOptimized(htmlString) {
   const tables = [];
   let tableIndex = 0;
-  
+
   function extractTable(html, startPos) {
     const openTag = '<table';
     const closeTag = '</table>';
-    
+
     let depth = 1;
     let pos = startPos + openTag.length;
-    
+
     while (pos < html.length && depth > 0) {
       const nextOpen = html.indexOf(openTag, pos);
       const nextClose = html.indexOf(closeTag, pos);
-      
+
       if (nextClose === -1) break;
-      
+
       if (nextOpen !== -1 && nextOpen < nextClose) {
         depth++;
         pos = nextOpen + openTag.length;
@@ -1364,20 +1383,20 @@ function extractTablesAndContentOptimized(htmlString) {
         pos = nextClose + closeTag.length;
       }
     }
-    
+
     return pos;
   }
-  
+
   let result = htmlString;
   let searchPos = 0;
-  
+
   while (true) {
     const tableStart = result.indexOf('<table', searchPos);
     if (tableStart === -1) break;
-    
+
     const tableEnd = extractTable(result, tableStart);
     const tableHTML = result.substring(tableStart, tableEnd);
-    
+
     const placeholder = `__TABLE_PLACEHOLDER_${tableIndex++}__`;
     const wrapper = document.createElement('div');
     wrapper.className = 'table-container';
@@ -1421,7 +1440,7 @@ function toggleFullScreenTable(tableContainer) {
         wrapper.remove();
         tableContainer.style.display = 'block';
         isTableFullScreen = false;
-        
+
         document.body.style.overflow = '';
         document.body.style.position = '';
         document.body.style.width = '';
@@ -1429,7 +1448,7 @@ function toggleFullScreenTable(tableContainer) {
         if (wrapper.dataset.scrollPos) {
           window.scrollTo(0, parseInt(wrapper.dataset.scrollPos));
         }
-        
+
         if (wasScrollingBeforeFullScreen && isScrollingAllowedByUser) {
           startAutoScroll();
         }
@@ -1439,13 +1458,13 @@ function toggleFullScreenTable(tableContainer) {
     wasScrollingBeforeFullScreen = isScrolling;
     isTableFullScreen = true;
     stopAutoScroll();
-    
+
     const scrollPos = window.scrollY;
     document.body.style.overflow = 'hidden';
     document.body.style.position = 'fixed';
     document.body.style.width = '100%';
     document.body.style.top = `-${scrollPos}px`;
-    
+
     tableContainer.style.display = 'none';
     const wrapper = document.createElement('div');
     wrapper.className = 'fullscreen-table-wrapper';
@@ -1478,7 +1497,7 @@ function optimizedProcessLine(line, index, lines) {
   const leadingSpaces = (normalized.match(REGEX_PATTERNS.leadingSpaces)?.[0] || "").length;
   const indentLevel = Math.floor(leadingSpaces / 2);
   const cleanText = normalized.trim();
-  
+
   if (!cleanText) {
     COMPUTATION_CACHE.set(cacheKey, { empty: true });
     return { empty: true };
@@ -1486,7 +1505,7 @@ function optimizedProcessLine(line, index, lines) {
 
   const nextLine = lines[index + 1] || "";
   const nextIndent = Math.floor(((nextLine.replace(REGEX_PATTERNS.tabs, "    ").match(REGEX_PATTERNS.leadingSpaces)?.[0]) || "").length / 2);
-  
+
   const result = {
     normalized,
     leadingSpaces,
@@ -1506,7 +1525,7 @@ function optimizedProcessLine(line, index, lines) {
 
   result.hasMarker = result.markerMatch && result.markerMatch[1].trim().length > 0;
   result.shortEnough = result.charLength <= 100 && result.wordCount <= 12;
-  result.isLikelyHeading = result.shortEnough && result.hasChildren && 
+  result.isLikelyHeading = result.shortEnough && result.hasChildren &&
     (!result.endsWithPunct || result.endsWithColon || result.endsWithQuestion);
 
   COMPUTATION_CACHE.set(cacheKey, result);
@@ -1524,12 +1543,12 @@ function generateParentLines(level, color = "#f4f6f8") {
     parentLinesCache.set(cacheKey, "none");
     return "none";
   }
-  
+
   const shadows = [];
   for (let i = 1; i < level; i++) {
     shadows.push(`${-1.5 * i}rem 0 0 ${color}`);
   }
-  
+
   const result = shadows.join(", ");
   parentLinesCache.set(cacheKey, result);
   return result;
@@ -1544,11 +1563,11 @@ function processSection(section) {
 
   const transformedLines = [];
   const indentStack = [];
-  
+
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index];
     const lineData = optimizedProcessLine(line, index, lines);
-    
+
     if (lineData.empty) continue;
 
     const { indentLevel, cleanText } = lineData;
@@ -1565,8 +1584,6 @@ function processSection(section) {
       indentStack.push(indentLevel);
     }
 
-    const paddingLeft = indentLevel * 1;
-    const linePosition = `${paddingLeft + 0.2}rem`;
     const customStyle = `padding-left: 0rem;`;
 
     if (lineData.isTable) {
@@ -1724,7 +1741,7 @@ function setupEventDelegation() {
       wrapper.classList.toggle('revealed');
       return;
     }
-    
+
     if (e.target.classList.contains('table-expand-icon')) {
       const container = e.target.closest('.table-container');
       if (container) {
@@ -1803,97 +1820,97 @@ const intersectionObserver = new IntersectionObserver((entries) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+  requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-            const sections = document.querySelectorAll('div[id^="section-"]');
-            if (sections.length === 0) {
-                console.warn("No sections found with id starting with 'section-'");
-                loading.remove();
-                return;
-            }
+      const sections = document.querySelectorAll('div[id^="section-"]');
+      if (sections.length === 0) {
+        console.warn("No sections found with id starting with 'section-'");
+        loading.remove();
+        return;
+      }
 
-            setupEventDelegation();
+      setupEventDelegation();
 
-            const savedPrefs = localStorage.getItem(`section_prefs_${PAGE_ID}`);
-            const hasSavedData = savedPrefs !== null;
-            const prefs = hasSavedData ? JSON.parse(savedPrefs) : {};
+      const savedPrefs = localStorage.getItem(`section_prefs_${PAGE_ID}`);
+      const hasSavedData = savedPrefs !== null;
+      const prefs = hasSavedData ? JSON.parse(savedPrefs) : {};
 
-            const consolidatedSection = Array.from(sections).find(section =>
-                sectionChecker.isConsolidated(section.id)
-            );
+      const consolidatedSection = Array.from(sections).find(section =>
+        sectionChecker.isConsolidated(section.id)
+      );
 
-            const controls = getCachedElement("#controls") || document.getElementById("controls");
-            let visibleSectionCount = 0;
+      const controls = getCachedElement("#controls") || document.getElementById("controls");
+      let visibleSectionCount = 0;
 
-            if (controls) {
-                const controlsFragment = document.createDocumentFragment();
+      if (controls) {
+        const controlsFragment = document.createDocumentFragment();
 
-                sections.forEach((section) => {
-                    const sectionId = section.id;
-                    const labelText = sectionId.replace("section-", "");
+        sections.forEach((section) => {
+          const sectionId = section.id;
+          const labelText = sectionId.replace("section-", "");
 
-                    let shouldBeChecked;
-                    if (hasSavedData && prefs.hasOwnProperty(sectionId)) {
-                        shouldBeChecked = prefs[sectionId];
-                    } else {
-                        const isConsolidated = sectionChecker.isConsolidated(sectionId);
-                        const isBase = sectionChecker.isBase(sectionId);
-                        shouldBeChecked = isConsolidated || (!consolidatedSection && isBase);
-                    }
+          let shouldBeChecked;
+          if (hasSavedData && prefs.hasOwnProperty(sectionId)) {
+            shouldBeChecked = prefs[sectionId];
+          } else {
+            const isConsolidated = sectionChecker.isConsolidated(sectionId);
+            const isBase = sectionChecker.isBase(sectionId);
+            shouldBeChecked = isConsolidated || (!consolidatedSection && isBase);
+          }
 
-                    const wrapper = createSectionToggle(section, sectionId, labelText, shouldBeChecked);
-                    controlsFragment.appendChild(wrapper);
+          const wrapper = createSectionToggle(section, sectionId, labelText, shouldBeChecked);
+          controlsFragment.appendChild(wrapper);
 
-                    if (shouldBeChecked) {
-                        processSection(section);
-                        section.style.setProperty('display', 'block', 'important');
-                        section.style.opacity = "1";
-                        visibleSectionCount++;
-                    } else {
-                        section.style.display = "none";
-                        intersectionObserver.observe(section);
-                    }
-                });
-
-                controls.appendChild(controlsFragment);
-            }
-
-            setTimeout(() => {
-                loading.style.opacity = "0";
-                loading.style.transition = "opacity 0.3s ease-out";
-                setTimeout(() => loading.remove(), 300);
-            }, visibleSectionCount * 50 + 100);
-
-            const pageTitle = document.title;
-            const h1 = document.createElement("h1");
-            h1.textContent = pageTitle;
-            h1.style.textAlign = "center";
-            h1.style.margin = "2rem 0";
-
-            const firstSection = document.querySelector('div[id^="section-"]');
-            if (firstSection) {
-                firstSection.parentNode.insertBefore(h1, firstSection);
-            }
-
-            setupScrollControls();
-            setupOutlineFeature();
-            setupCacheBuster();
-            setupNavigationWarning();
-            updateScrollProgress();
-
-            setTimeout(() => {
-                console.log('Loading highlights after DOM ready...');
-                loadHighlights();
-            }, 600);
+          if (shouldBeChecked) {
+            processSection(section);
+            section.style.setProperty('display', 'block', 'important');
+            section.style.opacity = "1";
+            visibleSectionCount++;
+          } else {
+            section.style.display = "none";
+            intersectionObserver.observe(section);
+          }
         });
+
+        controls.appendChild(controlsFragment);
+      }
+
+      setTimeout(() => {
+        loading.style.opacity = "0";
+        loading.style.transition = "opacity 0.3s ease-out";
+        setTimeout(() => loading.remove(), 300);
+      }, visibleSectionCount * 50 + 100);
+
+      const pageTitle = document.title;
+      const h1 = document.createElement("h1");
+      h1.textContent = pageTitle;
+      h1.style.textAlign = "center";
+      h1.style.margin = "2rem 0";
+
+      const firstSection = document.querySelector('div[id^="section-"]');
+      if (firstSection) {
+        firstSection.parentNode.insertBefore(h1, firstSection);
+      }
+
+      setupScrollControls();
+      setupOutlineFeature();
+      setupCacheBuster();
+      setupNavigationWarning();
+      updateScrollProgress();
+
+      setTimeout(() => {
+        console.log('Loading highlights after DOM ready...');
+        loadHighlights();
+      }, 600);
     });
+  });
 });
 
 function saveSectionPreference(sectionId, isChecked) {
-    const storageKey = `section_prefs_${PAGE_ID}`;
-    const currentPrefs = JSON.parse(localStorage.getItem(storageKey) || "{}");
-    currentPrefs[sectionId] = isChecked;
-    localStorage.setItem(storageKey, JSON.stringify(currentPrefs));
+  const storageKey = `section_prefs_${PAGE_ID}`;
+  const currentPrefs = JSON.parse(localStorage.getItem(storageKey) || "{}");
+  currentPrefs[sectionId] = isChecked;
+  localStorage.setItem(storageKey, JSON.stringify(currentPrefs));
 }
 
 function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
@@ -1912,17 +1929,17 @@ function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
       checkbox.checked = !checkbox.checked;
       return;
     }
-    
+
     saveSectionPreference(sectionId, checkbox.checked);
-    
+
     isProcessingSection = true;
     const switchLoading = document.createElement("div");
     switchLoading.className = "loading-overlay";
     switchLoading.innerHTML = `<div class="loading-spinner"></div><span>Processing...</span>`;
     document.body.appendChild(switchLoading);
-    
+
     checkbox.disabled = true;
-    
+
     setTimeout(() => {
       const targetSection = document.getElementById(sectionId);
       if (checkbox.checked) {
@@ -1932,7 +1949,7 @@ function createSectionToggle(section, sectionId, labelText, shouldBeChecked) {
       } else {
         targetSection.style.display = "none";
       }
-      
+
       switchLoading.remove();
       checkbox.disabled = false;
       isProcessingSection = false;
@@ -2021,7 +2038,7 @@ function setupScrollControls() {
 
   window.addEventListener("scroll", throttledScrollDirection, { passive: true });
   window.addEventListener("scroll", debouncedUserScroll, { passive: true });
-  
+
   window.addEventListener("wheel", (e) => {
     if (isScrollingAllowedByUser && !isUserInteracting) {
       isUserInteracting = true;
@@ -2039,7 +2056,7 @@ function setupOutlineFeature() {
   outlineButton.textContent = "View Outline";
   outlineButton.id = "generate-outline-button";
   outlineButton.className = "outline-toggle-button";
-  
+
   const controls = getCachedElement("#controls") || document.getElementById("controls");
   controls.appendChild(outlineButton);
 
@@ -2157,7 +2174,7 @@ function setupOutlineFeature() {
 
   outlineButton.addEventListener("click", () => {
     outlineSidebar.style.display = "block";
-    
+
     while (outlineSidebar.children.length > 1) {
       outlineSidebar.removeChild(outlineSidebar.lastChild);
     }
@@ -2216,55 +2233,55 @@ function setupOutlineFeature() {
 }
 
 function setupCacheBuster() {
-    const cacheBusterButton = document.createElement('button');
-    cacheBusterButton.textContent = "Bust cache";
-    cacheBusterButton.id = "bust-cache-button";
-    cacheBusterButton.className = "bust-cache-button";
-    
-    cacheBusterButton.addEventListener('click', async function() {
-        DOM_CACHE.clear();
-        COMPUTATION_CACHE.clear();
-        parentLinesCache.clear();
-        if (typeof estimator !== 'undefined') estimator.reset();
-        
-        try {
-            localStorage.clear();
-            sessionStorage.clear();
-            console.log('Storage wiped');
-        } catch (err) {
-            console.warn('Storage clear failed:', err);
-        }
-        
-        if ('caches' in window) {
-            try {
-                const cacheNames = await caches.keys();
-                await Promise.all(cacheNames.map(name => caches.delete(name)));
-            } catch (err) {
-                console.warn('Cache API clear failed:', err);
-            }
-        }
-        
-        const url = new URL(window.location.href);
-        url.searchParams.set('t', Date.now());
-        window.location.href = url.toString();
-    });
+  const cacheBusterButton = document.createElement('button');
+  cacheBusterButton.textContent = "Bust cache";
+  cacheBusterButton.id = "bust-cache-button";
+  cacheBusterButton.className = "bust-cache-button";
 
-    const controls = getCachedElement("#controls") || document.getElementById("controls");
-    if (controls) controls.appendChild(cacheBusterButton);
+  cacheBusterButton.addEventListener('click', async function() {
+    DOM_CACHE.clear();
+    COMPUTATION_CACHE.clear();
+    parentLinesCache.clear();
+    if (typeof estimator !== 'undefined') estimator.reset();
+
+    try {
+      localStorage.clear();
+      sessionStorage.clear();
+      console.log('Storage wiped');
+    } catch (err) {
+      console.warn('Storage clear failed:', err);
+    }
+
+    if ('caches' in window) {
+      try {
+        const cacheNames = await caches.keys();
+        await Promise.all(cacheNames.map(name => caches.delete(name)));
+      } catch (err) {
+        console.warn('Cache API clear failed:', err);
+      }
+    }
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('t', Date.now());
+    window.location.href = url.toString();
+  });
+
+  const controls = getCachedElement("#controls") || document.getElementById("controls");
+  if (controls) controls.appendChild(cacheBusterButton);
 }
 
 window.addEventListener('beforeunload', () => {
   DOM_CACHE.clear();
   COMPUTATION_CACHE.clear();
   parentLinesCache.clear();
-  
+
   if (animationId) {
     cancelAnimationFrame(animationId);
   }
-  
+
   if (pauseTimeout) clearTimeout(pauseTimeout);
   if (userScrollTimeout) clearTimeout(userScrollTimeout);
-  
+
   if (intersectionObserver) {
     intersectionObserver.disconnect();
   }
@@ -2284,7 +2301,7 @@ function setupNavigationWarning() {
     }
 
     window.history.pushState({ type: 'blocked' }, '', window.location.href);
-    
+
     dialogOpen = true;
     showNavigationWarningDialog(
       () => {
