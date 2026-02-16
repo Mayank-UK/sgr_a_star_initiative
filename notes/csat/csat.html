@@ -702,7 +702,7 @@
                     - Use \( n \mod 4 \) to find the position in the cycle:
                         - If remainder = 0 → take 4th element.
                         - Else → take element at remainder’s position.
-                    - Examples:
+                    - Example cases 1:
                         - \(2137^{2138}\)
                             - Base ends with 7 → cycle {7, 9, 3, 1}
                             - \(2138 \mod 4 = 2\) → 2nd element = 9 → unit digit = 9
@@ -715,7 +715,7 @@
                         - \(9233^{210}\)
                             - Base ends with 3 → cycle {3, 9, 7, 1}
                             - \(210 \mod 4 = 2\) → 2nd element = 9 → unit digit = 9
-                                - Example 1:
+                    - Example cases 2:
                         - \(6789^{4567^{8910}}\)
                             - Step 1:
                                 - Base ends with 9 → cycle = {9, 1} → length = 2
@@ -744,10 +744,11 @@
                                     - Exponent = \(219^{220}\)
                                     - We only need \(219^{220} \mod 4\).
                             - Step 4:
-                                - Since 219 ÷ 4 gives remainder 3 (because 4×54=216, remainder 3),
-                                    - Base ≡ 3 (mod 4)
-                                - Now find \(3^{220} \mod 4\):
-                                    - \(3^{220} \mod 4\) is just mathmatical alternative to represent \(219^{220}\)
+                                - Since 219 ÷ 4 gives remainder 3 (because 4×54=216, remainder 3)
+                                - Using modular congruency rule
+                                    - \( 219^{220} \equiv 3^{220} \pmod{4} \)
+                                    - \(3^{220} \mod 4\) and \(219^{220}\) gives same remainder using modular congruence rule.
+                                - Now find pattern formed by \(3^{220} \mod 4\):
                                     - Pattern of 3ⁿ mod 4 → {3, 1, 3, 1} → repeats every 2.
                                     - Since exponent 220 is even → remainder = 1.
                                 - Hence \(219^{220} \mod 4 = 1\).
@@ -755,7 +756,7 @@
                                 - Remainder 1 → means 1st element of the cycle {7, 9, 3, 1}.
                             - Therefore:
                                 - Unit digit = 7
-                - Rule 5 (Special Note for Bases Ending in 0, 1, 5, 6):
+                - Rule 5 (For Bases Ending in 0, 1, 5, 6):
                     - These always yield the same unit digit, regardless of power.
                     - 0 → always 0
                     - 1 → always 1
@@ -766,18 +767,21 @@
                         - \(251^{999}\) → last digit = 1 → unit digit = 1
                         - \(125^{500}\) → last digit = 5 → unit digit = 5
                         - \(216^{84}\) → last digit = 6 → unit digit = 6
-            - Important Notes:
-                - Any number ending in 0, 1, 5, or 6 will always have the same unit digit for any power.
-                - The rest (2, 3, 4, 7, 8, 9) show repeating patterns with cycle lengths 2 or 4.
-                - Knowing these saves time in competitive exams.
 
     - Additional Concepts:
         - Recurring Decimals:
             - For a fraction \(\frac{p}{q}\), if \(q\) is coprime with 10 (i.e., not divisible by 2 or 5), the decimal expansion is recurring.
+                - This simply means the denominator should not be divisible by 2, 5 and 10 to be recurring
             - The period is the smallest \(k\) such that \(10^k \equiv 1 \mod q\).
             - Example: 
                 - \(\frac{1}{7} = 0.\overline{142857}\), period = 6 (since \(10^6 \equiv 1 \mod 7\)).
         - Surds:
+            - Definition:
+                - \(
+                    \text{A surd is an irrational number of the form } \sqrt[n]{x}, \text{where } x \in \mathbb{Q},\; n \in \mathbb{N},\; n > 1,\; \text{and } \sqrt[n]{x} \notin \mathbb{Q}.
+                \)
+                - Meaning:
+                    - Where the result of \( \sqrt[n]{x} \) is irrational and it cannot be written as a fraction.
             - Simplification rules:
                 - \(
                 \sqrt{a} \cdot \sqrt{b} = \sqrt{ab}, \quad \frac{\sqrt{a}}{\sqrt{b}} = \sqrt{\frac{a}{b}}
@@ -844,16 +848,45 @@
                 - \(
                 (a+1)(b+1)\ldots(m+1)
                 \)
-            - Example: 
-                - For 12 = \(2^2 \cdot 3^1\), number of divisors = \((2+1)(1+1) = 3 \times 2 = 6\) (divisors: 1, 2, 3, 4, 6, 12).
-        - Sum of Divisors:
+            - Example 1:
+                - Number:
+                    - \(
+                        18 = 2^1 \cdot 3^2
+                    \)
+                - Number of divisors:
+                    - \(
+                        (1+1)(2+1) = 2 \times 3 = 6
+                    \)
+                - Divisors:
+                    - \(
+                        1, 2, 3, 6, 9, 18
+                    \)
+            - Example 2:
+                - Number:
+                    - \(
+                        24 = 2^3 \cdot 3^1
+                    \)
+                - Number of divisors:
+                    - \(
+                        (3+1)(1+1) = 4 \times 2 = 8
+                    \)
+            - Example 3:
+                - Number:
+                    - \(
+                        36 = 2^2 \cdot 3^2
+                    \)
+                - Number of divisors:
+                    - \(
+                        (2+1)(2+1) = 3 \times 3 = 9
+                    \)
+        - Sum of Divisors (not useful):
             - For \(N = p_1^{a} \cdot p_2^{b} \cdot \ldots \cdot p_k^{m}\):
                 - \(
                 \sigma(N) = \frac{p_1^{a+1}-1}{p_1-1} \cdot \frac{p_2^{b+1}-1}{p_2-1} \cdot \ldots \cdot \frac{p_k^{m+1}-1}{p_k-1}
                 \)
             - Example: 
                 - For 12 = \(2^2 \cdot 3^1\), sum = \(\frac{2^3-1}{2-1} \cdot \frac{3^2-1}{3-1} = \frac{7}{1} \cdot \frac{8}{2} = 7 \times 4 = 28\).
-        - Euler’s Totient Function (\(\phi(n)\)):
+        - Euler’s Totient Function (\(\phi(n)\)) (not useful):
             - Counts numbers up to \(n\) that are co-prime to \(n\):
                 - \(
                 \phi(n) = n \prod_{p|n} \left(1 - \frac{1}{p}\right)
@@ -1147,6 +1180,7 @@
         - Zero of a Polynomial (Root of a polynomial):
             - A real number 'a' is called a zero (or root) of a polynomial f(x) if:  
                 - f(a) = 0
+            - A root of a polynomial is simply a value that makes the polynomial equal zero.
             - Example:
                 - If x = 1 is a root of polynomial f(x) = 3x³ - 2x² + x - 2,  then f(1) = 3(1)³ - 2(1)² + 1 - 2 = 3 - 2 + 1 - 2 = 0  ⇒ x = 1 is a root of f(x)
             - Properties:
@@ -1256,10 +1290,11 @@
                         - \( \frac{a_1}{a_2} = \frac{b_1}{b_2} = \frac{c_1}{c_2} \).
                     - No solution: 
                         - \( \frac{a_1}{a_2} = \frac{b_1}{b_2} \neq \frac{c_1}{c_2} \).
-                - Example: Check consistency of \( 2x + 3y = 6 \), \( 4x + 6y = 12 \):
-                    - Ratios: 
-                        - \( \frac{a_1}{a_2} = \frac{2}{4} = \frac{1}{2} \), \( \frac{b_1}{b_2} = \frac{3}{6} = \frac{1}{2} \), \( \frac{c_1}{c_2} = \frac{6}{12} = \frac{1}{2} \).
-                    - Since \( \frac{1}{2} = \frac{1}{2} = \frac{1}{2} \), infinite solutions.
+                - Example: 
+                    - Check consistency of \( 2x + 3y = 6 \), \( 4x + 6y = 12 \):
+                        - Ratios: 
+                            - \( \frac{a_1}{a_2} = \frac{2}{4} = \frac{1}{2} \), \( \frac{b_1}{b_2} = \frac{3}{6} = \frac{1}{2} \), \( \frac{c_1}{c_2} = \frac{6}{12} = \frac{1}{2} \).
+                        - Since \( \frac{1}{2} = \frac{1}{2} = \frac{1}{2} \), infinite solutions.
         - Applications:
             - Time and Work: 
                 - If A completes a job in 6 days (\( \frac{1}{6} \) per day) and B in 8 days (\( \frac{1}{8} \) per day), solve for combined time using rates.
@@ -1516,7 +1551,7 @@
                 - Find HCF of \( \frac{7}{2} \), \( \frac{35}{4} \):
                     - HCF of numerators: 7, 35 = 7.
                     - LCM of denominators: 2, 4 = 4.
-                    - HCF = \( \frac{7}{4} = 1 \frac{3}{4} \) m.
+                    - = \( \frac{7}{4} = 1 \frac{3}{4} \) m.
         - Application: 
             - Find the other number when one number, LCM, and HCF are given.
                 - Example: 
