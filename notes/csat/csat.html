@@ -4372,9 +4372,45 @@
     - Clock Calculations:
         - Angle Between Hands:
             - To calculate the angle between the hour and minute hands at a given time \( T \) hours and \( n \) minutes:
-                - If the minute hand is behind the hour hand, use the formula: \( \left| 30T - \frac{11n}{2} \right|^\circ \), where \( T \) is the hour (0 to 11), and \( n \) is the minutes.
-                - If the minute hand is ahead of the hour hand, use: \( \left| 30 \left( \frac{n}{5} - T \right) - \frac{n}{2} \right|^\circ \).
-                - Calculate the absolute angle and its complement (\( 360^\circ - \text{angle} \)), and select the smaller value as the required angle.
+                - If the minute hand is behind the hour hand: 
+                    - Formula:
+                        - \( \left| 30T - \frac{11n}{2} \right|^\circ \), where \( T \) is the hour (0 to 11), and \( n \) is the minutes.
+                    - Derivation:
+                        - Let:
+                            - \( T \) = hour (0 to 11)
+                            - \( n \) = minutes past the hour.
+                        - Minute hand speed:
+                            - \( 360^\circ \) in 60 minutes.
+                            - \( \frac{360}{60} = 6^\circ \) per minute.
+                            - Position of minute hand after n minutes:
+                                - \( 6n \).
+                        - Hour hand speed:
+                            - \( 360^\circ \) in 12 hours.
+                            - \( 12 \text{ hours} = 720 \text{ minutes} \).
+                            - \( \frac{360}{720} = 0.5^\circ \) per minute.
+                            - Position of hour hand at T hours:
+                                - \( 30T \) (since \( 360/12 = 30^\circ \) per hour).
+                            - Additional movement of hour hand in n minutes:
+                                - \( 0.5n \).
+                            - Total position of hour hand:
+                                - \( 30T + 0.5n \).
+                        - Angle between hour and minute hands:
+                            - \( |(30T + 0.5n) - 6n| \).
+                        - Simplify:
+                            - \( |30T + 0.5n - 6n| \).
+                            - \( |30T - 5.5n| \).
+                            - Since \( 5.5 = \frac{11}{2} \):
+                                - \( \left| 30T - \frac{11n}{2} \right|^\circ \).
+                        - Therefore:
+                            - \( \left| 30T - \frac{11n}{2} \right|^\circ \).
+                - If the minute hand is ahead of the hour hand: 
+                    - Formula:
+                        - \( \left| 30 \left( \frac{n}{5} - T \right) - \frac{n}{2} \right|^\circ \).
+                    - Derivation:
+                        - Same as above, the only minor difference is that minute hand is ahead, so difference will be:
+                            - \( |6n - (30T + 0.5n)| \)
+                        - This will lead to:
+                            - \( \left| 30T - \frac{11n}{2} \right|^\circ \)
             - Example:
                 - Question: 
                     - What is the angle between the hour and minute hands at 7:30?
@@ -4384,7 +4420,8 @@
                         - In 7 hours, it moves \( 7 \times 30 = 210^\circ \). In 30 minutes, it moves an additional \( 30 \times 0.5 = 15^\circ \). Total: \( 210 + 15 = 225^\circ \).
                     - Minute hand position: 
                         - In 30 minutes, it moves \( 30 \times 6 = 180^\circ \).
-                    - Since the minute hand (\( 180^\circ \)) is behind the hour hand (\( 225^\circ \)), use: \( \left| 30T - \frac{11n}{2} \right| \).
+                    - Since the minute hand (\( 180^\circ \)) is behind the hour hand (\( 225^\circ \)), use: 
+                        - \( \left| 30T - \frac{11n}{2} \right| \).
                     - Compute: 
                         - \( 30 \times 7 = 210 \), \( \frac{11 \times 30}{2} = 165 \), so \( \left| 210 - 165 \right| = 45^\circ \).
                     - Check the complement: 
@@ -4394,6 +4431,37 @@
         - Coincidence of Hands:
             - The hour and minute hands coincide (form a 0° angle) between \( n \) and \( n+1 \) o’clock at \( \frac{60n}{11} \) minutes past \( n \).
             - This happens 11 times in 12 hours, approximately every 65.45 minutes, because the minute hand catches up to the hour hand at a relative speed of \( 5.5^\circ \) per minute.
+            - Derivation:
+                - Let:
+                    - \( n \) = hour (0 to 11)
+                    - \( t \) = minutes past \( n \) o'clock when hands coincide.
+                - Minute hand speed:
+                    - \( 360^\circ \) in 60 minutes.
+                    - \( 6^\circ \) per minute.
+                    - Position after \( t \) minutes:
+                        - \( 6t \).
+                - Hour hand speed:
+                    - \( 360^\circ \) in 12 hours.
+                    - \( 30^\circ \) per hour.
+                    - \( 0.5^\circ \) per minute.
+                    - Position at \( n \) o'clock:
+                        - \( 30n \).
+                    - Additional movement in \( t \) minutes:
+                        - \( 0.5t \).
+                    - Total position:
+                        - \( 30n + 0.5t \).
+                - When hands coincide:
+                    - Positions are equal.
+                    - \( 6t = 30n + 0.5t \).
+                - Rearranging:
+                    - \( 6t - 0.5t = 30n \).
+                    - \( 5.5t = 30n \).
+                    - \( t = \frac{30n}{5.5} \).
+                    - Since \( 5.5 = \frac{11}{2} \):
+                        - \( t = \frac{30n}{11/2} \).
+                        - \( t = \frac{30n \times 2}{11} \).
+                - Therefore:
+                    - \( t = \frac{60n}{11} \) minutes.
             - Example:
                 - Question: 
                     - At what time between 8 and 9 o’clock do the hands of a clock coincide?
@@ -4407,8 +4475,74 @@
                     - Thus, the hands coincide at approximately 43 minutes and 38 seconds past 8.
                     - Answer is: 
                         - The hands coincide at approximately 8:43:38.
+        - T Minutes Apart:
+            - The hands are \( T \) minute spaces apart at \( \left( 5n \pm T \right) \frac{12}{11} \) minutes past \( n \), with the positive sign when the hour hand is ahead and the negative sign when the minute hand is ahead.
+            - Derivation:
+                - Let:
+                    - \( n \) = hour (0 to 11)
+                    - \( t \) = minutes past \( n \)
+                    - \( T \) = required minute-spaces between the hands
+                - Minute hand speed:
+                    - \( 360^\circ \) in 60 minutes
+                    - \( 6^\circ \) per minute
+                    - Position after \( t \) minutes:
+                        - \( 6t \)
+                - Hour hand speed:
+                    - \( 360^\circ \) in 12 hours
+                    - \( 0.5^\circ \) per minute
+                    - Position at \( n \) o'clock:
+                        - \( 30n \)
+                    - Additional movement in \( t \) minutes:
+                        - \( 0.5t \)
+                    - Total position:
+                        - \( 30n + 0.5t \)
+                - Angle between hands:
+                    - \( |6t - (30n + 0.5t)| \)
+                - Simplify:
+                    - \( |6t - 30n - 0.5t| \)
+                    - \( |5.5t - 30n| \)
+                - One minute-space equals:
+                    - \( 6^\circ \)
+                    - If hands are \( T \) minute-spaces apart:
+                        - Required angle = \( 6T \)
+                - Therefore:
+                    - \( |5.5t - 30n| = 6T \)
+                - Case 1:
+                    - \( 5.5t - 30n = 6T \)
+                    - \( 5.5t = 30n + 6T \)
+                - Case 2:
+                    - \( 5.5t - 30n = -6T \)
+                    - \( 5.5t = 30n - 6T \)
+                - Combine:
+                    - \( 5.5t = 30n \pm 6T \)
+                    - \( t = \frac{30n \pm 6T}{5.5} \)
+                    - Since \( 5.5 = \frac{11}{2} \):
+                        - \( t = \frac{30n \pm 6T}{11/2} \)
+                    - \( t = \frac{2(30n \pm 6T)}{11} \)
+                    - \( t = \frac{60n \pm 12T}{11} \)
+                    - \( t = \frac{12(5n \pm T)}{11} \)
+                - Therefore:
+                    - \( t = (5n \pm T)\frac{12}{11} \)
+            - Example:
+                - Question: 
+                    - At what times between 3 and 4 o’clock are the hands 10 minute spaces apart?
+                - Solution:
+                    - Use the formula: 
+                        - \( \left( 5n \pm T \right) \frac{12}{11} \) minutes past \( n \), where \( n = 3 \), \( T = 10 \).
+                    - Compute: 
+                        - \( 5 \times 3 = 15 \), so \( 15 \pm 10 = 25 \) or \( 5 \).
+                    - First case (hour hand ahead): 
+                        - \( 25 \times \frac{12}{11} = \frac{300}{11} \approx 27.2727 \). Convert: \( 0.2727 \times 60 \approx 16 \) seconds, so approximately 27 minutes and 16 seconds past 3.
+                    - Second case (minute hand ahead): 
+                        - \( 5 \times \frac{12}{11} = \frac{60}{11} \approx 5.4545 \). Convert: \( 0.4545 \times 60 \approx 27 \) seconds, so approximately 5 minutes and 27 seconds past 3.
+                    - Answer is: 
+                        - The hands are 10 minute spaces apart at approximately 3:05:27 and 3:27:16.
         - Right Angles:
             - The hands form a 90° angle (are perpendicular) twice per hour, when they are 15 minute spaces apart, at times given by \( \left( 5n \pm 15 \right) \frac{12}{11} \) minutes past \( n \).
+            - Formula:
+                - \( \left( 5n \pm 15 \right) \frac{12}{11} \)
+            - Derivation:
+                - Use the above generic formula with difference as 15 minutes
             - Example:
                 - Question: 
                     - At what times between 6 and 7 o’clock are the hands at a right angle?
@@ -4423,9 +4557,12 @@
                     - Answer is: 
                         - The hands are at a right angle at approximately 6:16:22 and 6:49:05.
         - Straight Line (Opposite Directions):
-            - The hands are 180° apart (point in opposite directions) once per hour, when they are 30 minute spaces apart, at:
+            - The hands are 180° apart (point in opposite directions) once per hour, when they are 30 minute spaces apart
+            - Formula:
                 - \( \left( 5n + 30 \right) \frac{12}{11} \) minutes past \( n \) if \( n &lt; 6 \).
                 - \( \left( 5n - 30 \right) \frac{12}{11} \) minutes past \( n \) if \( n > 6 \).
+            - Derivation:
+                - Use the above generic formula with difference as 30 minutes
             - Example:
                 - Question: 
                     - At what time between 5 and 6 o’clock are the hands opposite each other?
@@ -4439,28 +4576,44 @@
                     - Minute hand gains 55 minute spaces in 60 minutes, so 5 minute spaces in \( \frac{60 \times 5}{55} = \frac{60}{11} \approx 5.4545 \). Convert: \( 0.4545 \times 60 \approx 27 \) seconds, so approximately 5 minutes and 27 seconds past 5.
                     - Answer is: 
                         - The hands are opposite at approximately 5:05:27.
-        - T Minutes Apart:
-            - The hands are \( T \) minute spaces apart at \( \left( 5n \pm T \right) \frac{12}{11} \) minutes past \( n \), with the positive sign when the hour hand is ahead and the negative sign when the minute hand is ahead.
-            - Example:
-                - Question: 
-                    - At what times between 3 and 4 o’clock are the hands 10 minute spaces apart?
-                - Solution:
-                    - Use the formula: \( \left( 5n \pm T \right) \frac{12}{11} \) minutes past \( n \), where \( n = 3 \), \( T = 10 \).
-                    - Compute: 
-                        - \( 5 \times 3 = 15 \), so \( 15 \pm 10 = 25 \) or \( 5 \).
-                    - First case (hour hand ahead): 
-                        - \( 25 \times \frac{12}{11} = \frac{300}{11} \approx 27.2727 \). Convert: \( 0.2727 \times 60 \approx 16 \) seconds, so approximately 27 minutes and 16 seconds past 3.
-                    - Second case (minute hand ahead): 
-                        - \( 5 \times \frac{12}{11} = \frac{60}{11} \approx 5.4545 \). Convert: \( 0.4545 \times 60 \approx 27 \) seconds, so approximately 5 minutes and 27 seconds past 3.
-                    - Answer is: 
-                        - The hands are 10 minute spaces apart at approximately 3:05:27 and 3:27:16.
         - Faulty Clocks:
             - A clock is considered “too fast” if it shows a time ahead of the correct time (e.g., showing 6:15 when it’s actually 6:00) and “too slow” if it shows a time behind (e.g., showing 6:45 when it’s actually 7:00).
             - If the minute hand overtakes the hour hand every \( M \) minutes, the clock’s gain or loss per day is calculated as:
                 - \(
-                \left( \frac{720}{M} - \frac{60 \times 24}{11} \right) \text{ minutes}
+                    \left( \frac{720}{M} - \frac{60 \times 24}{11} \right) \text{ minutes}
                 \)
                 - A positive result indicates the clock gains time, while a negative result indicates it loses time.
+            - Derivation:
+                - For a correct clock:
+                    - In 12 hours = 720 minutes
+                    - Hands coincide 11 times
+                    - Therefore, time between coincidences:
+                        - \( \frac{720}{11} \) minutes
+                - So correct clock completes:
+                    - \( \frac{60 \times 24}{720/11} \) coincidences per day
+                    - Simplify:
+                        - \( \frac{1440}{720/11} \)
+                        - \( = \frac{1440 \times 11}{720} \)
+                        - \( = 22 \) coincidences per day
+                - Now suppose faulty clock shows coincidence every \( M \) minutes.
+                    - Then number of coincidences per day:
+                        - \( \frac{1440}{M} \)
+                - For a correct clock:
+                    - Relative angular speed between hands:
+                        - \( 5.5^\circ \) per minute
+                - In faulty clock:
+                    - Relative angular speed becomes:
+                        - \( \frac{360}{M} \) degrees per minute
+                - Difference in relative speed:
+                    - \( \frac{360}{M} - 5.5 \)
+                    - Over 1 day (1440 minutes), total angular gain/loss becomes:
+                        - \( \left( \frac{360}{M} - 5.5 \right) \times 1440 \div 360 \)
+                - Simplify:
+                    - \( \left( \frac{1440}{M} - \frac{1440}{720/11} \right) \)
+                    - Since:
+                        - \( \frac{1440}{720/11} = \frac{60 \times 24}{11} \)
+                - Therefore, gain/loss per day:
+                    - \( \left( \frac{720}{M} - \frac{60 \times 24}{11} \right) \) minutes
             - Example:
                 - Question: 
                     - A clock’s minute hand overtakes the hour hand every 63 minutes. How much time does the clock gain or lose per day?
