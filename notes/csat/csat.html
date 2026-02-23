@@ -4371,57 +4371,57 @@
 
     - Clock Calculations:
         - Angle Between Hands:
-            - To calculate the angle between the hour and minute hands at a given time \( T \) hours and \( n \) minutes:
+            - To calculate the angle between the hour and minute hands at a given time \( H \) hours and \( M \) minutes:
                 - If the minute hand is behind the hour hand: 
                     - Formula:
-                        - \( \left| 30T - \frac{11n}{2} \right|^\circ \), where \( T \) is the hour (0 to 11), and \( n \) is the minutes.
+                        - \( \left| 30H - \frac{11M}{2} \right|^\circ \), where \( H \) is the hour (0 to 11), and \( M \) is the minutes.
                     - Derivation:
                         - Let:
-                            - \( T \) = hour (0 to 11)
-                            - \( n \) = minutes past the hour.
+                            - \( H \) = hour (0 to 11)
+                            - \( M \) = minutes past the hour.
                         - Minute hand speed:
                             - \( 360^\circ \) in 60 minutes.
                             - \( \frac{360}{60} = 6^\circ \) per minute.
-                            - Position of minute hand after n minutes:
-                                - \( 6n \).
+                            - Position of minute hand after M minutes:
+                                - \( 6M \).
                         - Hour hand speed:
                             - \( 360^\circ \) in 12 hours.
                             - \( 12 \text{ hours} = 720 \text{ minutes} \).
                             - \( \frac{360}{720} = 0.5^\circ \) per minute.
-                            - Position of hour hand at T hours:
-                                - \( 30T \) (since \( 360/12 = 30^\circ \) per hour).
-                            - Additional movement of hour hand in n minutes:
-                                - \( 0.5n \).
+                            - Position of hour hand at H hours:
+                                - \( 30H \) (since \( 360/12 = 30^\circ \) per hour).
+                            - Additional movement of hour hand in M minutes:
+                                - \( 0.5M \).
                             - Total position of hour hand:
-                                - \( 30T + 0.5n \).
+                                - \( 30H + 0.5M \).
                         - Angle between hour and minute hands:
-                            - \( |(30T + 0.5n) - 6n| \).
+                            - \( |(30H + 0.5M) - 6M| \).
                         - Simplify:
-                            - \( |30T + 0.5n - 6n| \).
-                            - \( |30T - 5.5n| \).
+                            - \( |30H + 0.5M - 6M| \).
+                            - \( |30H - 5.5M| \).
                             - Since \( 5.5 = \frac{11}{2} \):
-                                - \( \left| 30T - \frac{11n}{2} \right|^\circ \).
+                                - \( \left| 30H - \frac{11M}{2} \right|^\circ \).
                         - Therefore:
-                            - \( \left| 30T - \frac{11n}{2} \right|^\circ \).
+                            - \( \left| 30H - \frac{11M}{2} \right|^\circ \).
                 - If the minute hand is ahead of the hour hand: 
                     - Formula:
-                        - \( \left| 30 \left( \frac{n}{5} - T \right) - \frac{n}{2} \right|^\circ \).
+                        - \( \left| 30 \left( \frac{M}{5} - H \right) - \frac{M}{2} \right|^\circ \).
                     - Derivation:
                         - Same as above, the only minor difference is that minute hand is ahead, so difference will be:
-                            - \( |6n - (30T + 0.5n)| \)
+                            - \( |6M - (30H + 0.5M)| \)
                         - This will lead to:
-                            - \( \left| 30T - \frac{11n}{2} \right|^\circ \)
+                            - \( \left| 30 \left( \frac{M}{5} - H \right) - \frac{M}{2} \right|^\circ \)
             - Example:
                 - Question: 
                     - What is the angle between the hour and minute hands at 7:30?
                 - Solution:
-                    - Given time is 7:30, so \( T = 7 \), \( n = 30 \).
+                    - Given time is 7:30, so \( H = 7 \), \( M = 30 \).
                     - Hour hand position: 
                         - In 7 hours, it moves \( 7 \times 30 = 210^\circ \). In 30 minutes, it moves an additional \( 30 \times 0.5 = 15^\circ \). Total: \( 210 + 15 = 225^\circ \).
                     - Minute hand position: 
                         - In 30 minutes, it moves \( 30 \times 6 = 180^\circ \).
                     - Since the minute hand (\( 180^\circ \)) is behind the hour hand (\( 225^\circ \)), use: 
-                        - \( \left| 30T - \frac{11n}{2} \right| \).
+                        - \( \left| 30H - \frac{11M}{2} \right| \).
                     - Compute: 
                         - \( 30 \times 7 = 210 \), \( \frac{11 \times 30}{2} = 165 \), so \( \left| 210 - 165 \right| = 45^\circ \).
                     - Check the complement: 
@@ -4429,45 +4429,45 @@
                     - Answer is: 
                         - The angle between the hands at 7:30 is \( 45^\circ \).
         - Coincidence of Hands:
-            - The hour and minute hands coincide (form a 0° angle) between \( n \) and \( n+1 \) o’clock at \( \frac{60n}{11} \) minutes past \( n \).
+            - The hour and minute hands coincide (form a 0° angle) between \( H \) and \( H+1 \) o’clock at \( \frac{60H}{11} \) minutes past \( H \).
             - This happens 11 times in 12 hours, approximately every 65.45 minutes, because the minute hand catches up to the hour hand at a relative speed of \( 5.5^\circ \) per minute.
             - Derivation:
                 - Let:
-                    - \( n \) = hour (0 to 11)
-                    - \( t \) = minutes past \( n \) o'clock when hands coincide.
+                    - \( H \) = hour (0 to 11)
+                    - \( M \) = minutes past \( H \) o'clock when hands coincide.
                 - Minute hand speed:
                     - \( 360^\circ \) in 60 minutes.
                     - \( 6^\circ \) per minute.
-                    - Position after \( t \) minutes:
-                        - \( 6t \).
+                    - Position after \( M \) minutes:
+                        - \( 6M \).
                 - Hour hand speed:
                     - \( 360^\circ \) in 12 hours.
                     - \( 30^\circ \) per hour.
                     - \( 0.5^\circ \) per minute.
-                    - Position at \( n \) o'clock:
-                        - \( 30n \).
-                    - Additional movement in \( t \) minutes:
-                        - \( 0.5t \).
+                    - Position at \( H \) o'clock:
+                        - \( 30H \).
+                    - Additional movement in \( M \) minutes:
+                        - \( 0.5M \).
                     - Total position:
-                        - \( 30n + 0.5t \).
+                        - \( 30H + 0.5M \).
                 - When hands coincide:
                     - Positions are equal.
-                    - \( 6t = 30n + 0.5t \).
+                    - \( 6M = 30H + 0.5M \).
                 - Rearranging:
-                    - \( 6t - 0.5t = 30n \).
-                    - \( 5.5t = 30n \).
-                    - \( t = \frac{30n}{5.5} \).
+                    - \( 6M - 0.5M = 30H \).
+                    - \( 5.5M = 30H \).
+                    - \( M = \frac{30H}{5.5} \).
                     - Since \( 5.5 = \frac{11}{2} \):
-                        - \( t = \frac{30n}{11/2} \).
-                        - \( t = \frac{30n \times 2}{11} \).
+                        - \( M = \frac{30H}{11/2} \).
+                        - \( M = \frac{30H \times 2}{11} \).
                 - Therefore:
-                    - \( t = \frac{60n}{11} \) minutes.
+                    - \( M = \frac{60H}{11} \) minutes.
             - Example:
                 - Question: 
                     - At what time between 8 and 9 o’clock do the hands of a clock coincide?
                 - Solution:
                     - Use the formula: 
-                        - \( \frac{60n}{11} \) minutes past \( n \), where \( n = 8 \).
+                        - \( \frac{60H}{11} \) minutes past \( H \), where \( H = 8 \).
                     - Compute: 
                         - \( \frac{60 \times 8}{11} = \frac{480}{11} \approx 43.6363 \).
                     - Convert the decimal to seconds: 
@@ -4476,61 +4476,61 @@
                     - Answer is: 
                         - The hands coincide at approximately 8:43:38.
         - T Minutes Apart:
-            - The hands are \( T \) minute spaces apart at \( \left( 5n \pm T \right) \frac{12}{11} \) minutes past \( n \), with the positive sign when the hour hand is ahead and the negative sign when the minute hand is ahead.
+            - The hands are \( T \) minute spaces apart at \( \left( 5H \pm T \right) \frac{12}{11} \) minutes past \( H \), with the positive sign when the hour hand is ahead and the negative sign when the minute hand is ahead.
             - Formula:
-                - \( \left( 5n \pm T \right) \frac{12}{11} \)
+                - \( \left( 5H \pm T \right) \frac{12}{11} \)
             - Derivation:
                 - Let:
-                    - \( n \) = hour (0 to 11)
-                    - \( t \) = minutes past \( n \)
+                    - \( H \) = hour (0 to 11)
+                    - \( M \) = minutes past \( H \)
                     - \( T \) = required minute-spaces between the hands
                 - Minute hand speed:
                     - \( 360^\circ \) in 60 minutes
                     - \( 6^\circ \) per minute
-                    - Position after \( t \) minutes:
-                        - \( 6t \)
+                    - Position after \( M \) minutes:
+                        - \( 6M \)
                 - Hour hand speed:
                     - \( 360^\circ \) in 12 hours
                     - \( 0.5^\circ \) per minute
-                    - Position at \( n \) o'clock:
-                        - \( 30n \)
-                    - Additional movement in \( t \) minutes:
-                        - \( 0.5t \)
+                    - Position at \( H \) o'clock:
+                        - \( 30H \)
+                    - Additional movement in \( M \) minutes:
+                        - \( 0.5M \)
                     - Total position:
-                        - \( 30n + 0.5t \)
+                        - \( 30H + 0.5M \)
                 - Angle between hands:
-                    - \( |6t - (30n + 0.5t)| \)
+                    - \( |6M - (30H + 0.5M)| \)
                 - Simplify:
-                    - \( |6t - 30n - 0.5t| \)
-                    - \( |5.5t - 30n| \)
+                    - \( |6M - 30H - 0.5M| \)
+                    - \( |5.5M - 30H| \)
                 - One minute-space equals:
                     - \( 6^\circ \)
                     - If hands are \( T \) minute-spaces apart:
                         - Required angle = \( 6T \)
                 - Therefore:
-                    - \( |5.5t - 30n| = 6T \)
+                    - \( |5.5M - 30H| = 6T \)
                 - Case 1:
-                    - \( 5.5t - 30n = 6T \)
-                    - \( 5.5t = 30n + 6T \)
+                    - \( 5.5M - 30H = 6T \)
+                    - \( 5.5M = 30H + 6T \)
                 - Case 2:
-                    - \( 5.5t - 30n = -6T \)
-                    - \( 5.5t = 30n - 6T \)
+                    - \( 5.5M - 30H = -6T \)
+                    - \( 5.5M = 30H - 6T \)
                 - Combine:
-                    - \( 5.5t = 30n \pm 6T \)
-                    - \( t = \frac{30n \pm 6T}{5.5} \)
+                    - \( 5.5M = 30H \pm 6T \)
+                    - \( M = \frac{30H \pm 6T}{5.5} \)
                     - Since \( 5.5 = \frac{11}{2} \):
-                        - \( t = \frac{30n \pm 6T}{11/2} \)
-                    - \( t = \frac{2(30n \pm 6T)}{11} \)
-                    - \( t = \frac{60n \pm 12T}{11} \)
-                    - \( t = \frac{12(5n \pm T)}{11} \)
+                        - \( M = \frac{30H \pm 6T}{11/2} \)
+                    - \( M = \frac{2(30H \pm 6T)}{11} \)
+                    - \( M = \frac{60H \pm 12T}{11} \)
+                    - \( M = \frac{12(5H \pm T)}{11} \)
                 - Therefore:
-                    - \( t = (5n \pm T)\frac{12}{11} \)
+                    - \( M = (5H \pm T)\frac{12}{11} \)
             - Example:
                 - Question: 
                     - At what times between 3 and 4 o’clock are the hands 10 minute spaces apart?
                 - Solution:
                     - Use the formula: 
-                        - \( \left( 5n \pm T \right) \frac{12}{11} \) minutes past \( n \), where \( n = 3 \), \( T = 10 \).
+                        - \( \left( 5H \pm T \right) \frac{12}{11} \) minutes past \( H \), where \( H = 3 \), \( T = 10 \).
                     - Compute: 
                         - \( 5 \times 3 = 15 \), so \( 15 \pm 10 = 25 \) or \( 5 \).
                     - First case (hour hand ahead): 
@@ -4540,16 +4540,16 @@
                     - Answer is: 
                         - The hands are 10 minute spaces apart at approximately 3:05:27 and 3:27:16.
         - Right Angles:
-            - The hands form a 90° angle (are perpendicular) twice per hour, when they are 15 minute spaces apart, at times given by \( \left( 5n \pm 15 \right) \frac{12}{11} \) minutes past \( n \).
+            - The hands form a 90° angle (are perpendicular) twice per hour, when they are 15 minute spaces apart, at times given by \( \left( 5H \pm 15 \right) \frac{12}{11} \) minutes past \( H \).
             - Formula:
-                - \( \left( 5n \pm 15 \right) \frac{12}{11} \)
+                - \( \left( 5H \pm 15 \right) \frac{12}{11} \)
             - Derivation:
                 - Use the above generic formula with difference as 15 minutes
             - Example:
                 - Question: 
                     - At what times between 6 and 7 o’clock are the hands at a right angle?
                 - Solution:
-                    - Use the formula: \( \left( 5n \pm 15 \right) \frac{12}{11} \) minutes past \( n \), where \( n = 6 \).
+                    - Use the formula: \( \left( 5H \pm 15 \right) \frac{12}{11} \) minutes past \( H \), where \( H = 6 \).
                     - Compute: 
                         - \( 5 \times 6 = 30 \), so \( 30 \pm 15 = 45 \) or \( 15 \).
                     - First time: 
@@ -4561,76 +4561,60 @@
         - Straight Line (Opposite Directions):
             - The hands are 180° apart (point in opposite directions) once per hour, when they are 30 minute spaces apart
             - Formula:
-                - \( \left( 5n + 30 \right) \frac{12}{11} \) minutes past \( n \) if \( n &lt; 6 \).
-                - \( \left( 5n - 30 \right) \frac{12}{11} \) minutes past \( n \) if \( n > 6 \).
+                - \( \left( 5H \pm 30 \right) \frac{12}{11} \) minutes past \( H \)
+                - Choose the value of M such that 0 &lt; M &lt; 60
             - Derivation:
                 - Use the above generic formula with difference as 30 minutes
             - Example:
                 - Question: 
                     - At what time between 5 and 6 o’clock are the hands opposite each other?
                 - Solution:
-                    - Since \( n = 5 &lt; 6 \), use: 
-                        - \( \left( 5n + 30 \right) \frac{12}{11} \) minutes past \( n \).
+                    - Use: 
+                        - \( \left( 5H \pm 30 \right) \frac{12}{11} \) minutes past \( H \).
                     - Compute: 
                         - \( 5 \times 5 + 30 = 55 \), so \( 55 \times \frac{12}{11} = \frac{660}{11} = 60 \).
-                    - This result (60 minutes) indicates the boundary at 6:00, which is typically not included in the interval. Recalculate using the minute space approach for clarity:
-                    - At 5:00, the hands are 25 minute spaces apart. To be opposite (30 minute spaces apart), the minute hand must gain \( 30 - 25 = 5 \) minute spaces or \( 30 + 25 = 55 \) minute spaces.
-                    - Minute hand gains 55 minute spaces in 60 minutes, so 5 minute spaces in \( \frac{60 \times 5}{55} = \frac{60}{11} \approx 5.4545 \). Convert: \( 0.4545 \times 60 \approx 27 \) seconds, so approximately 5 minutes and 27 seconds past 5.
+                    - This result (60 minutes) indicates the boundary at 6:00, which is typically not included in the interval. 
+                    - Recalculate using the minute space approach for clarity:
+                        - At 5:00, the hands are 25 minute spaces apart. To be opposite (30 minute spaces apart), the minute hand must gain \( 30 - 25 = 5 \) minute spaces or \( 30 + 25 = 55 \) minute spaces.
+                        - Minute hand gains 55 minute spaces in 60 minutes, so 5 minute spaces in \( \frac{60 \times 5}{55} = \frac{60}{11} \approx 5.4545 \). Convert: \( 0.4545 \times 60 \approx 27 \) seconds, so approximately 5 minutes and 27 seconds past 5.
                     - Answer is: 
                         - The hands are opposite at approximately 5:05:27.
         - Faulty Clocks:
             - A clock is considered “too fast” if it shows a time ahead of the correct time (e.g., showing 6:15 when it’s actually 6:00) and “too slow” if it shows a time behind (e.g., showing 6:45 when it’s actually 7:00).
-            - If the minute hand overtakes the hour hand every \( M \) minutes, the clock’s gain or loss per day is calculated as:
-                - \(
-                    \left( \frac{720}{M} - \frac{60 \times 24}{11} \right) \text{ minutes}
-                \)
-                - A positive result indicates the clock gains time, while a negative result indicates it loses time.
+            - If the minute hand overtakes the hour hand every \( M \) minutes, then the gain or loss per day is:
+                - \( \frac{1440}{11} \left( \frac{720}{M} - 11 \right) \text{ minutes} \)
+                - A positive result indicates the clock gains time.
+                - A negative result indicates the clock loses time.
             - Derivation:
                 - For a correct clock:
                     - In 12 hours = 720 minutes
                     - Hands coincide 11 times
-                    - Therefore, time between coincidences:
+                    - Time between coincidences:
                         - \( \frac{720}{11} \) minutes
-                - So correct clock completes:
-                    - \( \frac{60 \times 24}{720/11} \) coincidences per day
-                    - Simplify:
-                        - \( \frac{1440}{720/11} \)
-                        - \( = \frac{1440 \times 11}{720} \)
-                        - \( = 22 \) coincidences per day
-                - Now suppose faulty clock shows coincidence every \( M \) minutes.
-                    - Then number of coincidences per day:
-                        - \( \frac{1440}{M} \)
-                - For a correct clock:
-                    - Relative angular speed between hands:
-                        - \( 5.5^\circ \) per minute
-                - In faulty clock:
-                    - Relative angular speed becomes:
+                - Correct relative angular speed:
+                    - \( 5.5^\circ \) per minute
+                - If faulty clock shows coincidence every \( M \) minutes:
+                    - Relative angular speed:
                         - \( \frac{360}{M} \) degrees per minute
-                - Difference in relative speed:
-                    - \( \frac{360}{M} - 5.5 \)
-                    - Over 1 day (1440 minutes), total angular gain/loss becomes:
-                        - \( \left( \frac{360}{M} - 5.5 \right) \times 1440 \div 360 \)
-                - Simplify:
-                    - \( \left( \frac{1440}{M} - \frac{1440}{720/11} \right) \)
-                    - Since:
-                        - \( \frac{1440}{720/11} = \frac{60 \times 24}{11} \)
-                - Therefore, gain/loss per day:
-                    - \( \left( \frac{720}{M} - \frac{60 \times 24}{11} \right) \) minutes
+                - Ratio of faulty speed to correct speed:
+                    - \( \frac{\frac{360}{M}}{5.5} \)
+                - Gain or loss per minute:
+                    - \( \frac{\frac{360}{M} - 5.5}{5.5} \)
+                - Gain or loss per day (1440 minutes):
+                    - \( \frac{\frac{360}{M} - 5.5}{5.5} \times 1440 \)
+                - Simplifying:
+                    - \( \frac{1440}{11} \left( \frac{720}{M} - 11 \right) \)
             - Example:
-                - Question: 
+                - Question:
                     - A clock’s minute hand overtakes the hour hand every 63 minutes. How much time does the clock gain or lose per day?
                 - Solution:
-                    - Use the formula: 
-                        - \( \left( \frac{720}{M} - \frac{60 \times 24}{11} \right) \) minutes, where \( M = 63 \).
-                    - Compute: 
-                        - \( \frac{60 \times 24}{11} = \frac{1440}{11} \approx 130.9091 \).
-                    - Then: 
-                        - \( \frac{720}{63} \approx 11.4286 \).
-                    - Gain/loss: 
-                        - \( 11.4286 - 130.9091 \approx -119.4805 \).
-                    - A negative result indicates a loss of approximately 119.48 minutes per day.
-                    - Answer is: 
-                        - The clock loses approximately 119.48 minutes per day.
+                    - Substitute \( M = 63 \):
+                        - \( \frac{720}{63} \approx 11.4286 \)
+                        - \( 11.4286 - 11 = 0.4286 \)
+                        - Gain per day:
+                            - \( \frac{1440}{11} \times 0.4286 \approx 130.9091 \times 0.4286 \approx 56 \)
+                    - Therefore:
+                        - The clock gains approximately 56 minutes per day.
 
     - Calendar Calculations:
         - Leap Year Identification:
@@ -4646,16 +4630,17 @@
                         - 2052 is a leap year.
         - Odd Days:
             - An ordinary year (365 days) has 1 odd day, as \( 365 = 52 \times 7 + 1 \).
-            - A leap year (366 days) has 2 odd days if the date is after February 29 (\( 366 = 52 \times 7 + 2 \)); otherwise, 1 odd day.
-            - For longer periods:
+            - A leap year (366 days) has 2 odd days, as (\( 366 = 52 \times 7 + 2 \)).
+            - For longer periods (speed shortcut):
                 - 100 years: 
-                    - 76 ordinary years (\( 76 \times 1 \)) + 24 leap years (\( 24 \times 2 \)) = 124 days = 17 weeks + 5 odd days.
+                    - 5 odd days.
                 - 200 years: 
-                    - \( 5 \times 2 = 10 \) days = 1 week + 3 odd days.
+                    - 3 odd days.
                 - 300 years: 
-                    - \( 5 \times 3 = 15 \) days = 2 weeks + 1 odd day.
+                    - 1 odd day.
                 - 400 years: 
-                    - \( 5 \times 4 + 1 = 21 \) days = 3 weeks = 0 odd days (includes extra leap day for the 400th year).
+                    - 0 odd days
+                    - So Gregorian calendar repeats every 400 years.
             - Example:
                 - Question: 
                     - How many odd days are there from 2015 to 2018 (inclusive)?
@@ -4697,7 +4682,9 @@
                     - Answer is: 
                         - October 10, 2023, was a Tuesday.
         - Day of the Week (Without Reference):
-            - Sum the odd days from a base year (e.g., 2000, which has 0 odd days due to the 400-year cycle) to the target year, including centuries, years, and days in the target year. Map the total odd days to: 0 = Sunday, 1 = Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday.
+            - Sum the odd days from a base year (e.g., 2000, which has 0 odd days due to the 400-year cycle) to the target year, including centuries, years, and days in the target year. 
+            - Map the total odd days to: 
+                - 0 = Sunday, 1 = Monday, 2 = Tuesday, 3 = Wednesday, 4 = Thursday, 5 = Friday, 6 = Saturday.
             - Example:
                 - Question: 
                     - What day of the week was July 4, 2023?
@@ -4718,14 +4705,6 @@
         - Century Constraints:
             - The first day of a century (e.g., January 1, 2000) can only be a Tuesday, Thursday, or Saturday.
             - The last day of a century (e.g., December 31, 2000) cannot be a Tuesday, Thursday, or Saturday.
-            - Example:
-                - Question: 
-                    - Can December 31, 2100, be a Tuesday?
-                - Solution:
-                    - The last day of a century cannot be a Tuesday, Thursday, or Saturday, as per the given rule.
-                    - Since Tuesday is explicitly excluded, December 31, 2100, cannot be a Tuesday.
-                    - Answer is: 
-                        - No, December 31, 2100, cannot be a Tuesday.
 
 
 - Area and Perimeter:
