@@ -4313,35 +4313,60 @@
                     - Answer is: 
                         - The clock hands form a 90° angle twice between 3:00 and 4:00.
         - Calendar Structure:
-            - An ordinary year consists of 365 days, which equates to 52 complete weeks (52 × 7 = 364 days) plus 1 extra day, known as an odd day.
-            - A leap year consists of 366 days, which equates to 52 weeks plus 2 odd days, with the extra day being February 29.
-            - A year is a leap year if it is divisible by 4. However, century years (e.g., 2100, 2200) must also be divisible by 400 to be leap years.
-            - Odd days are the extra days beyond complete weeks in a given period, and they are essential for determining the day of the week for a specific date.
-            - Monthly odd days in an ordinary year (and leap year for February):
-                - January: 
-                    - 3 odd days (31 days = 4 weeks + 3 days).
-                - February: 
-                    - 0 odd days (28 days = 4 weeks) in an ordinary year; 1 odd day (29 days = 4 weeks + 1 day) in a leap year.
-                - March: 
-                    - 3 odd days (31 days = 4 weeks + 3 days).
-                - April: 
-                    - 2 odd days (30 days = 4 weeks + 2 days).
-                - May: 
-                    - 3 odd days (31 days = 4 weeks + 3 days).
-                - June: 
-                    - 2 odd days (30 days = 4 weeks + 2 days).
-                - July: 
-                    - 3 odd days (31 days = 4 weeks + 3 days).
-                - August: 
-                    - 3 odd days (31 days = 4 weeks + 3 days).
-                - September: 
-                    - 2 odd days (30 days = 4 weeks + 2 days).
-                - October: 
-                    - 3 odd days (31 days = 4 weeks + 3 days).
-                - November: 
-                    - 2 odd days (30 days = 4 weeks + 2 days).
-                - December: 
-                    - 3 odd days (31 days = 4 weeks + 3 days).
+            - Ordinary year:
+                - An ordinary year consists of 365 days, which equates to 52 complete weeks (52 × 7 = 364 days) plus 1 extra day, known as an odd day.
+            - Leap year:
+                - A leap year consists of 366 days, which equates to 52 weeks plus 2 odd days, with the extra day being February 29.
+                - A year is a leap year if it is divisible by 4. However, century years (e.g., 2100, 2200) must also be divisible by 400 to be leap years.
+            - Odd days:
+                - Odd days are the extra days beyond complete weeks in a given period, and they are essential for determining the day of the week for a specific date.
+                - The calendar we use today started on January 1st, Year 1, which was a Monday. Therefore, 1 odd day always represents Monday. By logic, 0 odd days (or 7) completes the week cycle back to Sunday.
+                - Standard Day Codes (Universal for Odd Days Method):
+                    - Logic: 
+                        - The Gregorian calendar considers the first day (01-01-0001) as a Monday.
+                    - Codes:
+                        - 1 = Monday
+                        - 2 = Tuesday
+                        - 3 = Wednesday
+                        - 4 = Thursday
+                        - 5 = Friday
+                        - 6 = Saturday
+                        - 0 or 7 = Sunday
+                - Monthly odd days in an ordinary year (and leap year for February):
+                    - January: 
+                        - 3 odd days (31 days = 4 weeks + 3 days).
+                    - February: 
+                        - 0 odd days (28 days = 4 weeks) in an ordinary year; 1 odd day (29 days = 4 weeks + 1 day) in a leap year.
+                    - March: 
+                        - 3 odd days (31 days = 4 weeks + 3 days).
+                    - April: 
+                        - 2 odd days (30 days = 4 weeks + 2 days).
+                    - May: 
+                        - 3 odd days (31 days = 4 weeks + 3 days).
+                    - June: 
+                        - 2 odd days (30 days = 4 weeks + 2 days).
+                    - July: 
+                        - 3 odd days (31 days = 4 weeks + 3 days).
+                    - August: 
+                        - 3 odd days (31 days = 4 weeks + 3 days).
+                    - September: 
+                        - 2 odd days (30 days = 4 weeks + 2 days).
+                    - October: 
+                        - 3 odd days (31 days = 4 weeks + 3 days).
+                    - November: 
+                        - 2 odd days (30 days = 4 weeks + 2 days).
+                    - December: 
+                        - 3 odd days (31 days = 4 weeks + 3 days).
+                - Mathematical Simplification (Modulo 7):
+                    - Concept: 
+                        - Since the day of the week repeats every 7 days, any number of total days can be reduced to "odd days" by finding the remainder when divided by 7.
+                    - Rule: 
+                        - \( \text{Odd Days} = \text{Total Days} \pmod 7 \).
+                    - Example: 
+                        - In your calculation: 
+                            - \( 31 \div 7 = 4 \) weeks and \( 3 \) days remainder.
+                        - \( 31 \pmod 7 = 3 \).
+                        - Therefore, 31 days contribute 3 odd days to the final tally.
             - Examples:
                 - Example 1:
                     - Question: 
@@ -4615,6 +4640,35 @@
                             - \( \frac{1440}{11} \times 0.4286 \approx 130.9091 \times 0.4286 \approx 56 \)
                     - Therefore:
                         - The clock gains approximately 56 minutes per day.
+        - Time Conversion (Decimal to Sexagesimal):
+            - Concept:
+                - Competitive exam results often produce decimal or fractional values (e.g., while using the relative speed formula). These must be converted back into the Hours:Minutes:Seconds format to match exam options.
+            - General Formula:
+                - \( \text{Total Time} = H \text{ hours} + (D_1 \times 60) \text{ minutes} + (D_2 \times 60) \text{ seconds} \)
+                - Where \( D_1 \) is the decimal part of the hour, and \( D_2 \) is the decimal part of the minute.
+            - Example 1: Decimal Hours
+                - Question:
+                    - Convert \( 2.72 \text{ hours} \) into hours, minutes, and seconds.
+                - Solution:
+                    - Step 1 (Extract Hours):
+                        - The whole number is \( 2 \). 
+                    - Step 2 (Calculate Minutes):
+                        - Take the decimal part: \( 0.72 \).
+                        - \( 0.72 \times 60 = 43.2 \text{ minutes} \).
+                        - The whole number \( 43 \) is your minutes.
+                    - Step 3 (Calculate Seconds):
+                        - Take the remaining decimal \( 0.2 \).
+                        - \( 0.2 \times 60 = 12 \text{ seconds} \).
+                - Final Result:
+                    - \( 2.72 \text{ hours} = 2 \text{ hours, } 43 \text{ minutes, and } 12 \text{ seconds} \).
+            - Example 2: Fractional Minutes (Common in CSAT)
+                - Question:
+                    - Convert \( 10 \frac{10}{11} \text{ minutes} \) to minutes and seconds.
+                - Solution:
+                    - Convert fraction to seconds:
+                        - \( \frac{10}{11} \times 60 = \frac{600}{11} \approx 54.54 \text{ seconds} \).
+                - Final Result:
+                    - Approximately \( 10 \text{ minutes and } 55 \text{ seconds} \).
 
     - Calendar Calculations:
         - Leap Year Identification:
@@ -4640,8 +4694,35 @@
                     - 1 odd day.
                 - 400 years: 
                     - 0 odd days
-                    - So Gregorian calendar repeats every 400 years.
-            - Example:
+                    - Gregorian calendar repeats every 400 years. So, any century multiple of 400 (400, 800, 1200, 1600, 2000, 2400) has 0 odd days.
+            - Example 1:
+                - Question:
+                    - Find the day of the week for August 15, 1947.
+                - Solution:
+                    - Step 1: Breakdown the years into segments:
+                        - 1600 years (multiple of 400) = 0 odd days.
+                        - 300 years = 1 odd day.
+                    - Step 2: Calculate odd days in the 46 completed years (1901 to 1946):
+                        - Leap years in 46 years: 
+                            - \( 46 \div 4 = 11 \) leap years.
+                        - Ordinary years: 
+                            - \( 46 - 11 = 35 \) ordinary years.
+                        - Odd days: 
+                            - \( (11 \times 2) + (35 \times 1) = 22 + 35 = 57 \) days.
+                        - Simplify: 
+                            - \( 57 \div 7 = 1 \) odd day (remainder).
+                    - Step 3: Calculate days in the current year (1947) up to August 15:
+                        - Jan(3) + Feb(0) + Mar(3) + Apr(2) + May(3) + Jun(2) + Jul(3) + Aug(15)
+                        - Total days = \( 3+0+3+2+3+2+3+15 = 31 \) days.
+                        - Simplify: 
+                            - \( 31 \div 7 = 3 \) odd days (remainder).
+                    - Step 4: Total odd days:
+                        - \( 0 \text{ (1600y)} + 1 \text{ (300y)} + 1 \text{ (46y)} + 3 \text{ (1947)} = 5 \) odd days.
+                    - Step 5: Match the code:
+                        - 0=Sun, 1=Mon, 2=Tue, 3=Wed, 4=Thu, 5=Fri, 6=Sat.
+                - Final Result:
+                    - August 15, 1947 was a Friday.
+            - Example 2:
                 - Question: 
                     - How many odd days are there from 2015 to 2018 (inclusive)?
                 - Solution:
