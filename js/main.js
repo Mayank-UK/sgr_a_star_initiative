@@ -164,19 +164,16 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykjqRKJgy9wpBWtTZGz
   function askForName(subtitle) {
     return new Promise(resolve => {
       injectStyles();
-      const existing = document.getElementById("dac-overlay");
-      if (existing) {
-        existing.querySelector(".dac-msg").innerHTML = subtitle;
-        const input = existing.querySelector(".dac-input");
-        const btn   = existing.querySelector(".dac-btn");
-        input.value = ""; input.classList.remove("error"); input.focus();
-        btn.disabled = false; btn.textContent = "Continue";
-        existing.querySelector(".dac-err").classList.remove("on");
-        wireSubmit(input, btn, existing.querySelector(".dac-err"), resolve);
-        return;
+      let overlay = document.getElementById("dac-overlay");
+      
+      // If overlay doesn't exist at all, create it
+      if (!overlay) {
+        overlay = document.createElement("div");
+        overlay.id = "dac-overlay";
+        document.body.appendChild(overlay);
       }
-      const overlay = document.createElement("div");
-      overlay.id = "dac-overlay";
+
+      // Always refresh the internal HTML to ensure we move from "Loader" to "Card"
       overlay.innerHTML = `
         <div class="dac-card">
           <div class="dac-icon">${PERSON_ICON}</div>
@@ -186,13 +183,16 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykjqRKJgy9wpBWtTZGz
             <input class="dac-input" type="text" placeholder="e.g. Mayank Upadhyay - 19/12/1998" autocomplete="name" />
             <button class="dac-btn">Continue</button>
           </div>
-          <p class="dac-err">Format: First Last - DD/MM/YYYY &nbsp;(e.g. Rahul Sharma - 19/12/1998)</p>
+          <p class="dac-err">Format: First Last - DD/MM/YYYY</p>
           <p class="dac-hint">Your name is used only to verify access.</p>
         </div>`;
-      document.body.appendChild(overlay);
+
       const input = overlay.querySelector(".dac-input");
-      wireSubmit(input, overlay.querySelector(".dac-btn"), overlay.querySelector(".dac-err"), resolve);
-      input.focus();
+      const btn = overlay.querySelector(".dac-btn");
+      const err = overlay.querySelector(".dac-err");
+      
+      wireSubmit(input, btn, err, resolve);
+      setTimeout(() => input.focus(), 50); // Small delay to ensure focus works
     });
   }
 
