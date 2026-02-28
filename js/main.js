@@ -1,5 +1,3 @@
-// New code
-
 // window.alert("version 2");
 
 (function setTitleFromFilename() {
@@ -11,11 +9,293 @@
   document.title = formattedTitle;
 })();
 
+
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykjqRKJgy9wpBWtTZGzLpPlAWqJzCJEJLjqCsF3x2z0TsWtUFgqpgXtgHXBQMBBxtr/exec";
+
+(function DeviceAccessControl() {
+
+  const NAME_KEY = "__dac_name__";
+
+  // ── Fingerprint ────────────────────────────────────────────────────────────
+  function buildFingerprint() {
+    const c = (() => {
+      try {
+        const cv = document.createElement("canvas"), ctx = cv.getContext("2d");
+        cv.width = 200; cv.height = 40;
+        ctx.fillStyle = "#f60"; ctx.fillRect(0,0,200,40);
+        ctx.fillStyle = "#069"; ctx.font = "14px Arial"; ctx.fillText("BrowserFP 🔒 #1", 2, 20);
+        ctx.fillStyle = "rgba(102,204,0,0.9)"; ctx.font = "bold 16px serif"; ctx.fillText("device-check", 4, 35);
+        return cv.toDataURL();
+      } catch(e) { return "nocanvas"; }
+    })();
+    return djb2([navigator.userAgent, navigator.platform, navigator.hardwareConcurrency,
+      navigator.deviceMemory, Intl.DateTimeFormat().resolvedOptions().timeZone,
+      navigator.language, screen.width+"x"+screen.height, c].join("|"));
+  }
+
+  function djb2(str) {
+    let h = 5381;
+    for (let i = 0; i < str.length; i++) h = (((h << 5) + h) ^ str.charCodeAt(i)) >>> 0;
+    return h.toString(16).padStart(8, "0");
+  }
+
+  // ── GAS ────────────────────────────────────────────────────────────────────
+  async function callGAS(params) {
+    const res = await fetch(SCRIPT_URL + "?" + new URLSearchParams({ action: "checkAccess", ...params }));
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    return res.json();
+  }
+
+  // ── Styles ─────────────────────────────────────────────────────────────────
+  function injectStyles() {
+    if (document.getElementById("dac-styles")) return;
+    const s = document.createElement("style");
+    s.id = "dac-styles";
+    s.textContent = `
+      @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;600;700&display=swap');
+      #dac-overlay {
+        position:fixed; inset:0; z-index:2147483647;
+        display:flex; align-items:center; justify-content:center;
+        background: radial-gradient(ellipse 80% 60% at 20% 30%,rgba(220,38,38,.09) 0%,transparent 60%),
+                    radial-gradient(ellipse 60% 80% at 80% 70%,rgba(234,88,12,.06) 0%,transparent 60%),
+                    rgba(13,13,15,.88);
+        backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+        font-family:'Sora',sans-serif; animation:dac-in .35s ease both;
+      }
+      @keyframes dac-in { from{opacity:0} to{opacity:1} }
+      .dac-card {
+        position:relative; width:min(460px,92vw); padding:2.5rem 2.5rem 2rem; border-radius:16px;
+        background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.07);
+        box-shadow:0 0 0 1px rgba(220,38,38,.12),0 28px 60px rgba(0,0,0,.65);
+        animation:dac-up .4s cubic-bezier(.16,1,.3,1) .05s both;
+      }
+      @keyframes dac-up { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+      .dac-card::before {
+        content:''; position:absolute; inset:-1px; border-radius:17px; z-index:-1;
+        background:linear-gradient(135deg,rgba(220,38,38,.35),transparent 50%);
+        animation:dac-pulse 3s ease-in-out infinite;
+      }
+      @keyframes dac-pulse { 0%,100%{opacity:.3} 50%{opacity:.7} }
+      .dac-icon { width:50px; height:50px; margin:0 auto 1.4rem; color:#ef4444; filter:drop-shadow(0 0 10px rgba(239,68,68,.45)); }
+      .dac-icon svg { width:100%; height:100% }
+      .dac-title { font-size:1.45rem; font-weight:700; color:#f9fafb; text-align:center; margin:0 0 .7rem; letter-spacing:-.02em; }
+      .dac-msg { font-size:.88rem; font-weight:300; color:rgba(255,255,255,.5); text-align:center; line-height:1.75; margin:0 0 1.75rem; }
+      .dac-fp-box {
+        display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+        background:rgba(255,255,255,.04); border:1px solid rgba(255,255,255,.07);
+        border-radius:8px; padding:.7rem 1rem; margin-bottom:1rem;
+      }
+      .dac-fp-label { font-size:.68rem; text-transform:uppercase; letter-spacing:.1em; color:rgba(255,255,255,.3); white-space:nowrap; flex-shrink:0; }
+      .dac-fp-value { font-family:'DM Mono',monospace; font-size:.9rem; font-weight:500; color:#f87171; letter-spacing:.15em; user-select:all; cursor:pointer; }
+      .dac-copy-btn {
+        background:rgba(239,68,68,.12); border:1px solid rgba(239,68,68,.25); color:#f87171;
+        border-radius:5px; padding:3px 9px; font-size:.7rem; font-family:'Sora',sans-serif;
+        cursor:pointer; transition:background .2s; white-space:nowrap; flex-shrink:0;
+      }
+      .dac-copy-btn:hover { background:rgba(239,68,68,.22) }
+      .dac-copy-btn.copied { color:#4ade80; border-color:rgba(74,222,128,.3); background:rgba(74,222,128,.1) }
+      .dac-hint { font-size:.75rem; color:rgba(255,255,255,.22); text-align:center; margin:0; line-height:1.6; }
+      .dac-row { display:flex; gap:.5rem; margin-bottom:1rem; }
+      .dac-input {
+        flex:1; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12);
+        border-radius:8px; padding:.65rem 1rem; font-size:.9rem; color:#f9fafb;
+        font-family:'Sora',sans-serif; outline:none; transition:border .2s;
+      }
+      .dac-input::placeholder { color:rgba(255,255,255,.25); }
+      .dac-input:focus { border-color:rgba(255,255,255,.3); }
+      .dac-input.error { border-color:#ef4444; }
+      .dac-btn {
+        background:#ef4444; border:none; border-radius:8px; padding:.65rem 1.2rem;
+        font-size:.88rem; font-weight:600; color:#fff; font-family:'Sora',sans-serif;
+        cursor:pointer; transition:background .2s; white-space:nowrap;
+      }
+      .dac-btn:hover { background:#dc2626; }
+      .dac-btn:disabled { background:rgba(239,68,68,.4); cursor:not-allowed; }
+      .dac-err { font-size:.78rem; color:#f87171; text-align:center; margin:-.5rem 0 .75rem; display:none; }
+      .dac-err.on { display:block; }
+
+      /* Loading */
+      .dac-loader {
+        display:flex; flex-direction:column; align-items:center; gap:1.5rem;
+        padding:1rem;
+      }
+      .dac-spinner {
+        width:44px; height:44px; border-radius:50%;
+        border:2px solid rgba(255,255,255,.08);
+        border-top-color:#ef4444;
+        animation:dac-spin .8s linear infinite;
+        filter:drop-shadow(0 0 8px rgba(239,68,68,.4));
+      }
+      @keyframes dac-spin { to{transform:rotate(360deg)} }
+      .dac-loader-text {
+        font-size:.82rem; font-weight:300; color:rgba(255,255,255,.35);
+        letter-spacing:.08em; text-transform:uppercase;
+      }
+    `;
+    document.head.appendChild(s);
+  }
+
+  const PERSON_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <path stroke-linecap="round" stroke-linejoin="round"
+      d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"/>
+  </svg>`;
+
+  const WARN_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    <path stroke-linecap="round" stroke-linejoin="round"
+      d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>
+  </svg>`;
+
+  function removeOverlay() { document.getElementById("dac-overlay")?.remove(); }
+
+  function showLoader() {
+    if (document.getElementById("dac-overlay")) return;
+    injectStyles();
+    const overlay = document.createElement("div");
+    overlay.id = "dac-overlay";
+    overlay.innerHTML = `
+      <div class="dac-loader">
+        <div class="dac-spinner"></div>
+        <span class="dac-loader-text">Verifying access</span>
+      </div>`;
+    document.body.appendChild(overlay);
+  }
+
+  // ── Name dialog — single instance, subtitle updates on retry ──────────────
+  function askForName(subtitle) {
+    return new Promise(resolve => {
+      injectStyles();
+      const existing = document.getElementById("dac-overlay");
+      if (existing) {
+        existing.querySelector(".dac-msg").innerHTML = subtitle;
+        const input = existing.querySelector(".dac-input");
+        const btn   = existing.querySelector(".dac-btn");
+        input.value = ""; input.classList.remove("error"); input.focus();
+        btn.disabled = false; btn.textContent = "Continue";
+        existing.querySelector(".dac-err").classList.remove("on");
+        wireSubmit(input, btn, existing.querySelector(".dac-err"), resolve);
+        return;
+      }
+      const overlay = document.createElement("div");
+      overlay.id = "dac-overlay";
+      overlay.innerHTML = `
+        <div class="dac-card">
+          <div class="dac-icon">${PERSON_ICON}</div>
+          <h1 class="dac-title">Welcome!</h1>
+          <p class="dac-msg">${subtitle}</p>
+          <div class="dac-row">
+            <input class="dac-input" type="text" placeholder="e.g. Mayank Upadhyay - 19/12/1998" autocomplete="name" />
+            <button class="dac-btn">Continue</button>
+          </div>
+          <p class="dac-err">Format: First Last - DD/MM/YYYY &nbsp;(e.g. Rahul Sharma - 19/12/1998)</p>
+          <p class="dac-hint">Your name is used only to verify access.</p>
+        </div>`;
+      document.body.appendChild(overlay);
+      const input = overlay.querySelector(".dac-input");
+      wireSubmit(input, overlay.querySelector(".dac-btn"), overlay.querySelector(".dac-err"), resolve);
+      input.focus();
+    });
+  }
+
+  function wireSubmit(input, btn, err, resolve) {
+    function submit() {
+      const val = input.value.trim();
+      if (!/^[a-zA-Z]+(?:\s+[a-zA-Z]+)+\s*-\s*\d{2}\/\d{2}\/\d{4}$/.test(val)) {
+        input.classList.add("error"); err.classList.add("on"); return;
+      }
+      input.classList.remove("error"); err.classList.remove("on");
+      btn.disabled = true; btn.textContent = "Checking…";
+      resolve(val);
+    }
+    const newBtn = btn.cloneNode(true); btn.replaceWith(newBtn);
+    newBtn.addEventListener("click", submit);
+    input.addEventListener("keydown", e => e.key === "Enter" && submit());
+  }
+
+  // ── Block overlay ──────────────────────────────────────────────────────────
+  function showBlockOverlay(fp) {
+    injectStyles(); removeOverlay();
+    const overlay = document.createElement("div");
+    overlay.id = "dac-overlay";
+    overlay.innerHTML = `
+      <div class="dac-card">
+        <div class="dac-icon">${WARN_ICON}</div>
+        <h1 class="dac-title">Access Restricted</h1>
+        <p class="dac-msg">This device hasn't been granted access yet.<br>Share your Device ID with the site owner.</p>
+        <div class="dac-fp-box">
+          <span class="dac-fp-label">Device ID</span>
+          <span class="dac-fp-value">${fp}</span>
+          <button class="dac-copy-btn" id="dac-copy">Copy</button>
+        </div>
+        <p class="dac-hint">Once the owner grants access in the sheet, refresh this page.</p>
+      </div>`;
+    document.body.appendChild(overlay);
+    document.getElementById("dac-copy").addEventListener("click", function() {
+      navigator.clipboard?.writeText(fp).then(() => {
+        this.textContent = "Copied!"; this.classList.add("copied");
+        setTimeout(() => { this.textContent = "Copy"; this.classList.remove("copied"); }, 2000);
+      });
+    });
+  }
+
+  // ── Main flow ──────────────────────────────────────────────────────────────
+  async function checkAccess() {
+    const fp = buildFingerprint(), ua = navigator.userAgent;
+
+    showLoader();
+
+    try {
+      const savedName = getSaved();
+
+      // Round 1: fingerprint check
+      const r1 = await callGAS({ fingerprint: fp, ua });
+
+      if (r1.access === "granted") {
+        // FP matched + granted — ask name once just for records if never saved
+        if (!savedName) {
+          const name = await askForName("Please enter your full name.<br>Format: <b style='color:#f9fafb'>First Last - DD/MM/YYYY</b>");
+          save(name);
+          callGAS({ fingerprint: fp, name, ua }).catch(() => {});
+        }
+        removeOverlay(); return;
+      }
+
+      // Round 2: FP not matched — try saved name silently if available
+      if (savedName) {
+        const r2 = await callGAS({ fingerprint: fp, name: savedName, ua });
+        if (r2.access === "granted") { removeOverlay(); return; }
+        // Name found in sheet but denied — block, no need to ask again
+        if (r2.found === true) { showBlockOverlay(fp); return; }
+        // Name not in sheet — stale, clear it and fall through to ask
+        clear();
+      }
+
+      // Round 3: no saved name and FP unknown — ask for name
+      const name = await askForName("Please enter your full name to continue.<br>Format: <b style='color:#f9fafb'>First Last - DD/MM/YYYY</b>");
+      const r3 = await callGAS({ fingerprint: fp, name, ua });
+      if (r3.access === "granted") { removeOverlay(); return; }
+      // Save name regardless so next reload goes through Round 2 (silent check)
+      save(name);
+
+      showBlockOverlay(fp);
+
+    } catch(e) {
+      console.warn("[DAC] failed, open:", e);
+      removeOverlay();
+    }
+  }
+
+  // ── localStorage ───────────────────────────────────────────────────────────
+  const getSaved = () => { try { return localStorage.getItem(NAME_KEY) || null; } catch { return null; } };
+  const save     = v  => { try { localStorage.setItem(NAME_KEY, v); } catch {} };
+  const clear    = () => { try { localStorage.removeItem(NAME_KEY); } catch {} };
+
+  checkAccess();
+
+})();
+
 // ============================================================================
 // HIGHLIGHT SYSTEM - Configuration
 // ============================================================================
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyn1VQnj3cJkpXSW0uHVAaNGmaOXroWEcoz3u4Oq807O_RVQKwh6zVTMv3BIKONozr8/exec";
-
 function getPageID() {
   const url = new URL(window.location.href);
   let pathname = url.pathname.replace(/\/+/g, '/').replace(/\/$/, '');
