@@ -10,7 +10,7 @@
 })();
 
 
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbykjqRKJgy9wpBWtTZGzLpPlAWqJzCJEJLjqCsF3x2z0TsWtUFgqpgXtgHXBQMBBxtr/exec";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUZHTl78OIuhFdhIMoqqGpoNqai8GgZH95xK5VcdTCqQiiP7DgADcc4IOu3xs_tZYN/exec";
 
 (function DeviceAccessControl() {
 
