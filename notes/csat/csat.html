@@ -4905,7 +4905,7 @@
                     - Area = \( \text{side}^2 \).
                     - Diagonal = \( \sqrt{2} \times \text{side} \).
                     - Perimeter = \( 4 \times \text{side} \).
-                    - Number of square tiles for a floor of \( l \times b \): \( \frac{l \times b}{\text{HCF}(l, b)^2} \).
+                    - Number of square tiles for a floor of \( l \times b \) = \( \frac{l \times b}{\text{HCF}(l, b)^2} \).
                 - Example:
                     - Question: 
                         - A square has a side of 9 m. Find its area and perimeter.
@@ -4944,7 +4944,7 @@
                 - A quadrilateral with all sides equal, opposite sides parallel, and diagonals bisecting at 90°.
                 - Formulas:
                     - Area = \( \frac{1}{2} \times \text{diagonal}_1 \times \text{diagonal}_2 \).
-                    - Side = \( \sqrt{\frac{\text{diagonal}_1^2 + \text{diagonal}_2^2}{4}} \).
+                    - Side = \( \frac{1}{2}\sqrt{\text{diagonal}_1^2 + \text{diagonal}_2^2} \).
                     - Perimeter = \( 4 \times \text{side} \).
                 - Example:
                     - Question: 
@@ -5009,8 +5009,8 @@
             - Sector:
                 - A region enclosed by two radii and an arc, with central angle \( \theta \).
                 - Formulas:
-                    - Area = \( \frac{1}{2} \times r \times l \), where \( l = \frac{2\pi r \theta}{360^\circ} \).
-                    - Arc length = \( \frac{2\pi r \theta}{360^\circ} \).
+                    - Area = \( \frac{\pi r^2}{360} \times \theta \)
+                    - Arc length = \( \frac{2\pi r}{360^\circ} \times \theta \).
                 - Example:
                     - Question: 
                         - A sector has a radius of 12 cm and an arc length of 18 cm. Find its area.
@@ -5052,9 +5052,47 @@
 
     - Some Properties of Plane Figures:
         - Dimension Changes:
-            - If the side or radius of a square or circle changes by \( a\% \), the area changes by \( \left( 2a + \frac{a^2}{100} \right)\% \).
-            - If all dimensions of a 2D figure change by \( a\% \), the perimeter changes by \( a\% \).
-            - For a rectangle, if length changes by \( a\% \) and breadth by \( b\% \), the area changes by \( \left( a + b + \frac{ab}{100} \right)\% \).
+            - 1. If side or radius changes by \( a\% \), area changes by \( \left(2a + \frac{a^2}{100}\right)\% \).
+                - Why?
+                    - Area of square:
+                        - \( A = s^2 \)
+                    - Area of circle:
+                        - \( A = \pi r^2 \)
+                    - If:
+                        - \( s \rightarrow s\left(1 + \frac{a}{100}\right) \)
+                    - Then:
+                        - \( A' = s^2\left(1 + \frac{a}{100}\right)^2 \)
+                    - That is why:
+                        - \( (1+x)^2 = 1 + 2x + x^2 \)
+            - 2. If all dimensions of a 2D figure change by \( a\% \), perimeter changes by \( a\% \).
+                - Why?
+                    - Perimeter is linear combination:
+                        - Example:
+                            - \( P = 2(l+b) \)
+                    - If each dimension increases by \( a\% \), every term is multiplied by the same factor.
+                    - So:
+                        - \( P' = P\left(1 + \frac{a}{100}\right) \)
+            - 3. Rectangle:
+                - If length changes by \( a\% \) and breadth by \( b\% \), area changes by \( \left(a + b + \frac{ab}{100}\right)\% \).
+                - Why?
+                    - Area:
+                        - \( A = lb \)
+                    - If:
+                        - \( l \rightarrow l\left(1 + \frac{a}{100}\right) \)
+                        - \( b \rightarrow b\left(1 + \frac{b}{100}\right) \)
+                    - Then:
+                        - \( A' = lb\left(1 + \frac{a}{100}\right)\left(1 + \frac{b}{100}\right) \)
+                    - Now subtract original 1 (since we want increase only):
+                        - Increase factor:
+                            - \( x + y + xy \)
+                    - Replace back:
+                        - \( \frac{a}{100} + \frac{b}{100} + \frac{ab}{10000} \)
+                        - This is not yet percentage, it is a fractional increase.
+                    - Converting to percentage:
+                        - Since, this formula already represents percentage change \( \frac{\text{New} - \text{Old}}{\text{Old}} \)
+                            - Therefore, Percentage = Fraction * 100
+                        - We get:
+                            - \( a + b + \frac{ab}{100} \% \)
         - Example:
             - Question: 
                 - A rectangle’s length increases by 10% and its breadth decreases by 5%. Find the net change in area.
@@ -5185,9 +5223,10 @@
         - A frustum is the portion of a cone between two parallel planes cutting it, with top radius \( r \), bottom radius \( R \), height \( h \), and slant height \( l \).
         - Formulas:
             - Slant height = \( \sqrt{h^2 + (R - r)^2} \).
-            - Curved surface area = \( \pi l (R + r) \).
+            - Curved surface area = \( \pi (R + r) l  \).
             - Total surface area = \( \pi (R^2 + r^2 + l(R + r)) \).
             - Volume = \( \frac{1}{3} \pi h (R^2 + r^2 + Rr) \).
+                - Derived by subtracting the volume of smaller cone from the bigger cone
         - Example:
             - Question: 
                 - A frustum of a cone has a top radius of 3 m, a bottom radius of 5 m, and a height of 4 m. Find its total surface area.
@@ -5202,10 +5241,24 @@
 
     - Some Rules Related to Solid Figures:
         - Volume Change:
-            - If dimensions (\( l, b, h \) for cuboid; \( x \) for cube; \( r, h \) for cylinder/cone; \( r \) for sphere) change by \( x\%, y\%, z\% \), volume changes by:
-                - \(
-                \left( x + y + z + \frac{xy + yz + zx}{100} + \frac{xyz}{10000} \right)\%
-                \)
+            - Formula:
+                - \( x + y + z + \frac{xy + yz + zx}{100} + \frac{xyz}{10000} \%\)
+            - Derivation:
+                - New Dimensions:
+                    - \( l \rightarrow l\left(1 + \frac{x}{100}\right) \)
+                    - \( b \rightarrow b\left(1 + \frac{y}{100}\right) \)
+                    - \( h \rightarrow h\left(1 + \frac{z}{100}\right) \)
+                - Original Volume:
+                    - \( V = lbh \)
+                - New Volume:
+                    - \( V' = V\left(1 + \frac{x}{100}\right)\left(1 + \frac{y}{100}\right)\left(1 + \frac{z}{100}\right) \)
+                - Expansion:
+                    - \( (1+a)(1+b)(1+c) \)
+                    - \( = 1 + a + b + c + ab + bc + ca + abc \)
+                    - where:
+                        - \( a = \frac{x}{100} \)
+                        - \( b = \frac{y}{100} \)
+                        - \( c = \frac{z}{100} \)
             - Example:
                 - Question: 
                     - A cuboid’s length, breadth, and height increase by 10%, 15%, and 20%, respectively. Find the percentage increase in volume.
@@ -5216,11 +5269,55 @@
                     - Increase = \( 10 + 15 + 20 + \frac{150 + 300 + 200}{100} + \frac{3000}{10000} = 45 + \frac{650}{100} + \frac{3000}{10000} = 45 + 6.5 + 0.3 = 51.8\% \).
                     - Answer is: 
                         - The volume increases by \( 51.8\% \).
-        - Surface Area Change:
-            - If two dimensions in the surface area formula change by \( x\%, y\% \), surface area changes by:
-                - \(
-                \left( x + y + \frac{xy}{100} \right)\%
-                \)
+        - Surface Area Change (Product of Two Changing Quantities):
+            - Applicable When:
+                - Surface area formula is of the form:
+                    - \( \text{Area} = kAB \)
+                - Where:
+                    - \( k \) = constant
+                    - \( A, B \) are the only changing dimensions
+            - Formula:
+                - \( x + y + \frac{xy}{100} \% \)
+            - Derivation:
+                - If:
+                    - \( A \rightarrow A\left(1 + \frac{x}{100}\right) \)
+                    - \( B \rightarrow B\left(1 + \frac{y}{100}\right) \)
+                - Original Area:
+                    - \( S = kAB \)
+                - New Area:
+                    - \( S' = kAB\left(1 + \frac{x}{100}\right)\left(1 + \frac{y}{100}\right) \)
+                - Expansion:
+                    - \( (1+a)(1+b) \)
+                    - \( = 1 + a + b + ab \)
+                    - where:
+                        - \( a = \frac{x}{100} \)
+                        - \( b = \frac{y}{100} \)
+                - Percentage Increase:
+                    - \( x + y + \frac{xy}{100} \% \)
+            - Works For:
+                - Rectangle area \( lb \)
+                - Triangle area \( \frac{1}{2}bh \)
+                - Cylinder CSA \( 2\pi rh \)
+                - Any formula that is simple product of two changing variables
+            - Does NOT Work Directly For:
+                - \( \pi r^2 \) (circle area)
+                - \( 4\pi r^2 \) (sphere surface area)
+                - Any expression containing squares or higher powers
+                - Any formula containing sums like \( 2\pi r(h+r) \)
+            - Change for squared values:
+                - For Squared Case (Important):
+                    - If:
+                        - \( r \rightarrow r\left(1 + \frac{x}{100}\right) \)
+                    - Then:
+                        - \( r^2 \rightarrow r^2\left(1 + \frac{x}{100}\right)^2 \)
+                    - Expansion:
+                        - \( (1+a)^2 = 1 + 2a + a^2 \)
+                    - Percentage Change:
+                        - \( 2x + \frac{x^2}{100} \% \)
+                - For Cubed Case (Volume type single variable):
+                    - \( (1+a)^3 = 1 + 3a + 3a^2 + a^3 \)
+                    - Percentage Change:
+                        - \( 3x + \frac{3x^2}{100} + \frac{x^3}{10000} \% \)
             - Example:
                 - Question: 
                     - A cylinder’s radius and height increase by 5% and 10%, respectively. Find the percentage increase in curved surface area.
@@ -5241,9 +5338,12 @@
                     - Answer is: 
                         - The cone’s radius is approximately \( 5.04 \, \text{cm} \).
         - Inscribed Shapes:
-            - Largest cube in a sphere of radius \( r \): Edge = \( \frac{2r}{\sqrt{3}} \).
-            - Largest sphere in a cone (slant height = diameter): Radius = \( \frac{r}{2} \).
-            - Largest cube in a hemisphere: Edge = \( \frac{2r}{\sqrt{3}} \).
+            - Largest cube in a sphere of radius \( r \): 
+                - Edge = \( \frac{2r}{\sqrt{3}} \).
+            - Largest sphere in a cone (slant height = diameter): 
+                - Radius = \( \frac{r}{2} \).
+            - Largest cube in a hemisphere: 
+                - Edge = \( \frac{2r}{\sqrt{3}} \).
             - Example:
                 - Question: 
                     - Find the edge of the largest cube inscribed in a sphere of radius 9 cm.
