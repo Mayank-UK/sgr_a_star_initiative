@@ -256,13 +256,13 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUZHTl78OIuhFdhIMoq
           save(name);
           callGAS({ fingerprint: fp, name, ua }).catch(() => {});
         }
-        removeOverlay(); return;
+        removeOverlay(); loadHighlightsWhenReady(); return;
       }
 
       // Round 2: FP not matched — try saved name silently if available
       if (savedName) {
         const r2 = await callGAS({ fingerprint: fp, name: savedName, ua });
-        if (r2.access === "granted") { removeOverlay(); return; }
+        if (r2.access === "granted") { removeOverlay(); loadHighlightsWhenReady(); return; } 
         // Name found in sheet but denied — block, no need to ask again
         if (r2.found === true) { showBlockOverlay(fp); return; }
         // Name not in sheet — stale, clear it and fall through to ask
@@ -272,17 +272,37 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxUZHTl78OIuhFdhIMoq
       // Round 3: no saved name and FP unknown — ask for name
       const name = await askForName("Please enter your full name to continue.<br>Format: <b style='color:#f9fafb'>First Last - DD/MM/YYYY</b>");
       const r3 = await callGAS({ fingerprint: fp, name, ua });
-      if (r3.access === "granted") { removeOverlay(); return; }
+      if (r3.access === "granted") { removeOverlay(); loadHighlightsWhenReady(); return; }
       // Save name regardless so next reload goes through Round 2 (silent check)
       save(name);
 
       showBlockOverlay(fp);
 
     } catch(e) {
-      console.warn("[DAC] failed, open:", e);
-      removeOverlay();
+      console.warn("[DAC] failed:", e);
+      showErrorOverlay();
     }
   }
+
+  function showErrorOverlay() {
+    injectStyles();
+    removeOverlay();
+    const overlay = document.createElement("div");
+    overlay.id = "dac-overlay";
+    overlay.innerHTML = `
+      <div class="dac-card">
+        <div class="dac-icon">${WARN_ICON}</div>
+        <h1 class="dac-title">Connection Error</h1>
+        <p class="dac-msg">Unable to verify access.<br>Please check your internet connection and try again.</p>
+        <button class="dac-btn" id="dac-retry" style="width:100%; margin-bottom:0.75rem">Retry</button>
+        <p class="dac-hint">If the problem persists, contact the site owner.</p>
+      </div>`;
+    document.body.appendChild(overlay);
+    document.getElementById("dac-retry").addEventListener("click", async () => {
+      removeOverlay();
+      await checkAccess();
+    });
+}
 
   // ── localStorage ───────────────────────────────────────────────────────────
   const getSaved = () => { try { return localStorage.getItem(NAME_KEY) || null; } catch { return null; } };
@@ -322,6 +342,17 @@ console.log('PAGE_ID:', PAGE_ID);
 // ============================================================================
 // HIGHLIGHT SYSTEM - Simple Online-Only Implementation
 // ============================================================================
+
+let domReady = false;
+let pendingLoadHighlights = false;
+
+function loadHighlightsWhenReady() {
+  if (domReady) {
+    loadHighlights();
+  } else {
+    pendingLoadHighlights = true;
+  }
+}
 
 let pendingHighlights = [];
 
@@ -2178,10 +2209,11 @@ document.addEventListener("DOMContentLoaded", () => {
       setupNavigationWarning();
       updateScrollProgress();
 
-      setTimeout(() => {
-        console.log('Loading highlights after DOM ready...');
-        loadHighlights();
-      }, 600);
+      domReady = true;
+      if (pendingLoadHighlights) {
+        pendingLoadHighlights = false;
+        setTimeout(loadHighlights, 400); 
+      }
     });
   });
 });
