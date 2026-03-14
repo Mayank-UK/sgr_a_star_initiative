@@ -483,16 +483,76 @@ function applyPendingHighlights() {
         let bestMatch = null;
         let bestScore = 0;
 
+        // for (const item of lineTextMap) {
+        //   const lineText = item.text;
+
+        //   // Level 1: full context (pre + text + post) — score 100
+        //   if (pre && post && bestScore < 100) {
+        //     const idx = lineText.indexOf(`${pre} ${text} ${post}`);
+        //     if (idx !== -1) {
+        //       bestMatch = { element: item.element, startIndex: idx + pre.length + 1, matchType: 'full-context' };
+        //       bestScore = 100;
+        //       break;
+        //     }
+        //   }
+
+        //   // Level 2: pre + text — score 90
+        //   if (pre && bestScore < 90) {
+        //     const idx = lineText.indexOf(`${pre} ${text}`);
+        //     if (idx !== -1) {
+        //       bestMatch = { element: item.element, startIndex: idx + pre.length + 1, matchType: 'pre-text' };
+        //       bestScore = 90;
+        //     }
+        //   }
+
+        //   // Level 3: text + post — score 85
+        //   if (post && bestScore < 85) {
+        //     const idx = lineText.indexOf(`${text} ${post}`);
+        //     if (idx !== -1) {
+        //       bestMatch = { element: item.element, startIndex: idx, matchType: 'text-post' };
+        //       bestScore = 85;
+        //     }
+        //   }
+
+        //   // Level 4: text-only with context-bonus scoring — score 50+
+        //   if (bestScore < 80) {
+        //     const idx = lineText.indexOf(text);
+        //     if (idx !== -1) {
+        //       let score = 50;
+        //       if (lineText === text) {
+        //         score = 80;
+        //       } else {
+        //         if (pre) {
+        //           const before = lineText.substring(Math.max(0, idx - pre.length - 5), idx).trim();
+        //           if (before.includes(pre)) score += 10;
+        //         }
+        //         if (post) {
+        //           const after = lineText.substring(idx + text.length, idx + text.length + post.length + 5).trim();
+        //           if (after.includes(post)) score += 10;
+        //         }
+        //       }
+        //       if (score > bestScore) {
+        //         bestMatch = { element: item.element, startIndex: 0, matchType: 'text-only' };
+        //         bestScore = score;
+        //       }
+        //       if (bestScore === 80) break;
+        //     }
+        //   }
+        // }
+
         for (const item of lineTextMap) {
           const lineText = item.text;
 
           // Level 1: full context (pre + text + post) — score 100
-          if (pre && post && bestScore < 100) {
+          if (pre && post) {
             const idx = lineText.indexOf(`${pre} ${text} ${post}`);
             if (idx !== -1) {
-              bestMatch = { element: item.element, startIndex: idx + pre.length + 1, matchType: 'full-context' };
-              bestScore = 100;
-              break;
+              const score = 100;
+              if (score > bestScore) {
+                bestMatch = { element: item.element, startIndex: idx + pre.length + 1, matchType: 'full-context' };
+                bestScore = score;
+                continue; // Don't break — another element might also match at 100
+              }
             }
           }
 
@@ -502,6 +562,7 @@ function applyPendingHighlights() {
             if (idx !== -1) {
               bestMatch = { element: item.element, startIndex: idx + pre.length + 1, matchType: 'pre-text' };
               bestScore = 90;
+              continue;
             }
           }
 
@@ -511,6 +572,7 @@ function applyPendingHighlights() {
             if (idx !== -1) {
               bestMatch = { element: item.element, startIndex: idx, matchType: 'text-post' };
               bestScore = 85;
+              continue;
             }
           }
 
@@ -535,7 +597,8 @@ function applyPendingHighlights() {
                 bestMatch = { element: item.element, startIndex: 0, matchType: 'text-only' };
                 bestScore = score;
               }
-              if (bestScore === 80) break;
+              // Only break early if we have NO context to distinguish (no pre, no post)
+              if (bestScore >= 80 && !pre && !post) break;
             }
           }
         }
