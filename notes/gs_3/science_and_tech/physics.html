@@ -1039,18 +1039,60 @@
                     - \( y = x \tan \theta - \frac{g x^2}{2 u^2 \cos^2 \theta} \).
                 - Time of Ascent: 
                     - \( t_a = \frac{u \sin \theta}{g} \).
+                    - Derivation:
+                        - Use equation of motion:
+                            - \( v = u + at \)
+                        - At maximum height:
+                            - Final vertical velocity = \( v_y = 0 \)
+                            - \( u_y = u \sin\theta \)
+                        - Apply in vertical direction:
+                            - \( 0 = u\sin\theta - gt_a \)
+                        - Rearranging:
+                            - \( gt_a = u\sin\theta \)
+                        - Therefore:
+                            - \( t_a = \frac{u\sin\theta}{g} \)
                 - Time of Descent: 
                     - \( t_d = \frac{u \sin \theta}{g} \).
                 - Time of Flight: 
                     - \( T = t_a + t_d = \frac{2 u \sin \theta}{g} \).
                 - Maximum Height: 
                     - \( H = \frac{u^2 \sin^2 \theta}{2 g} \).
+                    - Derivation:
+                        - Use equation of motion:
+                            - \( v^2 = u^2 + 2as \)
+                        - At maximum height:
+                            - Final vertical velocity = \( v_y = 0 \)
+                            - \( u_y = u \sin\theta \)
+                        - Apply in vertical direction:
+                            - \( 0 = (u\sin\theta)^2 - 2gH \)
+                        - Rearranging:
+                            - \( 2gH = u^2 \sin^2\theta \)
+                        - Therefore:
+                            - \( H = \frac{u^2 \sin^2\theta}{2g} \)
                 - Range: 
                     - \( R = \frac{u^2 \sin 2\theta}{g} \).
+                    - Derivation:
+                        - Horizontal component of velocity:
+                            - \( u_x = u \cos\theta \)
+                        - Vertical component of velocity:
+                            - \( u_y = u \sin\theta \)
+                        - Time of flight:
+                            - \( T = \frac{2u\sin\theta}{g} \)
+                        - Range:
+                            - \( R = \text{horizontal velocity} \times \text{time} \)
+                            - \( R = u\cos\theta \cdot T \)
+                        - Substitute \( T \):
+                            - \( R = u\cos\theta \cdot \frac{2u\sin\theta}{g} \)
+                        - Simplify:
+                            - \( R = \frac{2u^2 \sin\theta \cos\theta}{g} \)
+                        - Use identity:
+                            - \( \sin 2\theta = 2\sin\theta \cos\theta \)
+                        - Therefore:
+                            - \( R = \frac{u^2 \sin 2\theta}{g} \)
                 - Maximum Range: 
                     - At \( \theta = 45^\circ \), \( R_{\text{max}} = \frac{u^2}{g} \).
                 - Height at Maximum Range: 
-                    - \( H = \frac{R_{\text{max}}}{4} \).
+                    - \( H = \frac{R_{\text{max}}}{4} \)
             - Properties:
                 - Maximum range at \( \theta = 45^\circ \).
                 - Equal ranges for \( \theta \) and \( 90^\circ - \theta \).
@@ -1071,16 +1113,88 @@
                     - Angle swept by radius, unit: radian.
                     - Formula: 
                         - \( \theta = \frac{\text{Arc}}{\text{Radius}} \).
+                    - Derivation:
+                        - Consider a circle of radius \( r \)
+                            - Total circumference = \( 2\pi r \)
+                            - Total angle at center = \( 2\pi \) radians
+                                - A radian is the angle subtended at the center of a circle by an arc
+                                - Explanation:
+                                    - A full circle is defined as \( 360^\circ \)
+                                    - Conversion between degrees and radians:
+                                        - \( 180^\circ = \pi \) radians
+                                    - So:
+                                        - \( 360^\circ = 2 \times 180^\circ \)
+                                        - \( = 2\pi \) radians
+                                    - Therefore:
+                                        - Total angle at the center of a circle = \( 2\pi \) radians
+                        - Let:
+                            - Arc length = \( s \)
+                            - Corresponding angle = \( \theta \)
+                        - By proportionality:
+                            - \( \frac{\theta}{2\pi} = \frac{s}{2\pi r} \)
+                        - Multiply both sides by \( 2\pi \):
+                            - \( \theta = \frac{s}{r} \)
                 - Angular Velocity (\( \omega \)):
                     - Rate of change of angular displacement, unit: rad/s.
                     - Formula: 
                         - \( \omega = \frac{\theta}{t} = \frac{2\pi}{T} = 2\pi n \).
+                    - Derivation:
+                        - Let:
+                            - Angular displacement = \( \theta \)
+                            - Time taken = \( t \)
+                        - By definition of angular velocity:
+                            - \( \omega = \frac{\theta}{t} \)
+                        - For one complete revolution:
+                            - \( \theta = 2\pi \)
+                            - Time = \( T \)
+                        - So:
+                            - \( \omega = \frac{2\pi}{T} \)
+                        - If frequency = \( n \):
+                            - \( n = \frac{1}{T} \)
+                        - Substitute:
+                            - \( \omega = 2\pi n \)
                     - Relation to linear velocity: 
                         - \( v = \omega r \).
+                        - Derivation:
+                            - Consider a particle moving in a circle of radius \( r \)
+                            - Linear velocity:
+                                - \( v = \frac{s}{t} \)
+                            - Arc length traveled:
+                                - \( s = r\theta \)
+                            - Substitute \( s = r\theta \):
+                                - \( v = \frac{r\theta}{t} \)
+                            - Rearranging:
+                                - \( v = r \cdot \frac{\theta}{t} \)
+                            - Since:
+                                - \( \omega = \frac{\theta}{t} \)
+                            - Therefore:
+                                - \( v = \omega r \)
                 - Angular Acceleration (\( \alpha \)):
-                    - Rate of change of angular velocity, unit: rad/s².
+                    - Formula:
+                        - Rate of change of angular velocity, unit: rad/s².
+                        - \( \alpha = \frac{d\omega}{dt} = \frac{d^2 \theta}{dt^2} \)
                     - Relation to linear acceleration: 
                         - \( a = \alpha r \).
+                        - Derivation:
+                            - Consider a particle moving in a circle of radius \( r \)
+                            - Arc length:
+                                - \( s = r\theta \)
+                            - Linear velocity:
+                                - \( v = \frac{ds}{dt} \)
+                            - Substitute \( s = r\theta \):
+                                - \( v = \frac{d}{dt}(r\theta) = r \frac{d\theta}{dt} \)
+                            - Since:
+                                - \( \omega = \frac{d\theta}{dt} \)
+                            - So:
+                                - \( v = r\omega \)
+                            - Linear acceleration:
+                                - \( a = \frac{dv}{dt} \)
+                            - Substitute \( v = r\omega \):
+                                - \( a = \frac{d}{dt}(r\omega) = r \frac{d\omega}{dt} \)
+                            - Since:
+                                - \( \alpha = \frac{d\omega}{dt} \)
+                            - Therefore:
+                                - \( a = r\alpha \)
                 - Centripetal Acceleration:
                     - Directed toward the center, required to maintain circular path.
                     - Formula: 
@@ -1306,6 +1420,7 @@
             - Zero work at \( \theta = 90^\circ \) (force perpendicular to displacement).
             - Negative work at \( \theta = 180^\circ \) (force opposite to displacement).
         - Types of Work:
+            - <img height="400" src="./../../images/science_and_tech/positive_negative_zero_work.jpeg" />
             - Positive Work:
                 - Force and displacement in the same direction (e.g., pulling an object toward oneself).
             - Negative Work:
@@ -1418,12 +1533,19 @@
         - Definition:
             - Occurs when bodies physically strike or influence each other’s paths.
         - Types:
+            - <img height="400" src="./../../images/science_and_tech/elastic_inelastic.jpg" />
             - Elastic Collision:
                 - Momentum and kinetic energy conserved; common in atomic/nuclear collisions.
             - Inelastic Collision:
                 - Momentum conserved, kinetic energy not conserved; common in macroscopic collisions.
                 - Completely inelastic: 
                     - Bodies stick together post-collision.
+                - What changes in inelastic collision
+                    - Objects deform, heat up, or stick together
+                    - Some mechanical energy is converted into:
+                        - Internal energy (heat)
+                        - Sound
+                        - Deformation (potential energy at microscopic level)
 
     - Sources of Energy
         - Definition:
@@ -1640,6 +1762,10 @@
         - Outside Earth’s Surface:
             - At height \( h \): 
                 - \( g' = g \left( 1 + \frac{h}{R_e} \right)^{-2} \approx g \left( 1 - \frac{2h}{R_e} \right) \) for \( h \ll R_e \).
+                    - Assume h << R, for:
+                        - Buildings, mountains → definitely valid
+                        - Aircraft (~10 km) → very valid
+                        - Not for satellites, etc
             - \( g \) decreases as height increases.
         - Inside Earth:
             - At depth \( h \): 
@@ -1701,11 +1827,32 @@
                     - Weather forecasting, atmospheric studies.
 
     - Energy of a Satellite:
-        - Binding (total) energy: 
+        - Total energy of a satellite in orbit
             - \( E = -\frac{G m M}{2 r} \), where \( m \) is satellite mass, \( M \) is Earth’s mass, \( r \) is orbital radius.
-        - Includes:
-            - Potential energy for height.
-            - Kinetic energy for orbit.
+            - Includes:
+                - Potential energy for height.
+                - Kinetic energy for orbit.
+            - Why is it negative?
+                - Gravitational potential energy:
+                    - \( U = -\frac{GMm}{r} \)
+                    - Why is it negative?
+                        - As object comes closer it loses potential energy
+                        - Hence it is negative
+                - For circular orbit:
+                    - Centripetal force = Gravitational force
+                    - \( \frac{mv^2}{r} = \frac{GMm}{r^2} \)
+                    - So:
+                        - \( v^2 = \frac{GM}{r} \)
+                - Kinetic energy:
+                    - \( K = \frac{1}{2}mv^2 \)
+                    - \( K = \frac{1}{2}m \cdot \frac{GM}{r} \)
+                    - \( K = \frac{GMm}{2r} \)
+                - So,
+                    - \( E = K + U \)
+                    - \( E = \frac{GMm}{2r} - \frac{GMm}{r} \)
+                    - \( E = -\frac{GMm}{2r} \)
+        - Binding (total) energy: 
+            - For a satellite, binding energy is the total energy required to move it from its current orbit to a point infinitely far away from Earth's gravity.
 
     - Kepler’s Laws of Planetary Motion:
         - <img height="200" src="./../../images/science_and_tech/keplers_law.png" />
@@ -1719,6 +1866,15 @@
     - Orbital Velocity:
         - Velocity to maintain a satellite in orbit: 
             - \( v_o = \sqrt{\frac{G M_e}{R_e + h}} = \sqrt{\frac{g R_e^2}{R_e + h}} \).
+        - Derivation:
+            - Gravitational force provides centripetal force:
+                - \( \frac{GMm}{r^2} = \frac{mv^2}{r} \)
+            - Cancel \( m \):
+                - \( \frac{GM}{r^2} = \frac{v^2}{r} \)
+            - Multiply both sides by \( r \):
+                - \( \frac{GM}{r} = v^2 \)
+            - Taking square root:
+                - \( v = \sqrt{\frac{GM}{r}} \)
         - Near Earth’s surface (\( h \approx 0 \)): 
             - \( v_o = \sqrt{g R_e} \approx 7.92 \, \text{km/s} \).
         - Outcomes:
@@ -1779,6 +1935,7 @@
         - Definition:
             - Turning effect of a force (moment of force): \( \tau = F \cdot d \), where \( F \) is force, \( d \) is perpendicular distance from the axis of rotation.
             - Vector quantity; SI unit: N·m; positive (anticlockwise), negative (clockwise).
+                - <img height="200" src="./../../images/science_and_tech/positive_and_negative_torque.gif" />
         - Phenomena:
             - Maximum torque at door edges (e.g., handles placed at free edge).
             - Long-arm wrench increases torque for unscrewing tight nuts.
@@ -1852,6 +2009,7 @@
     - Angular Momentum
         - Definition:
             - Momentum associated with rotational motion: \( L = I \omega \).
+                - Where, \( I \) is the moment of inertia
             - SI unit: 
                 - J·s (joule-second).
         - Conservation of Angular Momentum:
@@ -2068,6 +2226,7 @@
             - Mean pressure on vessel walls up to height \( h \): \( \frac{\rho h g}{2} \).
 
     - Pascal’s Law
+        - <img height="256" src="./../../images/science_and_tech/pascals_law.jpg" />
         - Statement:
             - Pressure at any point in a liquid at rest is the same, neglecting gravity effects.
             - Pressure increase at one point is transmitted equally to all points and container walls.
@@ -2106,6 +2265,7 @@
             - Centre of gravity of displaced liquid.
 
     - Archimedes’ Principle
+        - <img height="256" src="./../../images/science_and_tech/archimedas_principle.jpg" />
         - Statement:
             - Buoyant force equals the weight of displaced fluid: 
                 - \( F = \rho_{\text{fluid}} V_{\text{displaced}} g \).
@@ -2701,8 +2861,8 @@
                     - No engine can convert all heat to work in a cycle.
                 - Clausius: 
                     - Heat cannot flow from colder to hotter body without external work.
-                - Applications: 
-                    - Air conditioning (Kelvin-Planck), refrigerators (Clausius).
+                    - Applications: 
+                        - Air conditioning (Kelvin-Planck), refrigerators (Clausius).
         - Processes:
             - Cyclic: 
                 - Initial and final states identical.
