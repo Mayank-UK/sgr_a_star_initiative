@@ -198,12 +198,21 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwZ-4ZDZgHeenJqFT9Ck
 
   function wireSubmit(input, btn, err, resolve) {
     function submit() {
-      const val = input.value.trim();
-      if (!/^[a-zA-Z]+(?:\s+[a-zA-Z]+)+\s*-\s*\d{2}\/\d{2}\/\d{4}$/.test(val)) {
-        input.classList.add("error"); err.classList.add("on"); return;
+      const val = input.value
+        .replace(/\s*-\s*/g, '-')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      if (!/^[a-zA-Z]+(?:\s+[a-zA-Z]+)+-\d{2}\/\d{2}\/\d{4}$/.test(val)) {
+        input.classList.add("error");
+        err.classList.add("on");
+        return;
       }
-      input.classList.remove("error"); err.classList.remove("on");
-      btn.disabled = true; btn.textContent = "Checking…";
+
+      input.classList.remove("error");
+      err.classList.remove("on");
+      btn.disabled = true;
+      btn.textContent = "Checking…";
       resolve(val);
     }
     const newBtn = btn.cloneNode(true); btn.replaceWith(newBtn);
