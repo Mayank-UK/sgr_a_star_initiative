@@ -4,7 +4,6 @@
         <meta charset="UTF-8">
         <link rel="stylesheet" href="./../../css/main.css" />
         <script src="./../../js/main.js" defer></script>
-        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
         <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     </head>
 
@@ -4392,7 +4391,7 @@
             - To calculate the angle between the hour and minute hands at a given time \( H \) hours and \( M \) minutes:
                 - If the minute hand is behind the hour hand: 
                     - Formula:
-                        - \( \left| 30H - \frac{11M}{2} \right|^\circ \), where \( H \) is the hour (0 to 11), and \( M \) is the minutes.
+                        - \( |(30H + 0.5M) - 6M| \)
                     - Derivation:
                         - Let:
                             - \( H \) = hour (0 to 11)
@@ -4423,7 +4422,7 @@
                             - \( \left| 30H - \frac{11M}{2} \right|^\circ \).
                 - If the minute hand is ahead of the hour hand: 
                     - Formula:
-                        - \( \left| 30 \left( \frac{M}{5} - H \right) - \frac{M}{2} \right|^\circ \).
+                        - \( |6M - (30H + 0.5M)| \)
                     - Derivation:
                         - Same as above, the only minor difference is that minute hand is ahead, so difference will be:
                             - \( |6M - (30H + 0.5M)| \)
@@ -5937,7 +5936,7 @@
 
 - Analogy
     - Number analogy
-        – Common Cases & Approaches
+        - Common Cases & Approaches
             1. Basic Arithmetic Operations
                 - Identify if the second number is obtained by adding, subtracting, multiplying, or dividing the first number.
                 - Example: 
@@ -6029,7 +6028,7 @@
                 - Focus on only remaining possible patterns
 
     - Letter analogy
-        – Common Cases & Approaches
+        - Common Cases & Approaches
             1. Position in Alphabet
                 - Letters are related based on their numerical positions (A=1, B=2, ..., Z=26).
                 - Example: 
