@@ -180,7 +180,7 @@ const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwZ-4ZDZgHeenJqFT9Ck
           <h1 class="dac-title">Welcome!</h1>
           <p class="dac-msg">${subtitle}</p>
           <div class="dac-row">
-            <input class="dac-input" type="text" placeholder="e.g. Mayank Upadhyay - 19/12/1998" autocomplete="name" />
+            <input class="dac-input" type="text" placeholder="e.g. FirstName LastName - 19/12/1998" autocomplete="name" />
             <button class="dac-btn">Continue</button>
           </div>
           <p class="dac-err">Format: First Last - DD/MM/YYYY</p>
